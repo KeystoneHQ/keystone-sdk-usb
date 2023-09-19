@@ -1,3 +1,5 @@
+import { Buffer } from 'buffer';
+
 const keystoneUSBVendorId = 4617;
 
 const keystoneDevices = [
