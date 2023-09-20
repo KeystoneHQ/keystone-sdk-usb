@@ -14,14 +14,6 @@ function App() {
   const eth = React.useRef<Eth | null>(null);
   const device = React.useRef<USBDevice | null>(null);
 
-  const openNotification = React.useCallback((content: any) => {
-    api.info({
-      message: `USB result`,
-      description: <div>{content}</div>,
-      placement: 'topRight',
-    });
-  }, [api, result]);
-
   const handleLink2Device = React.useCallback(async () => {
     setLoading(true);
     try {
