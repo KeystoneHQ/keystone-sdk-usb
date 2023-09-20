@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, notification } from 'antd';
+import { Button, notification, Space } from 'antd';
 import type { NotificationPlacement } from 'antd/es/notification/interface';
 import createTransport from '@keystonehq/hw-transport-webusb';
 import Eth from '@keystonehq/hw-app-eth';
@@ -62,11 +62,13 @@ function App() {
   }, [eth, result]);
 
   return (
-    <div className="App">
-      <Button loading={loading} onClick={handleLink2Device}>Link to Keystone3 Device</Button>
-      <Button disabled={!eth.current} loading={loading} onClick={handleSignTx}>Sign ETH tx</Button>
-      <Button disabled={!eth.current} loading={loading} onClick={handleCheckDeviceLockStatus}>Check Device Lock Status</Button>
-      {contextHolder}
+    <div className='App'>
+      <Space>
+        <Button loading={loading} onClick={handleLink2Device}>Link to Keystone3 Device</Button>
+        <Button disabled={!eth.current} loading={loading} onClick={handleSignTx}>Sign ETH tx</Button>
+        <Button disabled={!eth.current} loading={loading} onClick={handleCheckDeviceLockStatus}>Check Device Lock Status</Button>
+        {contextHolder}
+      </Space>
     </div>
   );
 }
