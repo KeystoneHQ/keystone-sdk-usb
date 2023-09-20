@@ -1,39 +1,71 @@
 import React from 'react';
 import { Button, notification } from 'antd';
 import type { NotificationPlacement } from 'antd/es/notification/interface';
-import TransportWebUSB, { Actions, getFirstKeystoneDevice, requestKeystoneDevice } from '@keystonehq/hw-transport-webusb';
+import createTransport from '@keystonehq/hw-transport-webusb';
+import Eth from '@keystonehq/hw-app-eth';
 import './App.css';
+
+const mockTxUR = 'UR:ETH-SIGN-REQUEST/OLADTPDAGDWMZTFTZORNGEFGWNNLGAIACSSBIYEHFNAOHDDLAOWEAHAOLRHKISDLAELRHKISDLBTLFGMAYMWGAGYFLASPLMDMYBGNDATEEISPLLGBABEFXLSIMVALNASCSGLJPNBAELARTAXAAAAAHAHTAADDYOEADLECSDWYKCSFNYKAEYKAEWKAEWKAOCYBNHEGSHYAMGHIHSNEOKTVWHDVSJETIWDTYPLVYGYKBFNNSVAWMNEFHLADWBB';
 
 function App() {
   const [api, contextHolder] = notification.useNotification();
   const [result, setResult] = React.useState<string>('');
+  const [loading, setLoading] = React.useState(false);
+  const eth = React.useRef<Eth | null>(null);
   const device = React.useRef<USBDevice | null>(null);
 
-  const openNotification = React.useCallback(() => {
+  const openNotification = React.useCallback((content: any) => {
     api.info({
       message: `USB result`,
-      description: <div>{result}</div>,
+      description: <div>{content}</div>,
       placement: 'topRight',
     });
   }, [api, result]);
 
+  const handleLink2Device = React.useCallback(async () => {
+    setLoading(true);
+    try {
+      const transport = await createTransport();
+      eth.current = new Eth(transport);
+      console.log('[result]: ', result);
+    } catch (e) {
+      console.log('[error]: ', e);
+    } finally {
+      setLoading(false);
+    }
+  }, [eth, result]);
+
+  const handleSignTx = React.useCallback(async () => {
+    setLoading(true);
+    try {
+      const result = await eth.current?.signTransaction(mockTxUR);
+      console.log('[result]: ', result);
+      setResult(result);
+    } catch (e) {
+      console.log('[error]: ', e);
+    } finally {
+      setLoading(false);
+    }
+  }, [eth, result]);
+
+  const handleCheckDeviceLockStatus = React.useCallback(async () => {
+    setLoading(true);
+    try {
+      const result = await eth.current?.checkLockStatus();
+      console.log('[result]: ', result);
+      setResult(result);
+    } catch (e) {
+      console.log('[error]: ', e);
+    } finally {
+      setLoading(false);
+    }
+  }, [eth, result]);
+
   return (
     <div className="App">
-      <Button onClick={async () => {
-        if (!device.current) {
-          try {
-            device.current = await TransportWebUSB.request();
-          } catch (e) {
-            console.log(e);
-            return;
-          }
-        }
-        const transport = new TransportWebUSB(device.current);
-        const result = await transport.send(Actions.SIGN_ETH_TX, 'UR:ETH-SIGN-REQUEST/OLADTPDAGDWMZTFTZORNGEFGWNNLGAIACSSBIYEHFNAOHDDLAOWEAHAOLRHKISDLAELRHKISDLBTLFGMAYMWGAGYFLASPLMDMYBGNDATEEISPLLGBABEFXLSIMVALNASCSGLJPNBAELARTAXAAAAAHAHTAADDYOEADLECSDWYKCSFNYKAEYKAEWKAEWKAOCYBNHEGSHYAMGHIHSNEOKTVWHDVSJETIWDTYPLVYGYKBFNNSVAWMNEFHLADWBB');
-        console.log(result);
-        setResult(result ?? '');
-        openNotification();
-      }}>Click me</Button>
+      <Button loading={loading} onClick={handleLink2Device}>Link to Keystone3 Device</Button>
+      <Button disabled={!eth.current} loading={loading} onClick={handleSignTx}>Sign ETH tx</Button>
+      <Button disabled={!eth.current} loading={loading} onClick={handleCheckDeviceLockStatus}>Check Device Lock Status</Button>
       {contextHolder}
     </div>
   );

@@ -1,3 +1,4 @@
+import { USBInterfaceNumber, USBConfigurationValue } from './constants';
 import { Buffer } from 'buffer';
 
 const keystoneUSBVendorId = 4617;
@@ -8,10 +9,35 @@ const keystoneDevices = [
   },
 ];
 
-export async function requestKeystoneDevice(): Promise<USBDevice> {
+async function requestKeystoneDevice(): Promise<USBDevice> {
   const device = await navigator.usb.requestDevice({
     filters: keystoneDevices,
   });
+  return device;
+}
+
+const open = async (device: USBDevice) => {
+  await device.open();
+
+  if (device.configuration === null) {
+    await device.selectConfiguration(USBConfigurationValue);
+  }
+
+  await gracefullyResetDevice(device);
+
+  try {
+    await device.claimInterface(USBInterfaceNumber);
+  } catch (e: any) {
+    await device.close();
+  }
+
+  const onDisconnect = e => {
+    if (device === e.device) {
+      navigator.usb.removeEventListener("disconnect", onDisconnect);
+    }
+  };
+
+  navigator.usb.addEventListener("disconnect", onDisconnect);
   return device;
 }
 
@@ -35,4 +61,9 @@ export async function gracefullyResetDevice(device: USBDevice) {
   } catch (err) {
     console.warn(err);
   }
+}
+
+export const request = async () => {
+  const device = await requestKeystoneDevice();
+  return open(device);
 }

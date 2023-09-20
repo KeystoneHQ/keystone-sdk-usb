@@ -1,0 +1,25 @@
+{
+  "name": "@keystonehq/hw-app-eth",
+  "version": "0.0.1",
+  "description": "",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "lint": "eslint",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "devDependencies": {
+    "@types/node": "^16.18.52",
+    "@types/w3c-web-usb": "^1.0.6",
+    "eslint": "^8.49.0",
+    "typescript": "^5.2.2"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@keystonehq/hw-transport-webusb": "^0.0.1",
+    "buffer": "^6.0.3"
+  }
+}

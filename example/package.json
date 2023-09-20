@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@keystonehq/hw-app-eth": "^0.0.1",
     "@keystonehq/hw-transport-webusb": "^0.0.1",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",

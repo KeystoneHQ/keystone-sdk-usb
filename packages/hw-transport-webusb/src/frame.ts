@@ -1,15 +1,38 @@
 import { Buffer } from 'buffer';
+import { Actions } from './actions';
 
 const MAX_PACKET_SIZE = 64;
 const MAX_DATA_SIZE = 59;
 const HEADER_SIZE = 5;
 const FOOTER_SIZE = 0;
+const TRUE = 1;
+const FALSE = 0;
 
-export const generateApduPackets = (command, strData) => {
-  // mock:
-  // strData = 'UR:ETH-SIGN-REQUEST/OLADTPDAGDWMZTFTZORNGEFGWNNLGAIACSSBIYEHFNAOHDDLAOWEAHAOLRHKISDLAELRHKISDLBTLFGMAYMWGAGYFLASPLMDMYBGNDATEEISPLLGBABEFXLSIMVALNASCSGLJPNBAELARTAXAAAAAHAHTAADDYOEADLECSDWYKCSFNYKAEYKAEWKAEWKAOCYBNHEGSHYAMGHIHSNEOKTVWHDVSJETIWDTYPLVYGYKBFNNSVAWMNEFHLADWBB';
+const toBool = (data: any) => {
+  if (data === TRUE) return true;
+  if (data === FALSE) return false;
+  return data;
+}
+
+const dataParser = (buffer: Uint8Array, packetIndex: number) => {
+  /**
+   * If the buffer length is 0, return null
+   */
+  if (buffer.length === 0) return null;
+  /**
+   * If the buffer length is 1, return the boolean value
+   */
+  if (packetIndex === 0 && buffer.length === 1) return toBool(buffer[0]);
+  const textDecoder = new TextDecoder('utf-8');
+  return textDecoder.decode(buffer);
+}
+
+export const generateApduPackets = (command: Actions, strData: string) => {
+  if (!strData || strData.length === 0) {
+    return [new Uint8Array([0x00, command, 0x01, 0x00, 0x00])];
+  }
+
   let data = new TextEncoder().encode(strData);
-
   let packets: Uint8Array[] = [];
   let totalPackets = Math.ceil(data.length / MAX_DATA_SIZE);
 
@@ -42,14 +65,13 @@ export const parseApduPacket = (uint8Array: Uint8Array) => {
   const packetDataSize = dataView.getUint8(4);
 
   const packetData = new Uint8Array(uint8Array.buffer, 5, packetDataSize);
-  const textDecoder = new TextDecoder('utf-8');
-  const dataString = textDecoder.decode(packetData);
+  const data = dataParser(packetData, packetIndex);
 
   return {
     cla,
     ins,
     totalPackets,
     packetIndex,
-    dataString,
+    data,
   };
 }
