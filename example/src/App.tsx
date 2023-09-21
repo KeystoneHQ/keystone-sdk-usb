@@ -58,7 +58,7 @@ function App() {
       return;
     }
     setLoading(true);
-    const result = await eth?.checkLockStatus().finally(() => setLoading(false));
+    const result = await eth?.checkLockStatus().catch((err) => error(err?.message ?? '')).finally(() => setLoading(false));
     console.log(result);
     setResult(result);
   }, [eth, result]);
