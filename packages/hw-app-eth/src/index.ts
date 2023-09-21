@@ -19,6 +19,6 @@ export default class Eth {
     if (isLocked) {
       throw new Error('Device is locked');
     }
-    return await this.#send(Actions.CMD_SIGN_ETH_TX, urString);
+    return await this.#send(Actions.CMD_RESOLVE_UR, urString);
   }
 }
