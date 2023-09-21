@@ -17,8 +17,7 @@ export class TransportWebUSB {
 
   async send(action: Actions, data: string) {
     if (!this.device?.opened) {
-      console.error('device not opened or not exist');
-      return null;
+      throw new Error('device not opened or not exist');
     }
 
     let result: any = null;

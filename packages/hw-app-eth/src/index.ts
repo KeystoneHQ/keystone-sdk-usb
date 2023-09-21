@@ -7,9 +7,9 @@ export default class Eth {
     this.transport = transport;
   }
 
-  #send = async (action: Actions, data: string) => await this.transport?.send(action, data).catch((err) => err);
+  #send = async (action: Actions, data: string) => await this.transport?.send(action, data);
 
-  checkLockStatus = async () => await this.#send(Actions.CMD_CHECK_LOCK_STATUS, '').catch((err) => true);
+  checkLockStatus = async () => await this.#send(Actions.CMD_CHECK_LOCK_STATUS, '');
 
   signTransaction = async (urString: string) => {
     if (!urString) {

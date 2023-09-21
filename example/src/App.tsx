@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button, notification, Space } from 'antd';
-import type { NotificationPlacement } from 'antd/es/notification/interface';
+import { Button, Space, Spin, message } from 'antd';
+import { ApiOutlined, EditOutlined, LockOutlined } from '@ant-design/icons';
 import createTransport from '@keystonehq/hw-transport-webusb';
 import Eth from '@keystonehq/hw-app-eth';
 import './App.css';
@@ -8,59 +8,73 @@ import './App.css';
 const mockTxUR = 'UR:ETH-SIGN-REQUEST/OLADTPDAGDWMZTFTZORNGEFGWNNLGAIACSSBIYEHFNAOHDDLAOWEAHAOLRHKISDLAELRHKISDLBTLFGMAYMWGAGYFLASPLMDMYBGNDATEEISPLLGBABEFXLSIMVALNASCSGLJPNBAELARTAXAAAAAHAHTAADDYOEADLECSDWYKCSFNYKAEYKAEWKAEWKAOCYBNHEGSHYAMGHIHSNEOKTVWHDVSJETIWDTYPLVYGYKBFNNSVAWMNEFHLADWBB';
 
 function App() {
-  const [api, contextHolder] = notification.useNotification();
   const [result, setResult] = React.useState<string>('');
   const [loading, setLoading] = React.useState(false);
-  const eth = React.useRef<Eth | null>(null);
-  const device = React.useRef<USBDevice | null>(null);
+  const [eth, setEth] = React.useState<Eth | null>(null);
+
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const success = (content: React.ReactNode) => {
+    messageApi.open({
+      type: 'success',
+      content,
+    });
+  };
+
+  const error = (content: React.ReactNode) => {
+    messageApi.open({
+      type: 'error',
+      content,
+    });
+  }
 
   const handleLink2Device = React.useCallback(async () => {
     setLoading(true);
-    try {
-      const transport = await createTransport();
-      eth.current = new Eth(transport);
-      console.log('[result]: ', result);
-    } catch (e) {
-      console.log('[error]: ', e);
-    } finally {
-      setLoading(false);
-    }
+    const transport = await createTransport().catch((err) => error(err?.message ?? 'unknow error')).finally(() => setLoading(false));
+    if (!transport) return;
+    setEth(new Eth(transport));
+    success('🎉 Link to Keystone3 Device Success!');
   }, [eth, result]);
 
   const handleSignTx = React.useCallback(async () => {
+    if (!eth) {
+      error('Please link to Keystone3 Device first!');
+      return;
+    }
     setLoading(true);
     try {
-      const result = await eth.current?.signTransaction(mockTxUR);
-      console.log('[result]: ', result);
+      const result = await eth?.signTransaction(mockTxUR);
+      console.log(result);
       setResult(result);
-    } catch (e) {
-      console.log('[error]: ', e);
-    } finally {
-      setLoading(false);
+    } catch (e: any) {
+      error(e?.message ?? 'Sign ETH tx failed!');
     }
+    setLoading(false)
   }, [eth, result]);
 
   const handleCheckDeviceLockStatus = React.useCallback(async () => {
-    setLoading(true);
-    try {
-      const result = await eth.current?.checkLockStatus();
-      console.log('[result]: ', result);
-      setResult(result);
-    } catch (e) {
-      console.log('[error]: ', e);
-    } finally {
-      setLoading(false);
+    if (!eth) {
+      error('Please link to Keystone3 Device first!');
+      return;
     }
+    setLoading(true);
+    const result = await eth?.checkLockStatus().finally(() => setLoading(false));
+    console.log(result);
+    setResult(result);
   }, [eth, result]);
 
   return (
     <div className='App'>
-      <Space>
-        <Button loading={loading} onClick={handleLink2Device}>Link to Keystone3 Device</Button>
-        <Button disabled={!eth.current} loading={loading} onClick={handleSignTx}>Sign ETH tx</Button>
-        <Button disabled={!eth.current} loading={loading} onClick={handleCheckDeviceLockStatus}>Check Device Lock Status</Button>
-        {contextHolder}
-      </Space>
+      <Spin spinning={loading}>
+        <Space direction='vertical' style={{
+          gap: '20px',
+        }}>
+          <Button icon={<ApiOutlined />} onClick={handleLink2Device}>Link to Keystone3 Device</Button>
+          <Button icon={<EditOutlined />} onClick={handleSignTx}>Sign ETH tx</Button>
+          <Button icon={<LockOutlined />} onClick={handleCheckDeviceLockStatus}>Check Device Lock Status</Button>
+        </Space>
+      </Spin>
+      {contextHolder}
     </div>
   );
 }

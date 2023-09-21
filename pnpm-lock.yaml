@@ -17,6 +17,12 @@ importers:
 
   example:
     dependencies:
+      '@ant-design/icons':
+        specifier: ^5.2.6
+        version: 5.2.6(react-dom@18.2.0)(react@18.2.0)
+      '@keystonehq/hw-app-eth':
+        specifier: ^0.0.1
+        version: link:../packages/hw-app-eth
       '@keystonehq/hw-transport-webusb':
         specifier: ^0.0.1
         version: link:../packages/hw-transport-webusb
