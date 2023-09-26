@@ -11,7 +11,6 @@ function App() {
   const [result, setResult] = React.useState<string>('');
   const [loading, setLoading] = React.useState(false);
   const [eth, setEth] = React.useState<Eth | null>(null);
-
   const [messageApi, contextHolder] = message.useMessage();
 
   const success = (content: React.ReactNode) => {
