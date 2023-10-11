@@ -8,7 +8,6 @@ import './App.css';
 const mockTxUR = 'UR:ETH-SIGN-REQUEST/OLADTPDAGDWMZTFTZORNGEFGWNNLGAIACSSBIYEHFNAOHDDLAOWEAHAOLRHKISDLAELRHKISDLBTLFGMAYMWGAGYFLASPLMDMYBGNDATEEISPLLGBABEFXLSIMVALNASCSGLJPNBAELARTAXAAAAAHAHTAADDYOEADLECSDWYKCSFNYKAEYKAEWKAEWKAOCYBNHEGSHYAMGHIHSNEOKTVWHDVSJETIWDTYPLVYGYKBFNNSVAWMNEFHLADWBB';
 
 function App() {
-  const [result, setResult] = React.useState<string>('');
   const [loading, setLoading] = React.useState(false);
   const [eth, setEth] = React.useState<Eth | null>(null);
   const [messageApi, contextHolder] = message.useMessage();
@@ -33,7 +32,7 @@ function App() {
     if (!transport) return;
     setEth(new Eth(transport));
     success('🎉 Link to Keystone3 Device Success!');
-  }, [eth, result]);
+  }, [eth]);
 
   const handleSignTx = React.useCallback(async () => {
     if (!eth) {
@@ -42,14 +41,13 @@ function App() {
     }
     setLoading(true);
     try {
-      const result = await eth?.signTransaction(mockTxUR);
-      console.log(result);
-      setResult(result);
+      const txResult = await eth?.signTransaction(mockTxUR);
+      alert(txResult.data);
     } catch (e: any) {
       error(e?.message ?? 'Sign ETH tx failed!');
     }
     setLoading(false)
-  }, [eth, result]);
+  }, [eth, error]);
 
   const handleCheckDeviceLockStatus = React.useCallback(async () => {
     if (!eth) {
@@ -57,10 +55,9 @@ function App() {
       return;
     }
     setLoading(true);
-    const result = await eth?.checkLockStatus().catch((err) => error(err?.message ?? '')).finally(() => setLoading(false));
-    console.log(result);
-    setResult(result);
-  }, [eth, result]);
+    const checkResult = await eth?.checkLockStatus().catch((err) => error(err?.message ?? '')).finally(() => setLoading(false));
+    console.log(checkResult?.data);
+  }, [eth]);
 
   return (
     <div className='App'>

@@ -50,14 +50,13 @@ export class TransportWebUSB {
       const response = await this.device.transferIn(this.endpoint, USBPackageSize);
       const hasBuffer = !!response?.data?.buffer;
       const isBufferEmpty = response?.data?.buffer?.byteLength === 0;
-      const isCurrentAction = hasBuffer && !isBufferEmpty && new DataView(response.data.buffer).getUint8(OFFSET_INS) === action;
+      const isCurrentAction = hasBuffer && !isBufferEmpty && new DataView(response.data.buffer).getUint16(OFFSET_INS) === action;
       if (!isCurrentAction) {
         continue;
       }
       shouldContinue = false;
-      const buffer = Buffer.from(response.data.buffer);
-      packagesBuffer.push(buffer);
-      totalPackets = buffer[OFFSET_P1];
+      packagesBuffer.push(Buffer.from(response.data.buffer));
+      totalPackets = new DataView(response.data.buffer).getUint16(OFFSET_P1);
       counter += 1;
     } while (counter < totalPackets || shouldContinue);
 
@@ -79,6 +78,7 @@ const isInvalidDevice = (device: Nullable<USBDevice>) => {
 }
 
 export default function createTransport() {
+  // eslint-disable-next-line no-async-promise-executor
   return new Promise<TransportWebUSB>(async (resolve, reject) => {
     try {
       device = isInvalidDevice(device) ? device as USBDevice : await request();
