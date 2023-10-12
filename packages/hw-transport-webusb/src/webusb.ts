@@ -33,11 +33,11 @@ const open = async (device: USBDevice) => {
 
   const onDisconnect = e => {
     if (device === e.device) {
-      navigator.usb.removeEventListener("disconnect", onDisconnect);
+      navigator.usb.removeEventListener('disconnect', onDisconnect);
     }
   };
 
-  navigator.usb.addEventListener("disconnect", onDisconnect);
+  navigator.usb.addEventListener('disconnect', onDisconnect);
   return device;
 }
 
@@ -53,7 +53,7 @@ export async function getFirstKeystoneDevice(): Promise<USBDevice> {
 }
 
 export const isSupported = (): Promise<boolean> =>
-  Promise.resolve(!!navigator && !!navigator.usb && typeof navigator.usb.getDevices === "function");
+  Promise.resolve(!!navigator && !!navigator.usb && typeof navigator.usb.getDevices === 'function');
 
 export async function gracefullyResetDevice(device: USBDevice) {
   try {

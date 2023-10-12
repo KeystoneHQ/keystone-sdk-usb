@@ -60,7 +60,8 @@ export class TransportWebUSB {
       const response = await this.device.transferIn(this.endpoint, USBPackageSize);
       const hasBuffer = !!response?.data?.buffer;
       const isBufferEmpty = response?.data?.buffer?.byteLength === 0;
-      const isCurrentAction = hasBuffer && !isBufferEmpty && new DataView(response.data.buffer).getUint16(OFFSET_INS) === action;
+      const isCurrentAction = hasBuffer && !isBufferEmpty &&
+        new DataView(response.data.buffer).getUint16(OFFSET_INS) === action;
       if (!isCurrentAction) {
         continue;
       }

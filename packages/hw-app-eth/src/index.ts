@@ -11,5 +11,6 @@ export default class Eth {
 
   checkLockStatus: CheckLockStatus = async () => await this.#send<CheckLockStatusResponse>(Actions.CMD_CHECK_LOCK_STATUS, '');
 
-  signTransaction: SignTransaction = async (urString: string) => await this.#send<SignTransactionResponse>(Actions.CMD_RESOLVE_UR, urString)
+  signTransaction: SignTransaction = async (urString: string) =>
+    await this.#send<SignTransactionResponse>(Actions.CMD_RESOLVE_UR, urString);
 }
