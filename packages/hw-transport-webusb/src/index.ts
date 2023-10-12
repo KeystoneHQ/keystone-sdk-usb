@@ -2,7 +2,7 @@ import { Buffer } from 'buffer';
 import { Actions } from './actions';
 import { Status } from './status_code';
 import { generateApduPackets, parseApduPacket } from './frame';
-import { OFFSET_P1, USBPackageSize, OFFSET_INS, USBTimeout } from './constants';
+import { OFFSET_P1, USBPackageSize, OFFSET_INS, USBTimeout, MAXUSBPackets } from './constants';
 import { request } from './webusb';
 import { safeJSONparse } from './helper';
 import { TransportError } from './error';
@@ -25,6 +25,9 @@ export class TransportWebUSB {
     }
   
     const packages = generateApduPackets(action, data);
+    if (MAXUSBPackets < packages.length) {
+      throw new TransportError('data too large', Status.ERR_DATA_TOO_LARGE);
+    }
   
     const timeout = new Promise<T>((_, reject) => 
       setTimeout(() => reject(new TransportError('timeout', Status.ERR_TIMEOUT)), USBTimeout)
