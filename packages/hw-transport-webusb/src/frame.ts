@@ -12,15 +12,6 @@ import {
 
 const MAX_DATA_SIZE = 55;
 const HEADER_SIZE = 9;
-const FOOTER_SIZE = 0;
-const TRUE = 1;
-const FALSE = 0;
-
-const toBool = (data: any) => {
-  if (data === TRUE) return true;
-  if (data === FALSE) return false;
-  return data;
-};
 
 const dataParser = (buffer: Uint8Array) => {
   /**
@@ -49,7 +40,7 @@ export const generateApduPackets = (command: Actions, strData: string) => {
 
   for (let i = 0; i < totalPackets; i++) {
       const packetData = data.slice(i * MAX_DATA_SIZE, (i + 1) * MAX_DATA_SIZE);
-      const packetLen = HEADER_SIZE + packetData.length + FOOTER_SIZE;
+      const packetLen = HEADER_SIZE + packetData.length;
 
       const packet = new Uint8Array(packetLen);
       packet[OFFSET_CLA] = 0;  // Fixed header
