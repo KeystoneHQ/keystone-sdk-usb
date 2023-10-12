@@ -21,18 +21,25 @@ export class TransportWebUSB {
 
   async send<T>(action: Actions, data: string): Promise<T> {
     if (!this.device?.opened) {
-      throw new TransportError('device not opened or not exist', Status.ERR_DEVICE_NOT_OPENED);
+      throw new TransportError(
+        'The USB device cannot be connected.',
+        Status.ERR_DEVICE_NOT_OPENED,
+        `Possible reasons include: 
+        - The device does not exist
+        - The device is not opened
+        - The device might be already connected by another page.`
+      );
     }
-  
+
     const packages = generateApduPackets(action, data);
     if (MAXUSBPackets < packages.length) {
       throw new TransportError('data too large', Status.ERR_DATA_TOO_LARGE);
     }
-  
-    const timeout = new Promise<T>((_, reject) => 
+
+    const timeout = new Promise<T>((_, reject) =>
       setTimeout(() => reject(new TransportError('timeout', Status.ERR_TIMEOUT)), USBTimeout)
     );
-  
+
     // eslint-disable-next-line no-async-promise-executor
     const sendRequest = new Promise<T>(async (resolve, reject) => {
       try {
@@ -41,13 +48,13 @@ export class TransportWebUSB {
           if (res.status !== 'ok') throw new TransportError('transferOut failed', Status.ERR_RESPONSE_STATUS_NOT_OK);
           packages.shift();
         } while (packages.length > 0);
-  
+
         resolve(await this.receive(action) as T);
-      } catch(err) {
+      } catch (err) {
         reject(err);
       }
     });
-  
+
     return Promise.race([sendRequest, timeout]);
   }
 
@@ -86,14 +93,14 @@ export class TransportWebUSB {
       throw new TransportError(`${safeJSONparse(result.data)?.payload ?? 'unknown error'}`, result.status ?? Status.RSP_FAILURE_CODE);
     }
     return safeJSONparse(result.data);
-  }
+  };
 }
 
 let device: Nullable<USBDevice> = null;
 
 const isInvalidDevice = (device: Nullable<USBDevice>) => {
   return device && device?.opened;
-}
+};
 
 export default function createTransport() {
   // eslint-disable-next-line no-async-promise-executor

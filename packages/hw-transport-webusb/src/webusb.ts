@@ -39,7 +39,7 @@ const open = async (device: USBDevice) => {
 
   navigator.usb.addEventListener('disconnect', onDisconnect);
   return device;
-}
+};
 
 export async function getKeystoneDevices(): Promise<USBDevice[]> {
   const devices = await navigator.usb.getDevices();
@@ -66,4 +66,4 @@ export async function gracefullyResetDevice(device: USBDevice) {
 export const request = async () => {
   const device = await requestKeystoneDevice();
   return open(device);
-}
+};

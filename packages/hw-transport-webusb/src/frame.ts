@@ -20,7 +20,7 @@ const toBool = (data: any) => {
   if (data === TRUE) return true;
   if (data === FALSE) return false;
   return data;
-}
+};
 
 const dataParser = (buffer: Uint8Array) => {
   /**
@@ -30,7 +30,7 @@ const dataParser = (buffer: Uint8Array) => {
 
   const textDecoder = new TextDecoder('utf-8');
   return textDecoder.decode(buffer);
-}
+};
 
 export const generateApduPackets = (command: Actions, strData: string) => {
   if (!strData || strData.length === 0) {
@@ -64,7 +64,7 @@ export const generateApduPackets = (command: Actions, strData: string) => {
   }
 
   return packets;
-}
+};
 
 export const parseApduPacket = (uint8Array: Uint8Array) => {
   if (uint8Array.length < HEADER_SIZE) throw new Error('Invalid packet size');
@@ -88,4 +88,4 @@ export const parseApduPacket = (uint8Array: Uint8Array) => {
     data,
     status,
   };
-}
+};

@@ -12,6 +12,8 @@ module.exports = {
   ],
   rules: {
     quotes: ['error', 'single'],
-    'max-len': ['error', { 'code': 120, 'ignoreComments': true, 'ignoreStrings': true }]
+    'max-len': ['error', { 'code': 120, 'ignoreComments': true, 'ignoreStrings': true }],
+    'comma-dangle': ['error', 'always-multiline'],
+    'semi': ['error', 'always'],
   },
 };

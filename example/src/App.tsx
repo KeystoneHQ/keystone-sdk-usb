@@ -12,27 +12,30 @@ function App() {
   const [eth, setEth] = React.useState<Eth | null>(null);
   const [messageApi, contextHolder] = message.useMessage();
 
-  const success = (content: React.ReactNode) => {
+  const success = React.useCallback((content: React.ReactNode) => {
     messageApi.open({
       type: 'success',
       content,
     });
-  };
+  }, [messageApi]);
 
-  const error = (content: React.ReactNode) => {
+  const error = React.useCallback((content: React.ReactNode) => {
     messageApi.open({
       type: 'error',
       content,
     });
-  }
+  }, [messageApi])
 
   const handleLink2Device = React.useCallback(async () => {
     setLoading(true);
-    const transport = await createTransport().catch((err) => error(err?.message ?? 'unknow error')).finally(() => setLoading(false));
+    const transport = await createTransport().catch((err) => {
+      console.error(err);
+      error(err?.message ?? 'unknow error');
+    }).finally(() => setLoading(false));
     if (!transport) return;
     setEth(new Eth(transport));
     success('🎉 Link to Keystone3 Device Success!');
-  }, [eth]);
+  }, [error, success, setEth, setLoading]);
 
   const handleSignTx = React.useCallback(async () => {
     if (!eth) {
@@ -47,7 +50,7 @@ function App() {
       error(e?.message ?? 'Sign ETH tx failed!');
     }
     setLoading(false)
-  }, [eth, error]);
+  }, [eth, error, setLoading]);
 
   const handleCheckDeviceLockStatus = React.useCallback(async () => {
     if (!eth) {
@@ -57,7 +60,7 @@ function App() {
     setLoading(true);
     const checkResult = await eth?.checkLockStatus().catch((err: any) => error(err?.message ?? '')).finally(() => setLoading(false));
     console.log(checkResult?.payload);
-  }, [eth]);
+  }, [error, eth, setLoading]);
 
   return (
     <div className='App'>
