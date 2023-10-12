@@ -7,21 +7,9 @@ export default class Eth {
     this.transport = transport;
   }
 
-  #send = async (action: Actions, data: string) => await this.transport?.send(action, data);
+  #send = async <T>(action: Actions, data: string) => await this.transport!.send<T>(action, data);
 
-  checkLockStatus = async (): Promise<{ data: boolean; }> => await this.#send(Actions.CMD_CHECK_LOCK_STATUS, '');
+  checkLockStatus: CheckLockStatus = async () => await this.#send<CheckLockStatusResponse>(Actions.CMD_CHECK_LOCK_STATUS, '');
 
-  signTransaction = async (urString: string): Promise<{ data: string; }> => {
-    if (!urString) {
-      throw new Error('Invalid UR string');
-    }
-    const { data: isLocked } = await this.checkLockStatus();
-    if (isLocked) {
-      throw new Error('Device is locked');
-    }
-    const data = await this.#send(Actions.CMD_RESOLVE_UR, urString);
-    return {
-      data,
-    }
-  }
+  signTransaction: SignTransaction = async (urString: string) => await this.#send<SignTransactionResponse>(Actions.CMD_RESOLVE_UR, urString)
 }

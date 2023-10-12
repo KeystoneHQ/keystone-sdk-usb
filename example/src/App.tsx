@@ -42,7 +42,7 @@ function App() {
     setLoading(true);
     try {
       const txResult = await eth?.signTransaction(mockTxUR);
-      alert(txResult.data);
+      alert(txResult.payload);
     } catch (e: any) {
       error(e?.message ?? 'Sign ETH tx failed!');
     }
@@ -55,8 +55,8 @@ function App() {
       return;
     }
     setLoading(true);
-    const checkResult = await eth?.checkLockStatus().catch((err) => error(err?.message ?? '')).finally(() => setLoading(false));
-    console.log(checkResult?.data);
+    const checkResult = await eth?.checkLockStatus().catch((err: any) => error(err?.message ?? '')).finally(() => setLoading(false));
+    console.log(checkResult?.payload);
   }, [eth]);
 
   return (

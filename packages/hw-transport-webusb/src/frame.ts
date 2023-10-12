@@ -22,14 +22,14 @@ const toBool = (data: any) => {
   return data;
 }
 
-const dataParser = (buffer: Uint8Array, packetIndex: number) => {
+const dataParser = (buffer: Uint8Array) => {
   /**
    * If the buffer length is 0, return null
    */
   if (buffer.length === 0) return null;
 
   const textDecoder = new TextDecoder('utf-8');
-  return safeJSONparse(textDecoder.decode(buffer));
+  return textDecoder.decode(buffer);
 }
 
 export const generateApduPackets = (command: Actions, strData: string) => {
@@ -78,7 +78,7 @@ export const parseApduPacket = (uint8Array: Uint8Array) => {
   const status = dataView.getUint16(statusOffset);
   
   const packetData = new Uint8Array(uint8Array.buffer, OFFSET_CDATA, packetDataSize);
-  const data = dataParser(packetData, packetIndex);
+  const data = dataParser(packetData);
 
   return {
     cla,
