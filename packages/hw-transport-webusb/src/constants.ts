@@ -1,6 +1,7 @@
 export const USBConfigurationValue = 1;
 export const USBInterfaceNumber = 1;
 export const USBPackageSize = 64;
+export const USBTimeout = 15000;
 export const OFFSET_CLA = 0;
 export const OFFSET_INS = 1;
 export const OFFSET_P1 = 3;

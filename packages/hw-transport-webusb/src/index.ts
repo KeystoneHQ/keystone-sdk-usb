@@ -2,12 +2,14 @@ import { Buffer } from 'buffer';
 import { Actions } from './actions';
 import { Status } from './status_code';
 import { generateApduPackets, parseApduPacket } from './frame';
-import { OFFSET_P1, USBPackageSize, OFFSET_INS } from './constants';
+import { OFFSET_P1, USBPackageSize, OFFSET_INS, USBTimeout } from './constants';
 import { request } from './webusb';
 import { safeJSONparse } from './helper';
+import { TransportError } from './error';
 
 export { Actions } from './actions';
 export * from './webusb';
+export { Status as StatusCode } from './status_code';
 
 export class TransportWebUSB {
   device: Nullable<USBDevice>;
@@ -17,19 +19,33 @@ export class TransportWebUSB {
     this.device = device;
   }
 
-  async send<T>(action: Actions, data: string) {
+  async send<T>(action: Actions, data: string): Promise<T> {
     if (!this.device?.opened) {
-      throw new Error('device not opened or not exist');
+      throw new TransportError('device not opened or not exist', Status.ERR_DEVICE_NOT_OPENED);
     }
-
+  
     const packages = generateApduPackets(action, data);
-    do {
-      const res = await this.device.transferOut(this.endpoint, packages[0]);
-      if (res.status !== 'ok') throw new Error('response status not ok');
-      packages.shift();
-    } while (packages.length > 0);
-
-    return await this.receive(action) as T;
+  
+    const timeout = new Promise<T>((_, reject) => 
+      setTimeout(() => reject(new TransportError('timeout', Status.ERR_TIMEOUT)), USBTimeout)
+    );
+  
+    // eslint-disable-next-line no-async-promise-executor
+    const sendRequest = new Promise<T>(async (resolve, reject) => {
+      try {
+        do {
+          const res = await this.device!.transferOut(this.endpoint, packages[0]);
+          if (res.status !== 'ok') throw new TransportError('transferOut failed', Status.ERR_RESPONSE_STATUS_NOT_OK);
+          packages.shift();
+        } while (packages.length > 0);
+  
+        resolve(await this.receive(action) as T);
+      } catch(err) {
+        reject(err);
+      }
+    });
+  
+    return Promise.race([sendRequest, timeout]);
   }
 
   receive = async (action: Actions) => {
@@ -63,7 +79,7 @@ export class TransportWebUSB {
       .reduce<{ data: string, status?: number }>((acc, { data, status }) =>
         ({ data: acc.data + data, status }), { data: '' });
     if (result.status !== Status.RSP_SUCCESS_CODE) {
-      throw new Error(`[Device response error]: ${safeJSONparse(result.data)?.payload ?? 'unknown error'}`);
+      throw new TransportError(`${safeJSONparse(result.data)?.payload ?? 'unknown error'}`, result.status ?? Status.RSP_FAILURE_CODE);
     }
     return safeJSONparse(result.data);
   }
