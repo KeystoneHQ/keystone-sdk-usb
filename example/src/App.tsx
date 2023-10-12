@@ -41,7 +41,7 @@ function App() {
     }
     setLoading(true);
     try {
-      const txResult = await eth?.signTransaction(mockTxUR);
+      const txResult = await eth?.signTransactionFromUr(mockTxUR);
       alert(txResult.payload);
     } catch (e: any) {
       error(e?.message ?? 'Sign ETH tx failed!');
