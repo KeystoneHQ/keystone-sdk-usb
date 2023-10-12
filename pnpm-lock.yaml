@@ -17,6 +17,12 @@ importers:
 
   example:
     dependencies:
+      '@ant-design/icons':
+        specifier: ^5.2.6
+        version: 5.2.6(react-dom@18.2.0)(react@18.2.0)
+      '@keystonehq/hw-app-eth':
+        specifier: ^0.0.1
+        version: link:../packages/hw-app-eth
       '@keystonehq/hw-transport-webusb':
         specifier: ^0.0.1
         version: link:../packages/hw-transport-webusb
@@ -60,6 +66,28 @@ importers:
       '@testing-library/jest-dom':
         specifier: ^5.17.0
         version: 5.17.0
+
+  packages/hw-app-eth:
+    dependencies:
+      '@keystonehq/hw-transport-webusb':
+        specifier: ^0.0.1
+        version: link:../hw-transport-webusb
+      buffer:
+        specifier: ^6.0.3
+        version: 6.0.3
+    devDependencies:
+      '@types/node':
+        specifier: ^16.18.52
+        version: 16.18.52
+      '@types/w3c-web-usb':
+        specifier: ^1.0.6
+        version: 1.0.6
+      eslint:
+        specifier: ^8.49.0
+        version: 8.49.0
+      typescript:
+        specifier: ^5.2.2
+        version: 5.2.2
 
   packages/hw-transport-webusb:
     dependencies:

@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-undef
 module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
@@ -9,4 +10,10 @@ module.exports = {
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
   ],
+  rules: {
+    quotes: ['error', 'single'],
+    'max-len': ['error', { 'code': 120, 'ignoreComments': true, 'ignoreStrings': true }],
+    'comma-dangle': ['error', 'always-multiline'],
+    'semi': ['error', 'always'],
+  },
 };
