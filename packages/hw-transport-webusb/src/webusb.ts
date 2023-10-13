@@ -16,7 +16,7 @@ async function requestKeystoneDevice(): Promise<USBDevice> {
   return device;
 }
 
-const open = async (device: USBDevice) => {
+export const open = async (device: USBDevice) => {
   await device.open();
 
   if (device.configuration === null) {

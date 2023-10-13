@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Space, Spin, message } from 'antd';
 import { ApiOutlined, EditOutlined, LockOutlined } from '@ant-design/icons';
 import createTransport from '@keystonehq/hw-transport-webusb';
-import Eth from '@keystonehq/hw-app-eth';
+import Eth, { HDPathType } from '@keystonehq/hw-app-eth';
 import './App.css';
 
 const mockTxUR = 'UR:ETH-SIGN-REQUEST/OLADTPDAGDWMZTFTZORNGEFGWNNLGAIACSSBIYEHFNAOHDDLAOWEAHAOLRHKISDLAELRHKISDLBTLFGMAYMWGAGYFLASPLMDMYBGNDATEEISPLLGBABEFXLSIMVALNASCSGLJPNBAELARTAXAAAAAHAHTAADDYOEADLECSDWYKCSFNYKAEYKAEWKAEWKAOCYBNHEGSHYAMGHIHSNEOKTVWHDVSJETIWDTYPLVYGYKBFNNSVAWMNEFHLADWBB';
@@ -62,6 +62,19 @@ function App() {
     console.log(checkResult?.payload);
   }, [error, eth, setLoading]);
 
+  const handleExportAddress = React.useCallback(async () => {
+    if (!eth) {
+      error('Please link to Keystone3 Device first!');
+      return;
+    }
+    setLoading(true);
+    const checkResult = await eth?.exportAddress({
+      n: 1,
+      type: HDPathType.Bip44Standard,
+    }).catch((err: any) => error(err?.message ?? '')).finally(() => setLoading(false));
+    console.log(checkResult?.payload);
+  }, [error, eth, setLoading]);
+
   return (
     <div className='App'>
       <Spin spinning={loading}>
@@ -71,6 +84,7 @@ function App() {
           <Button icon={<ApiOutlined />} onClick={handleLink2Device}>Link to Keystone3 Device</Button>
           <Button icon={<EditOutlined />} onClick={handleSignTx}>Sign ETH tx</Button>
           <Button icon={<LockOutlined />} onClick={handleCheckDeviceLockStatus}>Check Device Lock Status</Button>
+          <Button icon={<LockOutlined />} onClick={handleExportAddress}>Export Address</Button>
         </Space>
       </Spin>
       {contextHolder}

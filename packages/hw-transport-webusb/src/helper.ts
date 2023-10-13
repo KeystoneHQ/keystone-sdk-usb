@@ -1,4 +1,4 @@
-export const safeJSONStringify = (obj: any) => {
+export const safeJSONStringify = (obj: any): string => {
   try {
     return JSON.stringify(obj);
   } catch (err) {
