@@ -28,7 +28,7 @@ declare global {
   };
 
   type ExportAddressRequestParams = {
-    n: number,
+    n?: number,
     type: HDPathType,
   };
 
