@@ -1,6 +1,6 @@
 {
   "name": "@keystonehq/hw-app-eth",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
@@ -20,7 +20,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "@keystonehq/hw-transport-webusb": "^0.0.1",
+    "@keystonehq/hw-transport-webusb": "latest",
     "buffer": "^6.0.3"
   }
 }
