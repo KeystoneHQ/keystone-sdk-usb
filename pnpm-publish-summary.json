@@ -2,11 +2,11 @@
 	"publishedPackages": [
 		{
 			"name": "@keystonehq/hw-app-eth",
-			"version": "0.0.9"
+			"version": "0.0.10"
 		},
 		{
 			"name": "@keystonehq/hw-transport-webusb",
-			"version": "0.0.9"
+			"version": "0.0.10"
 		}
 	]
 }
