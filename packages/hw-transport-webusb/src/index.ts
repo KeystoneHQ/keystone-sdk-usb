@@ -20,8 +20,6 @@ export class TransportWebUSB {
     this.device = device;
   }
 
-  isSupported = isSupported;
-
   async send<T>(action: Actions, data: unknown): Promise<T> {
     await open(this.device!);
     if (!this.device?.opened) {
@@ -118,6 +116,7 @@ export default function createTransport() {
   // eslint-disable-next-line no-async-promise-executor
   return new Promise<TransportWebUSB>(async (resolve, reject) => {
     try {
+      await isSupported();
       device = isInvalidDevice(device) ? device as USBDevice : await requestKeystoneDevice();
       const transport = new TransportWebUSB(device);
       resolve(transport);

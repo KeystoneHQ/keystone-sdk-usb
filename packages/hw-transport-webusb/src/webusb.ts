@@ -1,4 +1,7 @@
 import { USBInterfaceNumber, USBConfigurationValue } from './constants';
+import { isEmpty } from './helper';
+import { throwTransportError } from './error';
+import { Status } from './status-code';
 import { Buffer } from 'buffer';
 
 const keystoneUSBVendorId = 4617;
@@ -59,8 +62,11 @@ export async function getFirstKeystoneDevice(): Promise<USBDevice> {
   return requestKeystoneDevice();
 }
 
-export const isSupported = (): Promise<boolean> =>
-  Promise.resolve(!!navigator && !!navigator.usb && typeof navigator.usb.getDevices === 'function');
+export const isSupported = async (): Promise<boolean> => {
+  if (!navigator?.usb || typeof navigator.usb.getDevices !== 'function') throwTransportError(Status.ERR_NOT_SUPPORTED);
+  if (isEmpty(await getKeystoneDevices())) throwTransportError(Status.ERR_NO_DEVICE_FOUND);
+  return true;
+};
 
 export async function gracefullyResetDevice(device: USBDevice): Promise<void> {
   try {
