@@ -3,7 +3,7 @@ import { Actions } from './actions';
 import { Status } from './status-code';
 import { generateApduPackets, parseApduPacket } from './frame';
 import { OFFSET_P1, USBPackageSize, OFFSET_INS, USBTimeout, MAXUSBPackets } from './constants';
-import { request, close, open } from './webusb';
+import { requestKeystoneDevice, close, open, isSupported } from './webusb';
 import { safeJSONStringify, safeJSONparse } from './helper';
 import { throwTransportError, TransportError, ErrorInfo } from './error';
 
@@ -20,7 +20,10 @@ export class TransportWebUSB {
     this.device = device;
   }
 
+  isSupported = isSupported;
+
   async send<T>(action: Actions, data: unknown): Promise<T> {
+    await open(this.device!);
     if (!this.device?.opened) {
       throwTransportError(Status.ERR_DEVICE_NOT_OPENED);
     }
@@ -50,6 +53,8 @@ export class TransportWebUSB {
         resolve(await this.receive(action) as T);
       } catch (err) {
         reject(err);
+      } finally {
+        await close(this.device!);
       }
     });
 
@@ -95,7 +100,7 @@ export class TransportWebUSB {
 
   open = async () => {
     if (!this.device) {
-      this.device = await request();
+      this.device = await requestKeystoneDevice();
     }
     await open(this.device);
   };
@@ -113,7 +118,7 @@ export default function createTransport() {
   // eslint-disable-next-line no-async-promise-executor
   return new Promise<TransportWebUSB>(async (resolve, reject) => {
     try {
-      device = isInvalidDevice(device) ? device as USBDevice : await request();
+      device = isInvalidDevice(device) ? device as USBDevice : await requestKeystoneDevice();
       const transport = new TransportWebUSB(device);
       resolve(transport);
     } catch (err) {

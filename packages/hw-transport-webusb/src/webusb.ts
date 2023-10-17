@@ -25,7 +25,7 @@ async function selectDefaultConfiguration(device: USBDevice): Promise<void> {
   }
 }
 
-async function requestKeystoneDevice(): Promise<USBDevice> {
+export async function requestKeystoneDevice(): Promise<USBDevice> {
   const device = await navigator.usb.requestDevice({
     filters: keystoneDevices,
   });
