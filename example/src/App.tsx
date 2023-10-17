@@ -71,7 +71,10 @@ function App() {
     setLoading(true);
     const checkResult = await eth?.exportAddress({
       type: accountType,
-    }).catch((err: any) => error(err?.message ?? '')).finally(() => setLoading(false));
+    }).catch((err: any) => {
+      error(err?.message ?? '');
+      console.error(err);
+    }).finally(() => setLoading(false));
     console.log(checkResult?.payload);
   }, [error, eth, setLoading, accountType]);
 

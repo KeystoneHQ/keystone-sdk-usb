@@ -3,9 +3,9 @@ import { Actions } from './actions';
 import { Status } from './status-code';
 import { generateApduPackets, parseApduPacket } from './frame';
 import { OFFSET_P1, USBPackageSize, OFFSET_INS, USBTimeout, MAXUSBPackets } from './constants';
-import { request } from './webusb';
+import { request, close, open } from './webusb';
 import { safeJSONStringify, safeJSONparse } from './helper';
-import { TransportError } from './error';
+import { throwTransportError, TransportError, ErrorInfo } from './error';
 
 export { Actions } from './actions';
 export * from './webusb';
@@ -22,14 +22,7 @@ export class TransportWebUSB {
 
   async send<T>(action: Actions, data: unknown): Promise<T> {
     if (!this.device?.opened) {
-      throw new TransportError(
-        'The USB device cannot be connected.',
-        Status.ERR_DEVICE_NOT_OPENED,
-        `Possible reasons include: 
-        - The device does not exist
-        - The device is not opened
-        - The device might be already connected by another page.`
-      );
+      throwTransportError(Status.ERR_DEVICE_NOT_OPENED);
     }
 
     if (typeof data !== 'string') {
@@ -38,11 +31,11 @@ export class TransportWebUSB {
 
     const packages = generateApduPackets(action, String(data));
     if (MAXUSBPackets < packages.length) {
-      throw new TransportError('data too large', Status.ERR_DATA_TOO_LARGE);
+      throwTransportError(Status.ERR_DATA_TOO_LARGE);
     }
 
     const timeout = new Promise<T>((_, reject) =>
-      setTimeout(() => reject(new TransportError('timeout', Status.ERR_TIMEOUT)), USBTimeout)
+      setTimeout(() => reject(new TransportError(ErrorInfo[Status.ERR_TIMEOUT], Status.ERR_TIMEOUT)), USBTimeout)
     );
 
     // eslint-disable-next-line no-async-promise-executor
@@ -50,7 +43,7 @@ export class TransportWebUSB {
       try {
         do {
           const res = await this.device!.transferOut(this.endpoint, packages[0]);
-          if (res.status !== 'ok') throw new TransportError('transferOut failed', Status.ERR_RESPONSE_STATUS_NOT_OK);
+          if (res.status !== 'ok') throwTransportError(Status.ERR_RESPONSE_STATUS_NOT_OK);
           packages.shift();
         } while (packages.length > 0);
 
@@ -99,6 +92,15 @@ export class TransportWebUSB {
     }
     return safeJSONparse(result.data);
   };
+
+  open = async () => {
+    if (!this.device) {
+      this.device = await request();
+    }
+    await open(this.device);
+  };
+
+  close = async () => this.device && close(this.device);
 }
 
 let device: Nullable<USBDevice> = null;
