@@ -1,4 +1,7 @@
 import { USBInterfaceNumber, USBConfigurationValue } from './constants';
+import { isEmpty } from './helper';
+import { throwTransportError } from './error';
+import { Status } from './status-code';
 import { Buffer } from 'buffer';
 
 const keystoneUSBVendorId = 4617;
@@ -9,41 +12,48 @@ const keystoneDevices = [
   },
 ];
 
-async function requestKeystoneDevice(): Promise<USBDevice> {
+function initializeDisconnectListener(device: USBDevice): void {
+  const onDisconnect = (e: Event) => {
+    if (device === (e as USBConnectionEvent).device) {
+      navigator.usb.removeEventListener('disconnect', onDisconnect);
+    }
+  };
+
+  navigator.usb.addEventListener('disconnect', onDisconnect);
+}
+
+async function selectDefaultConfiguration(device: USBDevice): Promise<void> {
+  if (device.configuration === null) {
+    await device.selectConfiguration(USBConfigurationValue);
+  }
+}
+
+export async function requestKeystoneDevice(): Promise<USBDevice> {
   const device = await navigator.usb.requestDevice({
     filters: keystoneDevices,
   });
   return device;
 }
 
-const open = async (device: USBDevice) => {
+export const open = async (device: USBDevice): Promise<USBDevice> => {
   await device.open();
-
-  if (device.configuration === null) {
-    await device.selectConfiguration(USBConfigurationValue);
-  }
-
+  await selectDefaultConfiguration(device);
   await gracefullyResetDevice(device);
 
   try {
     await device.claimInterface(USBInterfaceNumber);
   } catch (e: any) {
     await device.close();
+    throw e;
   }
 
-  const onDisconnect = e => {
-    if (device === e.device) {
-      navigator.usb.removeEventListener('disconnect', onDisconnect);
-    }
-  };
-
-  navigator.usb.addEventListener('disconnect', onDisconnect);
+  initializeDisconnectListener(device);
   return device;
 };
 
 export async function getKeystoneDevices(): Promise<USBDevice[]> {
   const devices = await navigator.usb.getDevices();
-  return devices.filter(d => d.vendorId === keystoneUSBVendorId);
+  return devices.filter((d: USBDevice) => d.vendorId === keystoneUSBVendorId);
 }
 
 export async function getFirstKeystoneDevice(): Promise<USBDevice> {
@@ -52,10 +62,13 @@ export async function getFirstKeystoneDevice(): Promise<USBDevice> {
   return requestKeystoneDevice();
 }
 
-export const isSupported = (): Promise<boolean> =>
-  Promise.resolve(!!navigator && !!navigator.usb && typeof navigator.usb.getDevices === 'function');
+export const isSupported = async (): Promise<boolean> => {
+  if (!navigator?.usb || typeof navigator.usb.getDevices !== 'function') throwTransportError(Status.ERR_NOT_SUPPORTED);
+  if (isEmpty(await getKeystoneDevices())) throwTransportError(Status.ERR_NO_DEVICE_FOUND);
+  return true;
+};
 
-export async function gracefullyResetDevice(device: USBDevice) {
+export async function gracefullyResetDevice(device: USBDevice): Promise<void> {
   try {
     await device.reset();
   } catch (err) {
@@ -63,7 +76,16 @@ export async function gracefullyResetDevice(device: USBDevice) {
   }
 }
 
-export const request = async () => {
+export const request = async (): Promise<USBDevice> => {
   const device = await requestKeystoneDevice();
   return open(device);
+};
+
+export const close = async (device: USBDevice): Promise<void> => {
+  try {
+    await device.releaseInterface(USBInterfaceNumber);
+    await gracefullyResetDevice(device);
+  } finally {
+    await device.close();
+  }
 };

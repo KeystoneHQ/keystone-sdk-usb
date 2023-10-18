@@ -12,15 +12,6 @@ import {
 
 const MAX_DATA_SIZE = 55;
 const HEADER_SIZE = 9;
-const FOOTER_SIZE = 0;
-const TRUE = 1;
-const FALSE = 0;
-
-const toBool = (data: any) => {
-  if (data === TRUE) return true;
-  if (data === FALSE) return false;
-  return data;
-};
 
 const dataParser = (buffer: Uint8Array) => {
   /**
@@ -32,14 +23,14 @@ const dataParser = (buffer: Uint8Array) => {
   return textDecoder.decode(buffer);
 };
 
-export const generateApduPackets = (command: Actions, strData: string) => {
+export const generateApduPackets = (command: Actions, requestID: number, strData: string) => {
   if (!strData || strData.length === 0) {
       const packet = new Uint8Array(9);
       packet[OFFSET_CLA] = 0;  // Fixed header
       setUint16(packet, OFFSET_INS, command);  // Command byte
       setUint16(packet, OFFSET_P1, 1);  // Total packets
       setUint16(packet, OFFSET_P2, 0);  // Current packet index
-      setUint16(packet, OFFSET_LC, 0);  // Data length
+      setUint16(packet, OFFSET_LC, requestID);  // request ID
       return [packet];
   }
 
@@ -49,14 +40,14 @@ export const generateApduPackets = (command: Actions, strData: string) => {
 
   for (let i = 0; i < totalPackets; i++) {
       const packetData = data.slice(i * MAX_DATA_SIZE, (i + 1) * MAX_DATA_SIZE);
-      const packetLen = HEADER_SIZE + packetData.length + FOOTER_SIZE;
+      const packetLen = HEADER_SIZE + packetData.length;
 
       const packet = new Uint8Array(packetLen);
       packet[OFFSET_CLA] = 0;  // Fixed header
       setUint16(packet, OFFSET_INS, command);  // Command byte
       setUint16(packet, OFFSET_P1, totalPackets);  // Total packets
       setUint16(packet, OFFSET_P2, i);  // Current packet index
-      setUint16(packet, OFFSET_LC, packetData.length);  // Data length
+      setUint16(packet, OFFSET_LC, requestID);  // requesr ID
 
       packet.set(packetData, HEADER_SIZE);  // Copy the data
 
@@ -73,10 +64,12 @@ export const parseApduPacket = (uint8Array: Uint8Array) => {
   const ins = dataView.getUint16(OFFSET_INS);
   const totalPackets = dataView.getUint16(OFFSET_P1);
   const packetIndex = dataView.getUint16(OFFSET_P2);
-  const packetDataSize = dataView.getUint16(OFFSET_LC);
+  const requestID = dataView.getUint16(OFFSET_LC);
   const statusOffset = uint8Array.buffer.byteLength - 2;
   const status = dataView.getUint16(statusOffset);
   
+  // Calculate packetDataSize by subtracting the length of the status from the length of the packet header
+  const packetDataSize = statusOffset - OFFSET_CDATA;
   const packetData = new Uint8Array(uint8Array.buffer, OFFSET_CDATA, packetDataSize);
   const data = dataParser(packetData);
 
@@ -85,6 +78,7 @@ export const parseApduPacket = (uint8Array: Uint8Array) => {
     ins,
     totalPackets,
     packetIndex,
+    requestID,
     data,
     status,
   };

@@ -1,8 +1,8 @@
 import React from 'react';
-import { Button, Space, Spin, message } from 'antd';
-import { ApiOutlined, EditOutlined, LockOutlined } from '@ant-design/icons';
+import { Button, Space, Spin, message, Select } from 'antd';
+import { ApiOutlined, EditOutlined, LockOutlined, DatabaseOutlined } from '@ant-design/icons';
 import createTransport from '@keystonehq/hw-transport-webusb';
-import Eth from '@keystonehq/hw-app-eth';
+import Eth, { HDPathType } from '@keystonehq/hw-app-eth';
 import './App.css';
 
 const mockTxUR = 'UR:ETH-SIGN-REQUEST/OLADTPDAGDWMZTFTZORNGEFGWNNLGAIACSSBIYEHFNAOHDDLAOWEAHAOLRHKISDLAELRHKISDLBTLFGMAYMWGAGYFLASPLMDMYBGNDATEEISPLLGBABEFXLSIMVALNASCSGLJPNBAELARTAXAAAAAHAHTAADDYOEADLECSDWYKCSFNYKAEYKAEWKAEWKAOCYBNHEGSHYAMGHIHSNEOKTVWHDVSJETIWDTYPLVYGYKBFNNSVAWMNEFHLADWBB';
@@ -11,6 +11,7 @@ function App() {
   const [loading, setLoading] = React.useState(false);
   const [eth, setEth] = React.useState<Eth | null>(null);
   const [messageApi, contextHolder] = message.useMessage();
+  const [accountType, setAccountType] = React.useState<HDPathType>(HDPathType.Bip44Standard);
 
   const success = React.useCallback((content: React.ReactNode) => {
     messageApi.open({
@@ -62,6 +63,21 @@ function App() {
     console.log(checkResult?.payload);
   }, [error, eth, setLoading]);
 
+  const handleExportAddress = React.useCallback(async () => {
+    if (!eth) {
+      error('Please link to Keystone3 Device first!');
+      return;
+    }
+    setLoading(true);
+    const checkResult = await eth?.exportAddress({
+      type: accountType,
+    }).catch((err: any) => {
+      error(err?.message ?? '');
+      console.error(err);
+    }).finally(() => setLoading(false));
+    console.log(checkResult?.payload);
+  }, [error, eth, setLoading, accountType]);
+
   return (
     <div className='App'>
       <Spin spinning={loading}>
@@ -71,6 +87,23 @@ function App() {
           <Button icon={<ApiOutlined />} onClick={handleLink2Device}>Link to Keystone3 Device</Button>
           <Button icon={<EditOutlined />} onClick={handleSignTx}>Sign ETH tx</Button>
           <Button icon={<LockOutlined />} onClick={handleCheckDeviceLockStatus}>Check Device Lock Status</Button>
+          <Space>
+            <Select value={accountType} onChange={setAccountType} style={{ width: 200 }} options={[
+              {
+                value: HDPathType.Bip44Standard,
+                label: 'Bip44Standard',
+              },
+              {
+                value: HDPathType.LedgerLegacy,
+                label: 'LedgerLegacy',
+              },
+              {
+                value: HDPathType.LedgerLive,
+                label: 'LedgerLive',
+              },
+            ]} />
+            <Button icon={<DatabaseOutlined />} onClick={handleExportAddress}>Export Address</Button>
+          </Space>
         </Space>
       </Spin>
       {contextHolder}

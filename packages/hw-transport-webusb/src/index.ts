@@ -1,15 +1,16 @@
 import { Buffer } from 'buffer';
 import { Actions } from './actions';
-import { Status } from './status_code';
+import { Status } from './status-code';
 import { generateApduPackets, parseApduPacket } from './frame';
-import { OFFSET_P1, USBPackageSize, OFFSET_INS, USBTimeout, MAXUSBPackets } from './constants';
-import { request } from './webusb';
-import { safeJSONparse } from './helper';
-import { TransportError } from './error';
+import { OFFSET_P1, USBPackageSize, OFFSET_INS, OFFSET_LC, USBTimeout, MAXUSBPackets } from './constants';
+import { requestKeystoneDevice, close, open, isSupported } from './webusb';
+import { safeJSONStringify, safeJSONparse, generateRequestID } from './helper';
+import { throwTransportError, TransportError, ErrorInfo } from './error';
 
 export { Actions } from './actions';
 export * from './webusb';
-export { Status as StatusCode } from './status_code';
+export { Status as StatusCode } from './status-code';
+export { Chain } from './chain';
 
 export class TransportWebUSB {
   device: Nullable<USBDevice>;
@@ -19,25 +20,25 @@ export class TransportWebUSB {
     this.device = device;
   }
 
-  async send<T>(action: Actions, data: string): Promise<T> {
+  async send<T>(action: Actions, data: unknown): Promise<T> {
+    await open(this.device!);
     if (!this.device?.opened) {
-      throw new TransportError(
-        'The USB device cannot be connected.',
-        Status.ERR_DEVICE_NOT_OPENED,
-        `Possible reasons include: 
-        - The device does not exist
-        - The device is not opened
-        - The device might be already connected by another page.`
-      );
+      throwTransportError(Status.ERR_DEVICE_NOT_OPENED);
     }
 
-    const packages = generateApduPackets(action, data);
+    if (typeof data !== 'string') {
+      data = safeJSONStringify(data);
+    }
+
+    const requestID = generateRequestID();
+
+    const packages = generateApduPackets(action, requestID, String(data));
     if (MAXUSBPackets < packages.length) {
-      throw new TransportError('data too large', Status.ERR_DATA_TOO_LARGE);
+      throwTransportError(Status.ERR_DATA_TOO_LARGE);
     }
 
     const timeout = new Promise<T>((_, reject) =>
-      setTimeout(() => reject(new TransportError('timeout', Status.ERR_TIMEOUT)), USBTimeout)
+      setTimeout(() => reject(new TransportError(ErrorInfo[Status.ERR_TIMEOUT], Status.ERR_TIMEOUT)), USBTimeout)
     );
 
     // eslint-disable-next-line no-async-promise-executor
@@ -45,20 +46,22 @@ export class TransportWebUSB {
       try {
         do {
           const res = await this.device!.transferOut(this.endpoint, packages[0]);
-          if (res.status !== 'ok') throw new TransportError('transferOut failed', Status.ERR_RESPONSE_STATUS_NOT_OK);
+          if (res.status !== 'ok') throwTransportError(Status.ERR_RESPONSE_STATUS_NOT_OK);
           packages.shift();
         } while (packages.length > 0);
 
-        resolve(await this.receive(action) as T);
+        resolve(await this.receive(action, requestID) as T);
       } catch (err) {
         reject(err);
+      } finally {
+        await close(this.device!);
       }
     });
 
     return Promise.race([sendRequest, timeout]);
   }
 
-  receive = async (action: Actions) => {
+  receive = async (action: Actions, requestID: number) => {
     if (!this.device?.opened) {
       return null;
     }
@@ -71,7 +74,8 @@ export class TransportWebUSB {
       const hasBuffer = !!response?.data?.buffer;
       const isBufferEmpty = response?.data?.buffer?.byteLength === 0;
       const isCurrentAction = hasBuffer && !isBufferEmpty &&
-        new DataView(response.data.buffer).getUint16(OFFSET_INS) === action;
+        new DataView(response.data.buffer).getUint16(OFFSET_INS) === action &&
+        new DataView(response.data.buffer).getUint16(OFFSET_LC) === requestID;
       if (!isCurrentAction) {
         continue;
       }
@@ -94,6 +98,15 @@ export class TransportWebUSB {
     }
     return safeJSONparse(result.data);
   };
+
+  open = async () => {
+    if (!this.device) {
+      this.device = await requestKeystoneDevice();
+    }
+    await open(this.device);
+  };
+
+  close = async () => this.device && close(this.device);
 }
 
 let device: Nullable<USBDevice> = null;
@@ -106,7 +119,8 @@ export default function createTransport() {
   // eslint-disable-next-line no-async-promise-executor
   return new Promise<TransportWebUSB>(async (resolve, reject) => {
     try {
-      device = isInvalidDevice(device) ? device as USBDevice : await request();
+      await isSupported();
+      device = isInvalidDevice(device) ? device as USBDevice : await requestKeystoneDevice();
       const transport = new TransportWebUSB(device);
       resolve(transport);
     } catch (err) {
