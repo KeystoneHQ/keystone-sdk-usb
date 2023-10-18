@@ -112,16 +112,17 @@ export class TransportWebUSB {
 let device: Nullable<USBDevice> = null;
 
 const isInvalidDevice = (device: Nullable<USBDevice>) => {
-  return device && device?.opened;
+  return device !== null && typeof device?.vendorId !== 'undefined';
 };
 
-export default function createTransport() {
+export default function fetchTransport() {
   // eslint-disable-next-line no-async-promise-executor
   return new Promise<TransportWebUSB>(async (resolve, reject) => {
     try {
       await isSupported();
       device = isInvalidDevice(device) ? device as USBDevice : await requestKeystoneDevice();
       const transport = new TransportWebUSB(device);
+      await transport.close();
       resolve(transport);
     } catch (err) {
       device = null;

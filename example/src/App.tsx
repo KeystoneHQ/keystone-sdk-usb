@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Space, Spin, message, Select } from 'antd';
 import { ApiOutlined, EditOutlined, LockOutlined, DatabaseOutlined } from '@ant-design/icons';
-import createTransport from '@keystonehq/hw-transport-webusb';
+import fetchTransport from '@keystonehq/hw-transport-webusb';
 import Eth, { HDPathType } from '@keystonehq/hw-app-eth';
 import './App.css';
 
@@ -29,7 +29,7 @@ function App() {
 
   const handleLink2Device = React.useCallback(async () => {
     setLoading(true);
-    const transport = await createTransport().catch((err) => {
+    const transport = await fetchTransport().catch((err) => {
       console.error(err);
       error(err?.message ?? 'unknow error');
     }).finally(() => setLoading(false));
