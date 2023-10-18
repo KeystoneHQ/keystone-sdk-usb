@@ -3,7 +3,7 @@ import { Actions } from './actions';
 import { Status } from './status-code';
 import { generateApduPackets, parseApduPacket } from './frame';
 import { OFFSET_P1, USBPackageSize, OFFSET_INS, OFFSET_LC, USBTimeout, MAXUSBPackets } from './constants';
-import { requestKeystoneDevice, close, open, isSupported } from './webusb';
+import { requestKeystoneDevice, close, open, isSupported, getFirstKeystoneDevice } from './webusb';
 import { safeJSONStringify, safeJSONparse, generateRequestID } from './helper';
 import { throwTransportError, TransportError, ErrorInfo } from './error';
 
@@ -120,7 +120,7 @@ export default function fetchTransport() {
   return new Promise<TransportWebUSB>(async (resolve, reject) => {
     try {
       await isSupported();
-      device = isInvalidDevice(device) ? device as USBDevice : await requestKeystoneDevice();
+      device = isInvalidDevice(device) ? device as USBDevice : await getFirstKeystoneDevice();
       const transport = new TransportWebUSB(device);
       await transport.close();
       resolve(transport);
