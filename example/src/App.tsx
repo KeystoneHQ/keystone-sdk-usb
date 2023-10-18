@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Space, Spin, message, Select } from 'antd';
 import { ApiOutlined, EditOutlined, LockOutlined, DatabaseOutlined } from '@ant-design/icons';
-import fetchTransport from '@keystonehq/hw-transport-webusb';
+import { TransportWebUSB } from '@keystonehq/hw-transport-webusb';
 import Eth, { HDPathType } from '@keystonehq/hw-app-eth';
 import './App.css';
 
@@ -29,13 +29,15 @@ function App() {
 
   const handleLink2Device = React.useCallback(async () => {
     setLoading(true);
-    const transport = await fetchTransport().catch((err) => {
-      console.error(err);
-      error(err?.message ?? 'unknow error');
-    }).finally(() => setLoading(false));
-    if (!transport) return;
-    setEth(new Eth(transport));
-    success('🎉 Link to Keystone3 Device Success!');
+    try {
+      const transport = await TransportWebUSB.create();
+      setEth(new Eth(transport!));
+      success('🎉 Link to Keystone3 Device Success!');
+    } catch (e: any) {
+      error(e?.message ?? 'Link to Keystone3 Device failed!');
+    } finally {
+      setLoading(false);
+    }
   }, [error, success, setEth, setLoading]);
 
   const handleSignTx = React.useCallback(async () => {

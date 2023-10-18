@@ -12,7 +12,7 @@ const keystoneDevices = [
   },
 ];
 
-function initializeDisconnectListener(device: USBDevice): void {
+export const initializeDisconnectListener = (device: USBDevice): void => {
   const onDisconnect = (e: Event) => {
     if (device === (e as USBConnectionEvent).device) {
       navigator.usb.removeEventListener('disconnect', onDisconnect);
@@ -20,7 +20,7 @@ function initializeDisconnectListener(device: USBDevice): void {
   };
 
   navigator.usb.addEventListener('disconnect', onDisconnect);
-}
+};
 
 async function selectDefaultConfiguration(device: USBDevice): Promise<void> {
   if (device.configuration === null) {
@@ -47,7 +47,6 @@ export const open = async (device: USBDevice): Promise<USBDevice> => {
     throw e;
   }
 
-  initializeDisconnectListener(device);
   return device;
 };
 

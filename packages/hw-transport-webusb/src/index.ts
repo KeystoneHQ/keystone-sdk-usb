@@ -3,7 +3,7 @@ import { Actions } from './actions';
 import { Status } from './status-code';
 import { generateApduPackets, parseApduPacket } from './frame';
 import { OFFSET_P1, USBPackageSize, OFFSET_INS, OFFSET_LC, USBTimeout, MAXUSBPackets } from './constants';
-import { requestKeystoneDevice, close, open, isSupported, getFirstKeystoneDevice } from './webusb';
+import { requestKeystoneDevice, close, open, isSupported, getKeystoneDevices } from './webusb';
 import { safeJSONStringify, safeJSONparse, generateRequestID } from './helper';
 import { throwTransportError, TransportError, ErrorInfo } from './error';
 
@@ -15,6 +15,18 @@ export { Chain } from './chain';
 export class TransportWebUSB {
   device: Nullable<USBDevice>;
   endpoint = 3;
+
+  static create = async () => {
+    await isSupported();
+    const devices = await getKeystoneDevices();
+    let device: Nullable<USBDevice> = null;
+    if (devices.length > 1) {
+      device = await requestKeystoneDevice();
+    } else {
+      device = devices[0];
+    }
+    return new TransportWebUSB(device);
+  };
 
   constructor(device: USBDevice) {
     this.device = device;
@@ -107,26 +119,4 @@ export class TransportWebUSB {
   };
 
   close = async () => this.device && close(this.device);
-}
-
-let device: Nullable<USBDevice> = null;
-
-const isInvalidDevice = (device: Nullable<USBDevice>) => {
-  return device !== null && typeof device?.vendorId !== 'undefined';
-};
-
-export default function fetchTransport() {
-  // eslint-disable-next-line no-async-promise-executor
-  return new Promise<TransportWebUSB>(async (resolve, reject) => {
-    try {
-      await isSupported();
-      device = isInvalidDevice(device) ? device as USBDevice : await getFirstKeystoneDevice();
-      const transport = new TransportWebUSB(device);
-      await transport.close();
-      resolve(transport);
-    } catch (err) {
-      device = null;
-      reject(err);
-    }
-  });
 }
