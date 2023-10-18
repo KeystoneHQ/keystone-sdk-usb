@@ -31,11 +31,4 @@ export default class Eth {
         ...params,
       });
     };
-
-    exportAddresses: ExportAddresses = async (params) => {
-      return await this.#send<ExportAddressesResponse>(Actions.CMD_EXPORT_ADDRESSES, {
-        chain: Chain.ETH,
-        ...params,
-      });
-    };
   }

@@ -2,9 +2,9 @@ import { Buffer } from 'buffer';
 import { Actions } from './actions';
 import { Status } from './status-code';
 import { generateApduPackets, parseApduPacket } from './frame';
-import { OFFSET_P1, USBPackageSize, OFFSET_INS, USBTimeout, MAXUSBPackets } from './constants';
+import { OFFSET_P1, USBPackageSize, OFFSET_INS, OFFSET_LC, USBTimeout, MAXUSBPackets } from './constants';
 import { requestKeystoneDevice, close, open, isSupported } from './webusb';
-import { safeJSONStringify, safeJSONparse } from './helper';
+import { safeJSONStringify, safeJSONparse, generateRequestID } from './helper';
 import { throwTransportError, TransportError, ErrorInfo } from './error';
 
 export { Actions } from './actions';
@@ -30,7 +30,9 @@ export class TransportWebUSB {
       data = safeJSONStringify(data);
     }
 
-    const packages = generateApduPackets(action, String(data));
+    const requestID = generateRequestID();
+
+    const packages = generateApduPackets(action, requestID, String(data));
     if (MAXUSBPackets < packages.length) {
       throwTransportError(Status.ERR_DATA_TOO_LARGE);
     }
@@ -48,7 +50,7 @@ export class TransportWebUSB {
           packages.shift();
         } while (packages.length > 0);
 
-        resolve(await this.receive(action) as T);
+        resolve(await this.receive(action, requestID) as T);
       } catch (err) {
         reject(err);
       } finally {
@@ -59,7 +61,7 @@ export class TransportWebUSB {
     return Promise.race([sendRequest, timeout]);
   }
 
-  receive = async (action: Actions) => {
+  receive = async (action: Actions, requestID: number) => {
     if (!this.device?.opened) {
       return null;
     }
@@ -72,7 +74,8 @@ export class TransportWebUSB {
       const hasBuffer = !!response?.data?.buffer;
       const isBufferEmpty = response?.data?.buffer?.byteLength === 0;
       const isCurrentAction = hasBuffer && !isBufferEmpty &&
-        new DataView(response.data.buffer).getUint16(OFFSET_INS) === action;
+        new DataView(response.data.buffer).getUint16(OFFSET_INS) === action &&
+        new DataView(response.data.buffer).getUint16(OFFSET_LC) === requestID;
       if (!isCurrentAction) {
         continue;
       }

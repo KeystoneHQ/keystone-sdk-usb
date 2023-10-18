@@ -28,3 +28,7 @@ export const isEmpty = (value: any) => {
   }
   return !value;
 };
+
+export const generateRequestID = () => {
+  return Math.floor(Math.random() * 65535);
+};
