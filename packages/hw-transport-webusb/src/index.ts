@@ -23,11 +23,7 @@ export class TransportWebUSB {
    * After the device has been accessed, it is then closed.
    * In order to establish a connection with a USB device, the application must first request the user's permission.
    */
-  static requestPermission = async () => {
-    await isSupported();
-    const device = await request();
-    await close(device);
-  };
+  static requestPermission = async () => await close(await request());
 
   /**
    * The `connect` static method is an asynchronous function that connects to a USB device.
