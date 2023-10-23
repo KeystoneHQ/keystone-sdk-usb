@@ -15,12 +15,14 @@ export { Chain } from './chain';
 export interface TransportConfig {
   endpoint?: number;
   timeout?: number;
+  maxPacketSize?: number;
 }
 
 export class TransportWebUSB {
   private device: Nullable<USBDevice>;
   private endpoint = 3;
   private requestTimeout = USBTimeout;
+  private maxPacketSize = MAXUSBPackets;
 
   /**
    * The `requestPermission` static method is an asynchronous function that requests permission from the user to access a USB device.
@@ -53,6 +55,7 @@ export class TransportWebUSB {
   constructor(device: USBDevice, config?: TransportConfig) {
     this.endpoint = config?.endpoint ?? this.endpoint;
     this.requestTimeout = config?.timeout ?? this.requestTimeout;
+    this.maxPacketSize = config?.maxPacketSize ?? this.maxPacketSize;
     this.device = device;
   }
 
@@ -69,7 +72,7 @@ export class TransportWebUSB {
     const requestID = generateRequestID();
 
     const packages = generateApduPackets(action, requestID, String(data));
-    if (MAXUSBPackets < packages.length) {
+    if (this.maxPacketSize < packages.length) {
       throwTransportError(Status.ERR_DATA_TOO_LARGE);
     }
 
