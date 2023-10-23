@@ -240,6 +240,9 @@ importers:
       '@keystonehq/hw-transport-webusb':
         specifier: latest
         version: link:../hw-transport-webusb
+      '@ngraveio/bc-ur':
+        specifier: ^1.1.6
+        version: 1.1.6
       buffer:
         specifier: ^6.0.3
         version: 6.0.3

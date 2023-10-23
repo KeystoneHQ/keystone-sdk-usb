@@ -7,6 +7,7 @@ import {
 import * as uuid from 'uuid';
 import rlp from 'rlp';
 import { DataType, EthSignRequest } from '@keystonehq/bc-ur-registry-eth';
+import { UR, UREncoder } from '@ngraveio/bc-ur';
 import type {
   CheckLockStatus,
   SignTransactionFromUr,
@@ -65,10 +66,12 @@ export default class Eth {
     );
 
     const ur = ethSignRequest.toUR();
-    return {
-      type: ur.type,
-      cbor: ur.cbor.toString('hex'),
-    };
+    const signatureUr = await this.signTransactionFromUr(new UREncoder(
+      new UR(Buffer.from((ur.cbor as unknown as WithImplicitCoercion<string>), 'hex'), ur.type),
+      Infinity
+    ).nextPart());
+
+    return signatureUr;
   };
 
   signTransactionFromUr: SignTransactionFromUr = async (urString: string) => {
