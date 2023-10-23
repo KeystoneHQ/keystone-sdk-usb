@@ -1,6 +1,6 @@
 {
   "name": "@keystonehq/hw-app-eth",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
@@ -20,7 +20,13 @@
   },
   "license": "ISC",
   "dependencies": {
+    "@keystonehq/bc-ur-registry-eth": "^0.19.1",
     "@keystonehq/hw-transport-webusb": "latest",
-    "buffer": "^6.0.3"
+    "buffer": "^6.0.3",
+    "rlp": "^3.0.0",
+    "@ethereumjs/tx": "^4.0.2",
+    "@ethereumjs/util": "^8.0.0",
+    "hdkey": "^2.0.1",
+    "uuid": "^8.3.2"
   }
 }

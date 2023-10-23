@@ -12,9 +12,15 @@ export * from './webusb';
 export { Status as StatusCode } from './status-code';
 export { Chain } from './chain';
 
+export interface TransportConfig {
+  endpoint?: number;
+  timeout?: number;
+}
+
 export class TransportWebUSB {
-  device: Nullable<USBDevice>;
-  endpoint = 3;
+  private device: Nullable<USBDevice>;
+  private endpoint = 3;
+  private requestTimeout = USBTimeout;
 
   /**
    * The `requestPermission` static method is an asynchronous function that requests permission from the user to access a USB device.
@@ -32,7 +38,7 @@ export class TransportWebUSB {
    * The `getKeystoneDevices` method can only retrieve devices that the application has previously obtained permission to access using the `requestDevice` method.
    * Finally, it creates and returns a new `TransportWebUSB` object using the selected device.
    */
-  static connect = async () => {
+  static connect = async (config?: TransportConfig) => {
     await isSupported();
     const devices = await getKeystoneDevices();
     let device: Nullable<USBDevice> = null;
@@ -41,10 +47,12 @@ export class TransportWebUSB {
     } else {
       device = devices[0];
     }
-    return new TransportWebUSB(device);
+    return new TransportWebUSB(device, config);
   };
 
-  constructor(device: USBDevice) {
+  constructor(device: USBDevice, config?: TransportConfig) {
+    this.endpoint = config?.endpoint ?? this.endpoint;
+    this.requestTimeout = config?.timeout ?? this.requestTimeout;
     this.device = device;
   }
 
@@ -66,8 +74,10 @@ export class TransportWebUSB {
     }
 
     const timeout = new Promise<T>((_, reject) =>
-      setTimeout(() => reject(new TransportError(ErrorInfo[Status.ERR_TIMEOUT], Status.ERR_TIMEOUT)), USBTimeout)
+      setTimeout(() => reject(new TransportError(ErrorInfo[Status.ERR_TIMEOUT], Status.ERR_TIMEOUT)),
+        this.requestTimeout)
     );
+
 
     // eslint-disable-next-line no-async-promise-executor
     const sendRequest = new Promise<T>(async (resolve, reject) => {

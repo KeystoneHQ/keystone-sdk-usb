@@ -1,4 +1,12 @@
-import { Actions, TransportWebUSB, Chain } from '@keystonehq/hw-transport-webusb';
+import { Actions, TransportWebUSB, Chain, type TransportConfig } from '@keystonehq/hw-transport-webusb';
+import {
+  TransactionFactory,
+  Transaction,
+  FeeMarketEIP1559Transaction,
+} from '@ethereumjs/tx';
+import * as uuid from 'uuid';
+import rlp from 'rlp';
+import { DataType, EthSignRequest } from '@keystonehq/bc-ur-registry-eth';
 import type {
   CheckLockStatus,
   SignTransactionFromUr,
@@ -6,19 +14,18 @@ import type {
   PromiseReturnType,
 } from './request';
 
-
 export { HDPathType } from './path-type';
 export * from './request';
 
 export default class Eth {
-  transport: Nullable<TransportWebUSB>;
+  private transport: Nullable<TransportWebUSB>;
 
   constructor(transport: TransportWebUSB) {
     this.transport = transport;
   }
 
-  static async createWithUSBTransport(): Promise<Eth> {
-    const transport = await TransportWebUSB.connect();
+  static async createWithUSBTransport(config?: TransportConfig): Promise<Eth> {
+    const transport = await TransportWebUSB.connect(config);
     return new Eth(transport);
   }
 
@@ -33,11 +40,42 @@ export default class Eth {
     return await this.#send<PromiseReturnType<CheckLockStatus>>(Actions.CMD_CHECK_LOCK_STATUS, '');
   };
 
+  signTransaction = async (keyringInstance, address: string, tx: any): Promise<any> => {
+    const dataType =
+      tx.type === 0 ? DataType.transaction : DataType.typedTransaction;
+    let messageToSign;
+    if (tx.type === 0) {
+      messageToSign = rlp.encode((tx as Transaction).getMessageToSign(false));
+    } else {
+      messageToSign = (tx as FeeMarketEIP1559Transaction).getMessageToSign(
+        false
+      );
+    }
+    const hdPath = await keyringInstance._pathFromAddress(address);
+    const chainId = tx.common.chainId();
+    const requestId = uuid.v4();
+    const ethSignRequest = EthSignRequest.constructETHRequest(
+      messageToSign,
+      dataType,
+      hdPath,
+      keyringInstance.xfp,
+      requestId,
+      chainId,
+      address
+    );
+
+    const ur = ethSignRequest.toUR();
+    return {
+      type: ur.type,
+      cbor: ur.cbor.toString('hex'),
+    };
+  };
+
   signTransactionFromUr: SignTransactionFromUr = async (urString: string) => {
     return await this.#send<PromiseReturnType<SignTransactionFromUr>>(Actions.CMD_RESOLVE_UR, urString);
   };
 
-  exportAddress: ExportAddress = async (params) => {
+  exportAddressFromUr: ExportAddress = async (params) => {
     return await this.#send<PromiseReturnType<ExportAddress>>(Actions.CMD_EXPORT_ADDRESS, {
       chain: Chain.ETH,
       ...params,

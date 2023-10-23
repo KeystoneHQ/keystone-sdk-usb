@@ -33,7 +33,7 @@ function App() {
       /**
        * 1. Request permission to access the device.
        */
-      await TransportWebUSB.requestPermission();
+      // await TransportWebUSB.requestPermission();
       /**
        * 2. Connect to the device.
        */
@@ -78,7 +78,7 @@ function App() {
       return;
     }
     setLoading(true);
-    const checkResult = await eth?.exportAddress({
+    const checkResult = await eth?.exportAddressFromUr({
       type: accountType,
     }).catch((err: any) => {
       error(err?.message ?? '');
