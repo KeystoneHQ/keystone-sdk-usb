@@ -1,4 +1,4 @@
-import { Actions, type TransportWebUSB, Chain } from '@keystonehq/hw-transport-webusb';
+import { Actions, TransportWebUSB, Chain } from '@keystonehq/hw-transport-webusb';
 import type {
   CheckLockStatus,
   SignTransactionFromUr,
@@ -17,6 +17,10 @@ export default class Eth {
     this.transport = transport;
   }
 
+  static async createWithUSBTransport(): Promise<Eth> {
+    const transport = await TransportWebUSB.connect();
+    return new Eth(transport);
+  }
 
   #send = async <T>(action: Actions, data: unknown) => {
     if (!this.transport) {

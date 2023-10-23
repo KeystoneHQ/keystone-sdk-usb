@@ -3,7 +3,7 @@ import { Actions } from './actions';
 import { Status } from './status-code';
 import { generateApduPackets, parseApduPacket } from './frame';
 import { OFFSET_P1, USBPackageSize, OFFSET_INS, OFFSET_LC, USBTimeout, MAXUSBPackets } from './constants';
-import { requestKeystoneDevice, close, open, isSupported, getKeystoneDevices } from './webusb';
+import { requestKeystoneDevice, close, open, isSupported, getKeystoneDevices, request } from './webusb';
 import { safeJSONStringify, safeJSONparse, generateRequestID } from './helper';
 import { throwTransportError, TransportError, ErrorInfo } from './error';
 
@@ -16,7 +16,27 @@ export class TransportWebUSB {
   device: Nullable<USBDevice>;
   endpoint = 3;
 
-  static create = async () => {
+  /**
+   * The `requestPermission` static method is an asynchronous function that requests permission from the user to access a USB device.
+   * It first checks if the WebUSB API is supported in the current environment.
+   * Then, it requests access to a USB device.
+   * After the device has been accessed, it is then closed.
+   * In order to establish a connection with a USB device, the application must first request the user's permission.
+   */
+  static requestPermission = async () => {
+    await isSupported();
+    const device = await request();
+    await close(device);
+  };
+
+  /**
+   * The `connect` static method is an asynchronous function that connects to a USB device.
+   * It first checks if the WebUSB API is supported in the current environment.
+   * Then, it retrieves a list of all USB devices that the application has permission to access using the `getKeystoneDevices` method.
+   * The `getKeystoneDevices` method can only retrieve devices that the application has previously obtained permission to access using the `requestDevice` method.
+   * Finally, it creates and returns a new `TransportWebUSB` object using the selected device.
+   */
+  static connect = async () => {
     await isSupported();
     const devices = await getKeystoneDevices();
     let device: Nullable<USBDevice> = null;

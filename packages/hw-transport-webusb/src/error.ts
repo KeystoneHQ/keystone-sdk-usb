@@ -19,7 +19,6 @@ export const ErrorInfo = {
   [Status.ERR_RESPONSE_STATUS_NOT_OK]: 'The response status is not ok.',
   [Status.ERR_TIMEOUT]: 'The request timed out.',
   [Status.ERR_DATA_TOO_LARGE]: 'The data is too large.',
-  [Status.ERR_NO_DEVICE_FOUND]: 'No USB device is found.',
   [Status.ERR_NOT_SUPPORTED]: 'The USB device is not supported.',
 };
 

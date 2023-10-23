@@ -30,7 +30,14 @@ function App() {
   const handleLink2Device = React.useCallback(async () => {
     setLoading(true);
     try {
-      const transport = await TransportWebUSB.create();
+      /**
+       * 1. Request permission to access the device.
+       */
+      await TransportWebUSB.requestPermission();
+      /**
+       * 2. Connect to the device.
+       */
+      const transport = await TransportWebUSB.connect();
       setEth(new Eth(transport!));
       success('🎉 Link to Keystone3 Device Success!');
     } catch (e: any) {

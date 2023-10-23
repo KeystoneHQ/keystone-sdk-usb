@@ -63,7 +63,7 @@ export async function getFirstKeystoneDevice(): Promise<USBDevice> {
 
 export const isSupported = async (): Promise<boolean> => {
   if (!navigator?.usb || typeof navigator.usb.getDevices !== 'function') throwTransportError(Status.ERR_NOT_SUPPORTED);
-  if (isEmpty(await getKeystoneDevices())) throwTransportError(Status.ERR_NO_DEVICE_FOUND);
+  if (isEmpty(await getKeystoneDevices())) throwTransportError(Status.ERR_DEVICE_NOT_FOUND);
   return true;
 };
 
