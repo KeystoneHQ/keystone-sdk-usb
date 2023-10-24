@@ -5,7 +5,7 @@ import {
   FeeMarketEIP1559Transaction,
 } from '@ethereumjs/tx';
 import * as uuid from 'uuid';
-import rlp from 'rlp';
+import * as rlp from 'rlp';
 import { DataType, EthSignRequest } from '@keystonehq/bc-ur-registry-eth';
 import { UR, UREncoder } from '@ngraveio/bc-ur';
 import type {
