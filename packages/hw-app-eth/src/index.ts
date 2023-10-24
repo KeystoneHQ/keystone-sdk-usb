@@ -6,7 +6,7 @@ import {
 } from '@ethereumjs/tx';
 import * as uuid from 'uuid';
 import * as rlp from 'rlp';
-import { DataType, EthSignRequest } from '@keystonehq/bc-ur-registry-eth';
+import { DataType, EthSignRequest, ETHSignature } from '@keystonehq/bc-ur-registry-eth';
 import { UR, UREncoder } from '@ngraveio/bc-ur';
 import type {
   CheckLockStatus,
@@ -66,11 +66,24 @@ export default class Eth {
     );
 
     const ur = ethSignRequest.toUR();
-    const signatureUr = await this.signTransactionFromUr(new UREncoder(
+    const signatureResponse = await this.signTransactionFromUr(new UREncoder(
       new UR(Buffer.from((ur.cbor as unknown as WithImplicitCoercion<string>), 'hex'), ur.type),
       Infinity
     ).nextPart().toUpperCase());
-    return signatureUr;
+    const ethSignature = ETHSignature.fromCBOR(Buffer.from(signatureResponse.payload, 'hex'));
+    const signature = ethSignature.getSignature();
+    const r = signature.slice(0, 32);
+    const s = signature.slice(32, 64);
+    const v = signature.slice(64);
+    const txJson = tx.toJSON();
+    txJson.v = v;
+    txJson.s = s;
+    txJson.r = r;
+    txJson.type = tx.type;
+    const transaction = TransactionFactory.fromTxData(txJson, {
+      common: tx.common,
+    });
+    return transaction;
   };
 
   signTransactionFromUr: SignTransactionFromUr = async (urString: string) => {

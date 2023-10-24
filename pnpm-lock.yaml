@@ -238,7 +238,7 @@ importers:
         specifier: ^0.19.1
         version: 0.19.1
       '@keystonehq/hw-transport-webusb':
-        specifier: latest
+        specifier: workspace:../hw-transport-webusb
         version: link:../hw-transport-webusb
       '@ngraveio/bc-ur':
         specifier: ^1.1.6
