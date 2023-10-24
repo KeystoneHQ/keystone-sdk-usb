@@ -77,7 +77,7 @@ export default class Eth {
     }
 
     const resultUr = decoder.resultUR();
-    if (ur.type !== 'eth-signature') {
+    if (resultUr.type !== 'eth-signature') {
       throw new Error('Invalid UR type');
     }
 

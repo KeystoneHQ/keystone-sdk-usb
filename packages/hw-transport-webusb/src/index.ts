@@ -76,10 +76,11 @@ export class TransportWebUSB {
       throwTransportError(Status.ERR_DATA_TOO_LARGE);
     }
 
-    const timeout = new Promise<T>((_, reject) =>
-      setTimeout(() => reject(new TransportError(ErrorInfo[Status.ERR_TIMEOUT], Status.ERR_TIMEOUT)),
-        this.requestTimeout)
-    );
+    let timeoutId: Nullable<NodeJS.Timeout>;
+    const timeout = new Promise<T>((_, reject) => {
+      timeoutId = setTimeout(() => reject(new TransportError(ErrorInfo[Status.ERR_TIMEOUT], Status.ERR_TIMEOUT)),
+        this.requestTimeout);
+    });
 
 
     // eslint-disable-next-line no-async-promise-executor
@@ -95,6 +96,7 @@ export class TransportWebUSB {
       } catch (err) {
         reject(err);
       } finally {
+        clearTimeout(timeoutId!);
         await close(this.device!);
       }
     });
