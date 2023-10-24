@@ -7,7 +7,7 @@ import {
 import * as uuid from 'uuid';
 import * as rlp from 'rlp';
 import { DataType, EthSignRequest, ETHSignature } from '@keystonehq/bc-ur-registry-eth';
-import { UR, UREncoder } from '@ngraveio/bc-ur';
+import { UR, UREncoder, URDecoder } from '@ngraveio/bc-ur';
 import type {
   CheckLockStatus,
   SignTransactionFromUr,
@@ -70,7 +70,18 @@ export default class Eth {
       new UR(Buffer.from((ur.cbor as unknown as WithImplicitCoercion<string>), 'hex'), ur.type),
       Infinity
     ).nextPart().toUpperCase());
-    const ethSignature = ETHSignature.fromCBOR(Buffer.from(signatureResponse.payload, 'hex'));
+    const decoder = new URDecoder();
+    decoder.receivePart(signatureResponse.payload);
+    if (!decoder.isComplete()) {
+      throw new Error('UR did not complete');
+    }
+
+    const resultUr = decoder.resultUR();
+    if (ur.type !== 'eth-signature') {
+      throw new Error('Invalid UR type');
+    }
+
+    const ethSignature = ETHSignature.fromCBOR(Buffer.from(resultUr.cbor.toString('hex'), 'hex'));
     const signature = ethSignature.getSignature();
     const r = signature.slice(0, 32);
     const s = signature.slice(32, 64);
