@@ -85,9 +85,7 @@ export class TransportWebUSB {
         this.requestTimeout);
     });
 
-
-    // eslint-disable-next-line no-async-promise-executor
-    const sendRequest = new Promise<T>(async (resolve, reject) => {
+    const sendRequest = (async () => {
       try {
         do {
           const res = await this.device!.transferOut(this.endpoint, packages[0]);
@@ -95,14 +93,12 @@ export class TransportWebUSB {
           packages.shift();
         } while (packages.length > 0);
 
-        resolve(await this.receive(action, requestID) as T);
-      } catch (err) {
-        reject(err);
+        return await this.receive(action, requestID) as T;
       } finally {
         clearTimeout(timeoutId!);
         await close(this.device!);
       }
-    });
+    })();
 
     return Promise.race([sendRequest, timeout]);
   }
