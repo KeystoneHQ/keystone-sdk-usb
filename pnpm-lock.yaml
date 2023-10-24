@@ -250,8 +250,8 @@ importers:
         specifier: ^2.0.1
         version: 2.1.0
       rlp:
-        specifier: ^3.0.0
-        version: 3.0.0
+        specifier: ^2.2.6
+        version: 2.2.6
       uuid:
         specifier: ^8.3.2
         version: 8.3.2
@@ -10671,9 +10671,11 @@ packages:
       inherits: 2.0.4
     dev: false
 
-  /rlp@3.0.0:
-    resolution: {integrity: sha512-PD6U2PGk6Vq2spfgiWZdomLvRGDreBLxi5jv5M8EpRo3pU6VEm31KO+HFxE18Q3vgqfDrQ9pZA3FP95rkijNKw==}
+  /rlp@2.2.6:
+    resolution: {integrity: sha512-HAfAmL6SDYNWPUOJNrM500x4Thn4PZsEy5pijPh40U9WfNk0z15hUYzO9xVIMAdIHdFtD8CBDHd75Td1g36Mjg==}
     hasBin: true
+    dependencies:
+      bn.js: 4.12.0
     dev: false
 
   /rollup-plugin-terser@7.0.2(rollup@2.79.1):

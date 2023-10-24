@@ -69,8 +69,7 @@ export default class Eth {
     const signatureUr = await this.signTransactionFromUr(new UREncoder(
       new UR(Buffer.from((ur.cbor as unknown as WithImplicitCoercion<string>), 'hex'), ur.type),
       Infinity
-    ).nextPart());
-
+    ).nextPart().toUpperCase());
     return signatureUr;
   };
 
