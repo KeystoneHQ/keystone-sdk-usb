@@ -98,7 +98,10 @@ export default class Eth {
   };
 
   signTransactionFromUr: SignTransactionFromUr = async (urString: string) => {
-    return await this.#send<PromiseReturnType<SignTransactionFromUr>>(Actions.CMD_RESOLVE_UR, urString);
+    console.log(`[${new Date().toISOString()}] Entered method signTransactionFromUr with parameter: ${urString}`);
+    const result = await this.#send<PromiseReturnType<SignTransactionFromUr>>(Actions.CMD_RESOLVE_UR, urString);
+    console.log(`[${new Date().toISOString()}] Exiting method signTransactionFromUr`);
+    return result;
   };
 
   exportAddressFromUr: ExportAddress = async (params) => {

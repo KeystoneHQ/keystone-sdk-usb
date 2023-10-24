@@ -27,10 +27,10 @@ importers:
         specifier: ^7.16.0
         version: 7.22.20
       '@keystonehq/hw-app-eth':
-        specifier: latest
+        specifier: workspace:*
         version: link:../packages/hw-app-eth
       '@keystonehq/hw-transport-webusb':
-        specifier: latest
+        specifier: workspace:*
         version: link:../packages/hw-transport-webusb
       '@pmmmwh/react-refresh-webpack-plugin':
         specifier: ^0.5.3
@@ -80,6 +80,9 @@ importers:
       browserslist:
         specifier: ^4.18.1
         version: 4.21.10
+      buffer:
+        specifier: ^6.0.3
+        version: 6.0.3
       camelcase:
         specifier: ^6.2.1
         version: 6.3.0

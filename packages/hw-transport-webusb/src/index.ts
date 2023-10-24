@@ -6,11 +6,13 @@ import { OFFSET_P1, USBPackageSize, OFFSET_INS, OFFSET_LC, USBTimeout, MAXUSBPac
 import { requestKeystoneDevice, close, open, isSupported, getKeystoneDevices, request } from './webusb';
 import { safeJSONStringify, safeJSONparse, generateRequestID } from './helper';
 import { throwTransportError, TransportError, ErrorInfo } from './error';
+import { logMethod } from './decorators';
 
 export { Actions } from './actions';
 export * from './webusb';
 export { Status as StatusCode } from './status-code';
 export { Chain } from './chain';
+export * from './decorators';
 
 export interface TransportConfig {
   endpoint?: number;
@@ -59,6 +61,7 @@ export class TransportWebUSB {
     this.device = device;
   }
 
+  @logMethod
   async send<T>(action: Actions, data: unknown): Promise<T> {
     await open(this.device!);
     if (!this.device?.opened) {
