@@ -77,7 +77,7 @@ export async function gracefullyResetDevice(device: USBDevice): Promise<void> {
 
 export const request = async (): Promise<USBDevice> => {
   const device = await requestKeystoneDevice();
-  return open(device);
+  return await open(device);
 };
 
 export const close = async (device: USBDevice): Promise<void> => {

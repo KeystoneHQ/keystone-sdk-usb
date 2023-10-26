@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Space, Spin, message, Select } from 'antd';
 import { ApiOutlined, EditOutlined, LockOutlined, DatabaseOutlined } from '@ant-design/icons';
-import { TransportWebUSB } from '@keystonehq/hw-transport-webusb';
+import { TransportWebUSB, getKeystoneDevices } from '@keystonehq/hw-transport-webusb';
 import Eth, { HDPathType } from '@keystonehq/hw-app-eth';
 import './App.css';
 
@@ -34,11 +34,14 @@ function App() {
       /**
        * 1. Request permission to access the device.
        */
-      // await TransportWebUSB.requestPermission();
+      if ((await getKeystoneDevices()).length <= 0) {
+        await TransportWebUSB.requestPermission();
+      }
       /**
        * 2. Connect to the device.
        */
       const transport = await TransportWebUSB.connect();
+      await transport.close();
       setEth(new Eth(transport!));
       success('🎉 Link to Keystone3 Device Success!');
     } catch (e: any) {
