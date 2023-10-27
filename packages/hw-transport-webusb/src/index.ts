@@ -63,6 +63,12 @@ export class TransportWebUSB {
 
   @logMethod
   async send<T>(action: Actions, data: unknown): Promise<T> {
+    return await this.#send<T>(action, data).finally(async () => {
+      await close(this.device!);
+    });
+  }
+
+  async #send<T>(action: Actions, data: unknown): Promise<T> {
     await open(this.device!);
     if (!this.device?.opened) {
       throwTransportError(Status.ERR_DEVICE_NOT_OPENED);
@@ -96,7 +102,6 @@ export class TransportWebUSB {
         return await this.receive(action, requestID) as T;
       } finally {
         clearTimeout(timeoutId!);
-        await close(this.device!);
       }
     })();
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Space, Spin, message, Select } from 'antd';
 import { ApiOutlined, EditOutlined, LockOutlined, DatabaseOutlined } from '@ant-design/icons';
 import { TransportWebUSB, getKeystoneDevices } from '@keystonehq/hw-transport-webusb';
@@ -50,6 +50,12 @@ function App() {
       setLoading(false);
     }
   }, [error, success, setEth, setLoading]);
+
+  useEffect(() => {
+    if (eth) {
+      (window as any).keystoneEth = eth;
+    }
+  }, [eth]);
 
   const handleSignTx = React.useCallback(async () => {
     if (!eth) {
