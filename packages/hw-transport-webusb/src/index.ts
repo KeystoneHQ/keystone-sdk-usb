@@ -154,4 +154,10 @@ export class TransportWebUSB {
   };
 
   close = async () => this.device?.opened && close(this.device);
+
+  forgetDevice = async () => {
+    await this.close();
+    await this.device?.forget();
+    this.device = null;
+  };
 }
