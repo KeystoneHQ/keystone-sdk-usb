@@ -8,10 +8,14 @@ import * as uuid from 'uuid';
 import * as rlp from 'rlp';
 import { DataType, EthSignRequest, ETHSignature } from '@keystonehq/bc-ur-registry-eth';
 import { UR, UREncoder, URDecoder } from '@ngraveio/bc-ur';
+import {
+  CryptoAccount,
+  CryptoHDKey,
+} from '@keystonehq/bc-ur-registry-eth';
 import type {
   CheckLockStatus,
   SignTransactionFromUr,
-  ExportAddress,
+  ExportPubKey,
   PromiseReturnType,
 } from './request';
 
@@ -105,10 +109,16 @@ export default class Eth {
     return result;
   };
 
-  exportAddressFromUr: ExportAddress = async (params) => {
-    return await this.#send<PromiseReturnType<ExportAddress>>(Actions.CMD_EXPORT_ADDRESS, {
+  exportPubKeyFromUr = async (params): Promise<CryptoHDKey | CryptoAccount> => {
+    const { payload: pubKeyUr } = await this.#send<PromiseReturnType<ExportPubKey>>(Actions.CMD_EXPORT_ADDRESS, {
       chain: Chain.ETH,
       ...params,
     });
+    const decoder = new URDecoder();
+    decoder.receivePart(pubKeyUr);
+    const result = decoder.resultUR();
+    const cbor = result.cbor.toString('hex');
+    const cryptoHDKey = CryptoHDKey.fromCBOR(Buffer.from(cbor, 'hex'));
+    return cryptoHDKey;
   };
 }

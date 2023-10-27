@@ -88,13 +88,13 @@ function App() {
       return;
     }
     setLoading(true);
-    const checkResult = await eth?.exportAddressFromUr({
+    const checkResult = await eth?.exportPubKeyFromUr({
       type: accountType,
     }).catch((err: any) => {
       error(err?.message ?? '');
       console.error(err);
     }).finally(() => setLoading(false));
-    console.log(checkResult?.payload);
+    console.log(checkResult);
   }, [error, eth, setLoading, accountType]);
 
   return (

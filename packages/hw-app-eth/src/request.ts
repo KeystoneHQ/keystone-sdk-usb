@@ -1,10 +1,9 @@
-import { Chain } from '@keystonehq/hw-transport-webusb';
 import { HDPathType } from './path-type';
 
 export type PromiseReturnType<T extends (...args: any)=> Promise<any>> =
   T extends (...args: any) => Promise<infer R> ? R : never;
 
-interface Response<T> {
+export interface Response<T> {
   payload: T;
 }
 
@@ -29,14 +28,14 @@ export type SignTransactionResponse = {
 
 export type SignTransaction = (params: SignTransactionRequestParams) => Promise<Response<SignTransactionResponse>>;
 
-export type ExportAddressResponse = string;
+export type ExportPubKeyResponse = string;
 
-export type ExportAddressRequestParams = {
+export type ExportPubKeyRequestParams = {
   n?: number,
   type: HDPathType,
 };
 
-export type ExportAddress = (params: ExportAddressRequestParams) => Promise<Response<ExportAddressResponse>>;
+export type ExportPubKey = (params: ExportPubKeyRequestParams) => Promise<Response<ExportPubKeyResponse>>;
 
 export type ExportAddressesRequestParams = {
   start: number,
