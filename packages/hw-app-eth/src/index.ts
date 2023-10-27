@@ -111,8 +111,4 @@ export default class Eth {
       ...params,
     });
   };
-
-  forgetDevice = async () => {
-    await this.transport?.forgetDevice();
-  };
 }
