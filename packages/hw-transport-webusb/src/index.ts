@@ -153,5 +153,5 @@ export class TransportWebUSB {
     await open(this.device);
   };
 
-  close = async () => this.device && close(this.device);
+  close = async () => this.device?.opened && close(this.device);
 }

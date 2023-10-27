@@ -43,7 +43,7 @@ export const open = async (device: USBDevice): Promise<USBDevice> => {
   try {
     await device.claimInterface(USBInterfaceNumber);
   } catch (e: any) {
-    await device.close();
+    await close(device);
     throw e;
   }
 
@@ -81,11 +81,7 @@ export const request = async (): Promise<USBDevice> => {
 };
 
 export const close = async (device: USBDevice): Promise<void> => {
-  if (!device?.opened) return;
-  try {
-    await device.releaseInterface(USBInterfaceNumber);
-    await gracefullyResetDevice(device);
-  } finally {
-    await device.close();
-  }
+  await device.releaseInterface(USBInterfaceNumber);
+  await gracefullyResetDevice(device);
+  await device.close();
 };
