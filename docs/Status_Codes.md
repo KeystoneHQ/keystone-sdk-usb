@@ -18,6 +18,5 @@
 | `ERR_RESPONSE_STATUS_NOT_OK` | | The status of the response is not okay. |
 | `ERR_TIMEOUT` | | The operation timed out. |
 | `ERR_DATA_TOO_LARGE` | | The data is too large. |
-| `ERR_NO_DEVICE_FOUND` | | No device was found. |
 | `ERR_NOT_SUPPORTED` | | The operation is not supported. |
 | `RSP_MAX_VALUE` | `0xFFFFFFFF` | Represents the maximum value of the response code. |

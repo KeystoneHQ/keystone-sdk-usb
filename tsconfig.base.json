@@ -18,6 +18,7 @@
     "module": "commonjs",
     "lib": ["DOM", "ES2017"],
     "isolatedModules": false,
+    "experimentalDecorators": true,
     "target": "ES6"
   }
 }

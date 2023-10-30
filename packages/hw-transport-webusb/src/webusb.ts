@@ -12,7 +12,7 @@ const keystoneDevices = [
   },
 ];
 
-function initializeDisconnectListener(device: USBDevice): void {
+export const initializeDisconnectListener = (device: USBDevice): void => {
   const onDisconnect = (e: Event) => {
     if (device === (e as USBConnectionEvent).device) {
       navigator.usb.removeEventListener('disconnect', onDisconnect);
@@ -20,7 +20,7 @@ function initializeDisconnectListener(device: USBDevice): void {
   };
 
   navigator.usb.addEventListener('disconnect', onDisconnect);
-}
+};
 
 async function selectDefaultConfiguration(device: USBDevice): Promise<void> {
   if (device.configuration === null) {
@@ -43,11 +43,10 @@ export const open = async (device: USBDevice): Promise<USBDevice> => {
   try {
     await device.claimInterface(USBInterfaceNumber);
   } catch (e: any) {
-    await device.close();
+    await close(device);
     throw e;
   }
 
-  initializeDisconnectListener(device);
   return device;
 };
 
@@ -64,7 +63,7 @@ export async function getFirstKeystoneDevice(): Promise<USBDevice> {
 
 export const isSupported = async (): Promise<boolean> => {
   if (!navigator?.usb || typeof navigator.usb.getDevices !== 'function') throwTransportError(Status.ERR_NOT_SUPPORTED);
-  if (isEmpty(await getKeystoneDevices())) throwTransportError(Status.ERR_NO_DEVICE_FOUND);
+  if (isEmpty(await getKeystoneDevices())) throwTransportError(Status.ERR_DEVICE_NOT_FOUND);
   return true;
 };
 
@@ -78,14 +77,11 @@ export async function gracefullyResetDevice(device: USBDevice): Promise<void> {
 
 export const request = async (): Promise<USBDevice> => {
   const device = await requestKeystoneDevice();
-  return open(device);
+  return await open(device);
 };
 
 export const close = async (device: USBDevice): Promise<void> => {
-  try {
-    await device.releaseInterface(USBInterfaceNumber);
-    await gracefullyResetDevice(device);
-  } finally {
-    await device.close();
-  }
+  await device.releaseInterface(USBInterfaceNumber);
+  await gracefullyResetDevice(device);
+  await device.close();
 };

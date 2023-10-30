@@ -1,4 +1,5 @@
 export const USBConfigurationValue = 1;
+// export const USBInterfaceNumber = 0;
 export const USBInterfaceNumber = 1;
 export const USBPackageSize = 64;
 export const MAXUSBPackets = 32;

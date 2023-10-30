@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Space, Spin, message, Select } from 'antd';
 import { ApiOutlined, EditOutlined, LockOutlined, DatabaseOutlined } from '@ant-design/icons';
-import createTransport from '@keystonehq/hw-transport-webusb';
+import { TransportWebUSB, getKeystoneDevices } from '@keystonehq/hw-transport-webusb';
 import Eth, { HDPathType } from '@keystonehq/hw-app-eth';
 import './App.css';
 
-const mockTxUR = 'UR:ETH-SIGN-REQUEST/OLADTPDAGDWMZTFTZORNGEFGWNNLGAIACSSBIYEHFNAOHDDLAOWEAHAOLRHKISDLAELRHKISDLBTLFGMAYMWGAGYFLASPLMDMYBGNDATEEISPLLGBABEFXLSIMVALNASCSGLJPNBAELARTAXAAAAAHAHTAADDYOEADLECSDWYKCSFNYKAEYKAEWKAEWKAOCYBNHEGSHYAMGHIHSNEOKTVWHDVSJETIWDTYPLVYGYKBFNNSVAWMNEFHLADWBB';
+// const mockTxUR = 'UR:ETH-SIGN-REQUEST/OLADTPDAGDWMZTFTZORNGEFGWNNLGAIACSSBIYEHFNAOHDDLAOWEAHAOLRHKISDLAELRHKISDLBTLFGMAYMWGAGYFLASPLMDMYBGNDATEEISPLLGBABEFXLSIMVALNASCSGLJPNBAELARTAXAAAAAHAHTAADDYOEADLECSDWYKCSFNYKAEYKAEWKAEWKAOCYBNHEGSHYAMGHIHSNEOKTVWHDVSJETIWDTYPLVYGYKBFNNSVAWMNEFHLADWBB';
+const mockTxUR = 'UR:ETH-SIGN-REQUEST/OLADTPDAGDWMRKUROLCYONFXSEPFAEWESNJYSPLKYNAOHDDTVSCNLRADEHDPAELFGMAYMWGAGYFLASPLMDMYBGNDATEEISPLLGBABEFXLSIMVALPEOESAHMKAELAAHLALAAXADAAAHAHTAADDYOEADLECSDWYKCSFNYKAEYKAEWKAEWKAOCYBNHEGSHYAMGHIHSNEOKTVWHDVSJETIWDTYPLVYGYKBFNNSVAWMNESGFYBWMO';
 
 function App() {
   const [loading, setLoading] = React.useState(false);
@@ -29,14 +30,32 @@ function App() {
 
   const handleLink2Device = React.useCallback(async () => {
     setLoading(true);
-    const transport = await createTransport().catch((err) => {
-      console.error(err);
-      error(err?.message ?? 'unknow error');
-    }).finally(() => setLoading(false));
-    if (!transport) return;
-    setEth(new Eth(transport));
-    success('🎉 Link to Keystone3 Device Success!');
+    try {
+      /**
+       * 1. Request permission to access the device.
+       */
+      if ((await getKeystoneDevices()).length <= 0) {
+        await TransportWebUSB.requestPermission();
+      }
+      /**
+       * 2. Connect to the device.
+       */
+      const transport = await TransportWebUSB.connect();
+      await transport.close();
+      setEth(new Eth(transport!));
+      success('🎉 Link to Keystone3 Device Success!');
+    } catch (e: any) {
+      error(e?.message ?? 'Link to Keystone3 Device failed!');
+    } finally {
+      setLoading(false);
+    }
   }, [error, success, setEth, setLoading]);
+
+  useEffect(() => {
+    if (eth) {
+      (window as any).keystoneEth = eth;
+    }
+  }, [eth]);
 
   const handleSignTx = React.useCallback(async () => {
     if (!eth) {
@@ -69,13 +88,13 @@ function App() {
       return;
     }
     setLoading(true);
-    const checkResult = await eth?.exportAddress({
+    const checkResult = await eth?.exportPubKeyFromUr({
       type: accountType,
     }).catch((err: any) => {
       error(err?.message ?? '');
       console.error(err);
     }).finally(() => setLoading(false));
-    console.log(checkResult?.payload);
+    console.log(checkResult);
   }, [error, eth, setLoading, accountType]);
 
   return (

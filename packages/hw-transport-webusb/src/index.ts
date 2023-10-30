@@ -3,24 +3,72 @@ import { Actions } from './actions';
 import { Status } from './status-code';
 import { generateApduPackets, parseApduPacket } from './frame';
 import { OFFSET_P1, USBPackageSize, OFFSET_INS, OFFSET_LC, USBTimeout, MAXUSBPackets } from './constants';
-import { requestKeystoneDevice, close, open, isSupported } from './webusb';
+import { requestKeystoneDevice, close, open, isSupported, getKeystoneDevices, request } from './webusb';
 import { safeJSONStringify, safeJSONparse, generateRequestID } from './helper';
 import { throwTransportError, TransportError, ErrorInfo } from './error';
+import { logMethod } from './decorators';
 
 export { Actions } from './actions';
 export * from './webusb';
 export { Status as StatusCode } from './status-code';
 export { Chain } from './chain';
+export * from './decorators';
+
+export interface TransportConfig {
+  endpoint?: number;
+  timeout?: number;
+  maxPacketSize?: number;
+}
 
 export class TransportWebUSB {
-  device: Nullable<USBDevice>;
-  endpoint = 3;
+  private device: Nullable<USBDevice>;
+  private endpoint = 3;
+  private requestTimeout = USBTimeout;
+  private maxPacketSize = MAXUSBPackets;
 
-  constructor(device: USBDevice) {
+  /**
+   * The `requestPermission` static method is an asynchronous function that requests permission from the user to access a USB device.
+   * It first checks if the WebUSB API is supported in the current environment.
+   * Then, it requests access to a USB device.
+   * After the device has been accessed, it is then closed.
+   * In order to establish a connection with a USB device, the application must first request the user's permission.
+   */
+  static requestPermission = async () => await close(await request());
+
+  /**
+   * The `connect` static method is an asynchronous function that connects to a USB device.
+   * It first checks if the WebUSB API is supported in the current environment.
+   * Then, it retrieves a list of all USB devices that the application has permission to access using the `getKeystoneDevices` method.
+   * The `getKeystoneDevices` method can only retrieve devices that the application has previously obtained permission to access using the `requestDevice` method.
+   * Finally, it creates and returns a new `TransportWebUSB` object using the selected device.
+   */
+  static connect = async (config?: TransportConfig) => {
+    await isSupported();
+    const devices = await getKeystoneDevices();
+    let device: Nullable<USBDevice> = null;
+    if (devices.length > 1) {
+      device = await requestKeystoneDevice();
+    } else {
+      device = devices[0];
+    }
+    return new TransportWebUSB(device, config);
+  };
+
+  constructor(device: USBDevice, config?: TransportConfig) {
+    this.endpoint = config?.endpoint ?? this.endpoint;
+    this.requestTimeout = config?.timeout ?? this.requestTimeout;
+    this.maxPacketSize = config?.maxPacketSize ?? this.maxPacketSize;
     this.device = device;
   }
 
+  @logMethod
   async send<T>(action: Actions, data: unknown): Promise<T> {
+    return await this.#send<T>(action, data).finally(async () => {
+      await close(this.device!);
+    });
+  }
+
+  async #send<T>(action: Actions, data: unknown): Promise<T> {
     await open(this.device!);
     if (!this.device?.opened) {
       throwTransportError(Status.ERR_DEVICE_NOT_OPENED);
@@ -33,16 +81,17 @@ export class TransportWebUSB {
     const requestID = generateRequestID();
 
     const packages = generateApduPackets(action, requestID, String(data));
-    if (MAXUSBPackets < packages.length) {
+    if (this.maxPacketSize < packages.length) {
       throwTransportError(Status.ERR_DATA_TOO_LARGE);
     }
 
-    const timeout = new Promise<T>((_, reject) =>
-      setTimeout(() => reject(new TransportError(ErrorInfo[Status.ERR_TIMEOUT], Status.ERR_TIMEOUT)), USBTimeout)
-    );
+    let timeoutId: Nullable<NodeJS.Timeout>;
+    const timeout = new Promise<T>((_, reject) => {
+      timeoutId = setTimeout(() => reject(new TransportError(ErrorInfo[Status.ERR_TIMEOUT], Status.ERR_TIMEOUT)),
+        this.requestTimeout);
+    });
 
-    // eslint-disable-next-line no-async-promise-executor
-    const sendRequest = new Promise<T>(async (resolve, reject) => {
+    const sendRequest = (async () => {
       try {
         do {
           const res = await this.device!.transferOut(this.endpoint, packages[0]);
@@ -50,13 +99,11 @@ export class TransportWebUSB {
           packages.shift();
         } while (packages.length > 0);
 
-        resolve(await this.receive(action, requestID) as T);
-      } catch (err) {
-        reject(err);
+        return await this.receive(action, requestID) as T;
       } finally {
-        await close(this.device!);
+        clearTimeout(timeoutId!);
       }
-    });
+    })();
 
     return Promise.race([sendRequest, timeout]);
   }
@@ -106,26 +153,5 @@ export class TransportWebUSB {
     await open(this.device);
   };
 
-  close = async () => this.device && close(this.device);
-}
-
-let device: Nullable<USBDevice> = null;
-
-const isInvalidDevice = (device: Nullable<USBDevice>) => {
-  return device && device?.opened;
-};
-
-export default function createTransport() {
-  // eslint-disable-next-line no-async-promise-executor
-  return new Promise<TransportWebUSB>(async (resolve, reject) => {
-    try {
-      await isSupported();
-      device = isInvalidDevice(device) ? device as USBDevice : await requestKeystoneDevice();
-      const transport = new TransportWebUSB(device);
-      resolve(transport);
-    } catch (err) {
-      device = null;
-      reject(err);
-    }
-  });
+  close = async () => this.device?.opened && close(this.device);
 }
