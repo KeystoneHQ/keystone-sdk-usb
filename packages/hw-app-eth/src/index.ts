@@ -29,7 +29,9 @@ export default class Eth {
     this.transport = transport;
   }
 
-  static async createWithUSBTransport(config?: TransportConfig): Promise<Eth> {
+  static async createWithUSBTransport(
+    config?: TransportConfig,
+  ): Promise<Eth> {
     const transport = await TransportWebUSB.connect(config);
     await transport.close();
     return new Eth(transport);

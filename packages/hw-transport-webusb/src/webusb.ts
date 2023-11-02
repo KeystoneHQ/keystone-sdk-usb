@@ -12,9 +12,14 @@ const keystoneDevices = [
   },
 ];
 
-export const initializeDisconnectListener = (device: USBDevice): void => {
+export const initializeDisconnectListener = (
+  device: USBDevice,
+  disconnectListener?: (device: USBDevice) => void
+): void => {
   const onDisconnect = (e: Event) => {
     if (device === (e as USBConnectionEvent).device) {
+      disconnectListener && disconnectListener(device);
+      close(device);
       navigator.usb.removeEventListener('disconnect', onDisconnect);
     }
   };
