@@ -6,9 +6,11 @@ import {
 } from '@ethereumjs/tx';
 import * as uuid from 'uuid';
 import * as rlp from 'rlp';
-import { DataType, EthSignRequest, ETHSignature } from '@keystonehq/bc-ur-registry-eth';
 import { UR, UREncoder, URDecoder } from '@ngraveio/bc-ur';
 import {
+  DataType,
+  EthSignRequest,
+  ETHSignature,
   CryptoAccount,
   CryptoHDKey,
 } from '@keystonehq/bc-ur-registry-eth';
