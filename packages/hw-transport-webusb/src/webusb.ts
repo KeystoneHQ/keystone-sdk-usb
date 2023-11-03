@@ -4,7 +4,7 @@ import { throwTransportError } from './error';
 import { Status } from './status-code';
 import { Buffer } from 'buffer';
 
-const keystoneUSBVendorId = 4617;
+export const keystoneUSBVendorId = 4617;
 
 const keystoneDevices = [
   {
