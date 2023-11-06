@@ -122,7 +122,10 @@ export default class Eth {
     decoder.receivePart(pubKeyUr);
     const result = decoder.resultUR();
     const cbor = result.cbor.toString('hex');
-    const cryptoHDKey = CryptoHDKey.fromCBOR(Buffer.from(cbor, 'hex'));
-    return cryptoHDKey;
+    if (result.type === 'crypto-hdkey') {
+      return CryptoHDKey.fromCBOR(Buffer.from(cbor, 'hex'));
+    } else {
+      return CryptoAccount.fromCBOR(Buffer.from(cbor, 'hex'));
+    }
   };
 }
