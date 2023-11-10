@@ -1,4 +1,4 @@
-import { Actions, TransportWebUSB, Chain, type TransportConfig } from '@keystonehq/hw-transport-webusb';
+import { Actions, TransportWebUSB, Chain, type TransportConfig, logMethod } from '@keystonehq/hw-transport-webusb';
 import {
   TransactionFactory,
   Transaction,
@@ -107,12 +107,11 @@ export default class Eth {
     return transaction;
   };
 
-  signTransactionFromUr: SignTransactionFromUr = async (urString: string) => {
-    console.log(`[${new Date().toISOString()}] Entered method signTransactionFromUr with parameter: ${urString}`);
+  @logMethod
+  async signTransactionFromUr(urString: string) {
     const result = await this.#send<PromiseReturnType<SignTransactionFromUr>>(Actions.CMD_RESOLVE_UR, urString);
-    console.log(`[${new Date().toISOString()}] Exiting method signTransactionFromUr`);
     return result;
-  };
+  }
 
   exportPubKeyFromUr = async (params): Promise<CryptoHDKey | CryptoAccount> => {
     const { payload: pubKeyUr } = await this.#send<PromiseReturnType<ExportPubKey>>(Actions.CMD_EXPORT_ADDRESS, {
