@@ -14,7 +14,8 @@ import {
   CryptoAccount,
   CryptoHDKey,
 } from '@keystonehq/bc-ur-registry-eth';
-import type {
+import {
+  Wallet,
   CheckLockStatus,
   SignTransactionFromUr,
   ExportPubKey,
@@ -116,6 +117,7 @@ export default class Eth {
   exportPubKeyFromUr = async (params): Promise<CryptoHDKey | CryptoAccount> => {
     const { payload: pubKeyUr } = await this.#send<PromiseReturnType<ExportPubKey>>(Actions.CMD_EXPORT_ADDRESS, {
       chain: Chain.ETH,
+      wallet: Wallet.Rabby,
       ...params,
     });
     const decoder = new URDecoder();

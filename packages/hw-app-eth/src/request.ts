@@ -30,9 +30,14 @@ export type SignTransaction = (params: SignTransactionRequestParams) => Promise<
 
 export type ExportPubKeyResponse = string;
 
+export enum Wallet {
+  Rabby,
+}
+
 export type ExportPubKeyRequestParams = {
   n?: number,
   type: HDPathType,
+  wallet: Wallet
 };
 
 export type ExportPubKey = (params: ExportPubKeyRequestParams) => Promise<Response<ExportPubKeyResponse>>;
