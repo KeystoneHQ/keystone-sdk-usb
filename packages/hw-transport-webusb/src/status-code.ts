@@ -2,15 +2,16 @@ export enum Status {
   /**
    * Hardware wallet status code
    */
-  RSP_SUCCESS_CODE = 0x00000000,      // Response success code
-  RSP_FAILURE_CODE,                   // Response failure code
-  PRS_INVALID_TOTAL_PACKETS,          // Invalid total packets
-  PRS_INVALID_INDEX,                  // Invalid index
+  RSP_SUCCESS_CODE = 0x00000000, // Response success code
+  RSP_FAILURE_CODE,              // Response failure code
+  PRS_INVALID_TOTAL_PACKETS,
+  PRS_INVALID_INDEX,
   // Resolve UR response status
-  PRS_PARSING_REJECTED,               // Parsing rejected
-  PRS_PARSING_ERROR,                  // Parsing error
-  PRS_PARSING_DISALLOWED,             // Parsing disallowed
+  PRS_PARSING_REJECTED,
+  PRS_PARSING_ERROR,
+  PRS_PARSING_DISALLOWED,
   PRS_PARSING_UNMATCHED,
+  PRS_PARSING_MISMATCHED_WALLET,
   PRS_EXPORT_ADDRESS_UNSUPPORTED_CHAIN,
   PRS_EXPORT_ADDRESS_INVALID_PARAMS,
   PRS_EXPORT_ADDRESS_ERROR,
