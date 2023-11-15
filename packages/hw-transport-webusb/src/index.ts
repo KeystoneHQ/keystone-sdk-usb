@@ -3,7 +3,7 @@ import { Actions } from './actions';
 import { Status } from './status-code';
 import { generateApduPackets, parseApduPacket } from './frame';
 import { OFFSET_P1, USBPackageSize, OFFSET_INS, OFFSET_LC, USBTimeout, MAXUSBPackets } from './constants';
-import { requestKeystoneDevice, close, open, isSupported, getKeystoneDevices, request } from './webusb';
+import { requestKeystoneDevice, close, open, isSupported, getKeystoneDevices, request, initializeDisconnectListener } from './webusb';
 import { safeJSONStringify, safeJSONparse, generateRequestID } from './helper';
 import { throwTransportError, TransportError, ErrorInfo } from './error';
 import { logMethod } from './decorators';
@@ -18,6 +18,7 @@ export interface TransportConfig {
   endpoint?: number;
   timeout?: number;
   maxPacketSize?: number;
+  disconnectListener?: (device: USBDevice) => void;
 }
 
 export class TransportWebUSB {
@@ -51,6 +52,7 @@ export class TransportWebUSB {
     } else {
       device = devices[0];
     }
+    initializeDisconnectListener(device, config?.disconnectListener);
     return new TransportWebUSB(device, config);
   };
 
@@ -117,7 +119,9 @@ export class TransportWebUSB {
     let totalPackets = 0;
     let shouldContinue = true;
     do {
-      const response = await this.device.transferIn(this.endpoint, USBPackageSize);
+      const response = await this.device.transferIn(this.endpoint, USBPackageSize).catch(async () => {
+        await open(this.device!);
+      });
       const hasBuffer = !!response?.data?.buffer;
       const isBufferEmpty = response?.data?.buffer?.byteLength === 0;
       const isCurrentAction = hasBuffer && !isBufferEmpty &&

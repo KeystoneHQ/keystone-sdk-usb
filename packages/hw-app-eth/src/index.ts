@@ -1,4 +1,4 @@
-import { Actions, TransportWebUSB, Chain, type TransportConfig } from '@keystonehq/hw-transport-webusb';
+import { Actions, TransportWebUSB, Chain, type TransportConfig, logMethod } from '@keystonehq/hw-transport-webusb';
 import {
   TransactionFactory,
   Transaction,
@@ -6,13 +6,16 @@ import {
 } from '@ethereumjs/tx';
 import * as uuid from 'uuid';
 import * as rlp from 'rlp';
-import { DataType, EthSignRequest, ETHSignature } from '@keystonehq/bc-ur-registry-eth';
 import { UR, UREncoder, URDecoder } from '@ngraveio/bc-ur';
 import {
+  DataType,
+  EthSignRequest,
+  ETHSignature,
   CryptoAccount,
   CryptoHDKey,
 } from '@keystonehq/bc-ur-registry-eth';
-import type {
+import {
+  Wallet,
   CheckLockStatus,
   SignTransactionFromUr,
   ExportPubKey,
@@ -29,7 +32,9 @@ export default class Eth {
     this.transport = transport;
   }
 
-  static async createWithUSBTransport(config?: TransportConfig): Promise<Eth> {
+  static async createWithUSBTransport(
+    config?: TransportConfig,
+  ): Promise<Eth> {
     const transport = await TransportWebUSB.connect(config);
     await transport.close();
     return new Eth(transport);
@@ -102,23 +107,26 @@ export default class Eth {
     return transaction;
   };
 
-  signTransactionFromUr: SignTransactionFromUr = async (urString: string) => {
-    console.log(`[${new Date().toISOString()}] Entered method signTransactionFromUr with parameter: ${urString}`);
+  @logMethod
+  async signTransactionFromUr(urString: string) {
     const result = await this.#send<PromiseReturnType<SignTransactionFromUr>>(Actions.CMD_RESOLVE_UR, urString);
-    console.log(`[${new Date().toISOString()}] Exiting method signTransactionFromUr`);
     return result;
-  };
+  }
 
   exportPubKeyFromUr = async (params): Promise<CryptoHDKey | CryptoAccount> => {
     const { payload: pubKeyUr } = await this.#send<PromiseReturnType<ExportPubKey>>(Actions.CMD_EXPORT_ADDRESS, {
       chain: Chain.ETH,
+      wallet: Wallet.Rabby,
       ...params,
     });
     const decoder = new URDecoder();
     decoder.receivePart(pubKeyUr);
     const result = decoder.resultUR();
     const cbor = result.cbor.toString('hex');
-    const cryptoHDKey = CryptoHDKey.fromCBOR(Buffer.from(cbor, 'hex'));
-    return cryptoHDKey;
+    if (result.type === 'crypto-hdkey') {
+      return CryptoHDKey.fromCBOR(Buffer.from(cbor, 'hex'));
+    } else {
+      return CryptoAccount.fromCBOR(Buffer.from(cbor, 'hex'));
+    }
   };
 }
