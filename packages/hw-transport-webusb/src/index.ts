@@ -111,6 +111,7 @@ export class TransportWebUSB {
   }
 
   receive = async (action: Actions, requestID: number) => {
+    await open(this.device!);
     if (!this.device?.opened) {
       return null;
     }
@@ -119,9 +120,7 @@ export class TransportWebUSB {
     let totalPackets = 0;
     let shouldContinue = true;
     do {
-      const response = await this.device.transferIn(this.endpoint, USBPackageSize).catch(async () => {
-        await open(this.device!);
-      });
+      const response = await this.device.transferIn(this.endpoint, USBPackageSize);
       const hasBuffer = !!response?.data?.buffer;
       const isBufferEmpty = response?.data?.buffer?.byteLength === 0;
       const isCurrentAction = hasBuffer && !isBufferEmpty &&
