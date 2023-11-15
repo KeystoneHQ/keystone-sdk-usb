@@ -1,5 +1,7 @@
 export const USBConfigurationValue = 1;
+// pro
 // export const USBInterfaceNumber = 0;
+// dev
 export const USBInterfaceNumber = 1;
 export const USBPackageSize = 64;
 // This constant represents the maximum number of USB packets. Each request packet can carry 55 valid data bytes,
