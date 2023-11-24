@@ -1,13 +1,13 @@
 import { Status } from './status-code';
 
 export class TransportError extends Error {
-  code: number;
+  transportErrorCode: number;
   details: string;
 
-  constructor(message: string, code: number, details?: string) {
-    super(`[Transport Error]: ${message}`);
+  constructor(message: string, transportErrorCode: number, details?: string) {
+    super(`${message} (error_code: ${transportErrorCode})`);
     this.name = 'TransportError';
-    this.code = code;
+    this.transportErrorCode = transportErrorCode;
     this.details = details ?? '';
     Object.setPrototypeOf(this, new.target.prototype);
   }
@@ -20,6 +20,7 @@ export const ErrorInfo = {
   [Status.ERR_TIMEOUT]: 'The request timed out.',
   [Status.ERR_DATA_TOO_LARGE]: 'The data is too large.',
   [Status.ERR_NOT_SUPPORTED]: 'The USB device is not supported.',
+  [Status.ERR_BUFFER_MISMATCH]: 'The buffer mismatched.',
 };
 
 export const throwTransportError = (status: Status): never => {
