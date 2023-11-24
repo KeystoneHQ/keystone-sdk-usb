@@ -111,7 +111,6 @@ export class TransportWebUSB {
   }
 
   receive = async (action: Actions, requestID: number) => {
-    await open(this.device!);
     if (!this.device?.opened) {
       return null;
     }
@@ -127,7 +126,7 @@ export class TransportWebUSB {
         new DataView(response.data.buffer).getUint16(OFFSET_INS) === action &&
         new DataView(response.data.buffer).getUint16(OFFSET_LC) === requestID;
       if (!isCurrentAction || response.status !== 'ok') {
-        await this.device.reset();
+        await this.open();
         continue;
       }
       shouldContinue = false;
