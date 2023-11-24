@@ -40,7 +40,9 @@ function App() {
       /**
        * 2. Connect to the device.
        */
-      const transport = await TransportWebUSB.connect();
+      const transport = await TransportWebUSB.connect({
+        timeout: 10000,
+      });
       await transport.close();
       setEth(new Eth(transport!));
       success('🎉 Link to Keystone3 Device Success!');

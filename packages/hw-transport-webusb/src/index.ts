@@ -126,7 +126,8 @@ export class TransportWebUSB {
       const isCurrentAction = hasBuffer && !isBufferEmpty &&
         new DataView(response.data.buffer).getUint16(OFFSET_INS) === action &&
         new DataView(response.data.buffer).getUint16(OFFSET_LC) === requestID;
-      if (!isCurrentAction) {
+      if (!isCurrentAction || response.status !== 'ok') {
+        await this.device.reset();
         continue;
       }
       shouldContinue = false;

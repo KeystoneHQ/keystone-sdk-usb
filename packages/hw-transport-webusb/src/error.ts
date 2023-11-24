@@ -20,6 +20,7 @@ export const ErrorInfo = {
   [Status.ERR_TIMEOUT]: 'The request timed out.',
   [Status.ERR_DATA_TOO_LARGE]: 'The data is too large.',
   [Status.ERR_NOT_SUPPORTED]: 'The USB device is not supported.',
+  [Status.ERR_BUFFER_MISMATCH]: 'The buffer mismatched.',
 };
 
 export const throwTransportError = (status: Status): never => {
