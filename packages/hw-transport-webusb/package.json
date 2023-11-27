@@ -1,6 +1,6 @@
 {
   "name": "@keystonehq/hw-transport-webusb",
-  "version": "0.2.21",
+  "version": "0.2.22",
   "description": "",
   "main": "lib/index.js",
   "scripts": {

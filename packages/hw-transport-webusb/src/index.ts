@@ -120,12 +120,15 @@ export class TransportWebUSB {
     let shouldContinue = true;
     do {
       const response = await this.device.transferIn(this.endpoint, USBPackageSize);
+      if (response.status === 'babble') {
+        throwTransportError(Status.ERR_RECEIVED_BABBLE);
+      }
       const hasBuffer = !!response?.data?.buffer;
       const isBufferEmpty = response?.data?.buffer?.byteLength === 0;
       const isCurrentAction = hasBuffer && !isBufferEmpty &&
         new DataView(response.data.buffer).getUint16(OFFSET_INS) === action &&
         new DataView(response.data.buffer).getUint16(OFFSET_LC) === requestID;
-      if (!isCurrentAction || response.status !== 'ok') {
+      if (!isCurrentAction) {
         await this.open();
         continue;
       }

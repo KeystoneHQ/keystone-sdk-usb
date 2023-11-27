@@ -12,7 +12,7 @@ function App() {
   const [loading, setLoading] = React.useState(false);
   const [eth, setEth] = React.useState<Eth | null>(null);
   const [messageApi, contextHolder] = message.useMessage();
-  const [accountType, setAccountType] = React.useState<HDPathType>(HDPathType.Bip44Standard);
+  const [accountType, setAccountType] = React.useState<HDPathType>(HDPathType.LedgerLive);
 
   const success = React.useCallback((content: React.ReactNode) => {
     messageApi.open({
