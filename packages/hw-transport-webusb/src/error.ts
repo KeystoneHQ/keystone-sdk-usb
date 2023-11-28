@@ -22,6 +22,7 @@ export const ErrorInfo = {
   [Status.ERR_NOT_SUPPORTED]: 'The USB device is not supported.',
   [Status.ERR_BUFFER_MISMATCH]: 'The buffer mismatched.',
   [Status.ERR_RECEIVED_BABBLE]: 'The USB device received babble.',
+  [Status.ERR_INVALID_PACKET_SIZE]: 'The packet size is invalid.',
 };
 
 export const throwTransportError = (status: Status): never => {
