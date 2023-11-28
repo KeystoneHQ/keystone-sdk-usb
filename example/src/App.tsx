@@ -41,7 +41,7 @@ function App() {
        * 2. Connect to the device.
        */
       const transport = await TransportWebUSB.connect({
-        timeout: 10000,
+        timeout: 5000,
       });
       await transport.close();
       setEth(new Eth(transport!));
