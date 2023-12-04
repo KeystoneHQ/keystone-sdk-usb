@@ -86,7 +86,11 @@ export const request = async (): Promise<USBDevice> => {
 };
 
 export const close = async (device: USBDevice): Promise<void> => {
-  await device.releaseInterface(USBInterfaceNumber);
-  await gracefullyResetDevice(device);
-  await device.close();
+  try {
+    await device.releaseInterface(USBInterfaceNumber);
+    await gracefullyResetDevice(device);
+    await device.close();
+  } catch (err) {
+    console.warn(err);
+  }
 };

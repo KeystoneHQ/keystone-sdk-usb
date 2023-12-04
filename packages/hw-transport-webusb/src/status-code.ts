@@ -6,7 +6,6 @@ export enum Status {
   RSP_FAILURE_CODE,              // Response failure code
   PRS_INVALID_TOTAL_PACKETS,
   PRS_INVALID_INDEX,
-  // Resolve UR response status
   PRS_PARSING_REJECTED,
   PRS_PARSING_ERROR,
   PRS_PARSING_DISALLOWED,
@@ -29,6 +28,8 @@ export enum Status {
   ERR_DATA_TOO_LARGE,
   ERR_NOT_SUPPORTED,
   ERR_BUFFER_MISMATCH,
+  ERR_RECEIVED_BABBLE,
+  ERR_INVALID_PACKET_SIZE,
 
   RSP_MAX_VALUE = 0xFFFFFFFF,
 }

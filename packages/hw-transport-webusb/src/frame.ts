@@ -9,6 +9,8 @@ import {
   OFFSET_LC,
   OFFSET_CDATA,
 } from './constants';
+import { throwTransportError } from './error';
+import { Status } from './status-code';
 
 const MAX_DATA_SIZE = 55;
 const HEADER_SIZE = 9;
@@ -58,7 +60,7 @@ export const generateApduPackets = (command: Actions, requestID: number, strData
 };
 
 export const parseApduPacket = (uint8Array: Uint8Array) => {
-  if (uint8Array.length < HEADER_SIZE) throw new Error('Invalid packet size');
+  if (uint8Array.length < HEADER_SIZE) throwTransportError(Status.ERR_INVALID_PACKET_SIZE);
   const dataView = new DataView(uint8Array.buffer);
   const cla = dataView.getUint8(0);
   const ins = dataView.getUint16(OFFSET_INS);

@@ -32,6 +32,7 @@ export type ExportPubKeyResponse = string;
 
 export enum Wallet {
   Rabby,
+  Default,
 }
 
 export type ExportPubKeyRequestParams = {

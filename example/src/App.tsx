@@ -12,7 +12,7 @@ function App() {
   const [loading, setLoading] = React.useState(false);
   const [eth, setEth] = React.useState<Eth | null>(null);
   const [messageApi, contextHolder] = message.useMessage();
-  const [accountType, setAccountType] = React.useState<HDPathType>(HDPathType.Bip44Standard);
+  const [accountType, setAccountType] = React.useState<HDPathType>(HDPathType.LedgerLive);
 
   const success = React.useCallback((content: React.ReactNode) => {
     messageApi.open({
@@ -41,7 +41,7 @@ function App() {
        * 2. Connect to the device.
        */
       const transport = await TransportWebUSB.connect({
-        timeout: 10000,
+        timeout: 5000,
       });
       await transport.close();
       setEth(new Eth(transport!));
