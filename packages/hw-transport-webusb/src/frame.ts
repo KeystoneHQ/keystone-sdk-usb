@@ -9,8 +9,7 @@ import {
   OFFSET_LC,
   OFFSET_CDATA,
 } from './constants';
-import { throwTransportError } from './error';
-import { Status } from './status-code';
+import { throwTransportError, Status } from '@keystonehq/hw-transport-error';
 
 const MAX_DATA_SIZE = 55;
 const HEADER_SIZE = 9;

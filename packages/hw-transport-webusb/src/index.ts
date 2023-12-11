@@ -1,16 +1,15 @@
 import { Buffer } from 'buffer';
 import { Actions } from './actions';
-import { Status } from './status-code';
+import { Status, throwTransportError, TransportError, ErrorInfo } from '@keystonehq/hw-transport-error';
 import { generateApduPackets, parseApduPacket } from './frame';
 import { OFFSET_P1, USBPackageSize, OFFSET_INS, OFFSET_LC, USBTimeout, MAXUSBPackets } from './constants';
 import { requestKeystoneDevice, close, open, isSupported, getKeystoneDevices, request, initializeDisconnectListener } from './webusb';
 import { safeJSONStringify, safeJSONparse, generateRequestID } from './helper';
-import { throwTransportError, TransportError, ErrorInfo } from './error';
 import { logMethod } from './decorators';
 
 export { Actions } from './actions';
 export * from './webusb';
-export { Status as StatusCode } from './status-code';
+export { Status as StatusCode } from '@keystonehq/hw-transport-error';
 export { Chain } from './chain';
 export * from './decorators';
 

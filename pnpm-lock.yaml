@@ -269,8 +269,13 @@ importers:
         specifier: ^5.2.2
         version: 5.2.2
 
+  packages/hw-transport-error: {}
+
   packages/hw-transport-webusb:
     dependencies:
+      '@keystonehq/hw-transport-error':
+        specifier: workspace:../hw-transport-error
+        version: link:../hw-transport-error
       buffer:
         specifier: ^6.0.3
         version: 6.0.3

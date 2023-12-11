@@ -1,6 +1,6 @@
 {
   "name": "@keystonehq/hw-transport-webusb",
-  "version": "0.2.23",
+  "version": "0.2.24",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
@@ -19,6 +19,7 @@
   },
   "license": "ISC",
   "dependencies": {
-    "buffer": "^6.0.3"
+    "buffer": "^6.0.3",
+    "@keystonehq/hw-transport-error": "workspace:../hw-transport-error"
   }
 }
