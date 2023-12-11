@@ -24,7 +24,7 @@ const dataParser = (buffer: Uint8Array) => {
   return textDecoder.decode(buffer);
 };
 
-export const generateApduPackets = (command: Actions, requestID: number, strData: string) => {
+export const generateEApduPackets = (command: Actions, requestID: number, strData: string) => {
   if (!strData || strData.length === 0) {
       const packet = new Uint8Array(9);
       packet[OFFSET_CLA] = 0;  // Fixed header
@@ -58,7 +58,7 @@ export const generateApduPackets = (command: Actions, requestID: number, strData
   return packets;
 };
 
-export const parseApduPacket = (uint8Array: Uint8Array) => {
+export const parseEApduPacket = (uint8Array: Uint8Array) => {
   if (uint8Array.length < HEADER_SIZE) throwTransportError(Status.ERR_INVALID_PACKET_SIZE);
   const dataView = new DataView(uint8Array.buffer);
   const cla = dataView.getUint8(0);

@@ -1,7 +1,7 @@
 import { Buffer } from 'buffer';
 import { Actions } from './actions';
 import { Status, throwTransportError, TransportError, ErrorInfo } from '@keystonehq/hw-transport-error';
-import { generateApduPackets, parseApduPacket } from './frame';
+import { generateEApduPackets, parseEApduPacket } from './frame';
 import { OFFSET_P1, USBPackageSize, OFFSET_INS, OFFSET_LC, USBTimeout, MAXUSBPackets } from './constants';
 import { requestKeystoneDevice, close, open, isSupported, getKeystoneDevices, request, initializeDisconnectListener } from './webusb';
 import { safeJSONStringify, safeJSONparse, generateRequestID } from './helper';
@@ -81,7 +81,7 @@ export class TransportWebUSB {
 
     const requestID = generateRequestID();
 
-    const packages = generateApduPackets(action, requestID, String(data));
+    const packages = generateEApduPackets(action, requestID, String(data));
     if (this.maxPacketSize < packages.length) {
       throwTransportError(Status.ERR_DATA_TOO_LARGE);
     }
@@ -141,7 +141,7 @@ export class TransportWebUSB {
       data: string,
       status?: Status
     } = packagesBuffer
-      .map((buffer) => parseApduPacket(buffer))
+      .map((buffer) => parseEApduPacket(buffer))
       .sort(({ packetIndex: a }, { packetIndex: b }) => a - b)
       .reduce<{ data: string, status?: number }>((acc, { data, status }) =>
         ({ data: acc.data + data, status }), { data: '' });
