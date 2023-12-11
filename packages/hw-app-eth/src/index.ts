@@ -1,6 +1,5 @@
 import { Actions, TransportWebUSB, Chain, type TransportConfig, logMethod } from '@keystonehq/hw-transport-webusb';
 import {
-  TransactionFactory,
   Transaction,
   FeeMarketEIP1559Transaction,
 } from '@ethereumjs/tx';
@@ -11,7 +10,6 @@ import { UR, UREncoder, URDecoder } from '@ngraveio/bc-ur';
 import {
   DataType,
   EthSignRequest,
-  ETHSignature,
   CryptoAccount,
   CryptoHDKey,
 } from '@keystonehq/bc-ur-registry-eth';
@@ -22,6 +20,7 @@ import {
   ExportPubKey,
   PromiseReturnType,
 } from './request';
+import { parseExportedPublicKeyOrAddress, parseTransaction } from './ur-parser';
 
 export { HDPathType } from './path-type';
 export * from './request';
@@ -86,26 +85,8 @@ export default class Eth {
     if (!decoder.isComplete()) {
       throwTransportError(Status.ERR_UR_INCOMPLETE);
     }
-
-    const resultUr = decoder.resultUR();
-    if (resultUr.type !== 'eth-signature') {
-      throwTransportError(Status.ERR_UR_INVALID_TYPE);
-    }
-
-    const ethSignature = ETHSignature.fromCBOR(Buffer.from(resultUr.cbor.toString('hex'), 'hex'));
-    const signature = ethSignature.getSignature();
-    const r = signature.slice(0, 32);
-    const s = signature.slice(32, 64);
-    const v = signature.slice(64);
-    const txJson = tx.toJSON();
-    txJson.v = v;
-    txJson.s = s;
-    txJson.r = r;
-    txJson.type = tx.type;
-    const transaction = TransactionFactory.fromTxData(txJson, {
-      common: tx.common,
-    });
-    return transaction;
+    
+    return parseTransaction(signatureResponse.payload, tx);
   };
 
   @logMethod
@@ -120,14 +101,7 @@ export default class Eth {
       wallet: Wallet.Rabby,
       ...params,
     });
-    const decoder = new URDecoder();
-    decoder.receivePart(pubKeyUr);
-    const result = decoder.resultUR();
-    const cbor = result.cbor.toString('hex');
-    if (result.type === 'crypto-hdkey') {
-      return CryptoHDKey.fromCBOR(Buffer.from(cbor, 'hex'));
-    } else {
-      return CryptoAccount.fromCBOR(Buffer.from(cbor, 'hex'));
-    }
+
+    return parseExportedPublicKeyOrAddress(pubKeyUr);
   };
 }
