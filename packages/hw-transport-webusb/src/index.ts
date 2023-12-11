@@ -1,7 +1,7 @@
 import { Buffer } from 'buffer';
 import { Actions } from './actions';
 import { Status, throwTransportError, TransportError, ErrorInfo } from '@keystonehq/hw-transport-error';
-import { generateEApduPackets, parseEApduPacket } from './frame';
+import { decode, encode } from './frame';
 import { OFFSET_P1, USBPackageSize, OFFSET_INS, OFFSET_LC, USBTimeout, MAXUSBPackets } from './constants';
 import { requestKeystoneDevice, close, open, isSupported, getKeystoneDevices, request, initializeDisconnectListener } from './webusb';
 import { safeJSONStringify, safeJSONparse, generateRequestID } from './helper';
@@ -81,7 +81,7 @@ export class TransportWebUSB {
 
     const requestID = generateRequestID();
 
-    const packages = generateEApduPackets(action, requestID, String(data));
+    const packages = encode(action, requestID, String(data));
     if (this.maxPacketSize < packages.length) {
       throwTransportError(Status.ERR_DATA_TOO_LARGE);
     }
@@ -137,14 +137,7 @@ export class TransportWebUSB {
       counter += 1;
     } while (counter < totalPackets || shouldContinue);
 
-    const result: {
-      data: string,
-      status?: Status
-    } = packagesBuffer
-      .map((buffer) => parseEApduPacket(buffer))
-      .sort(({ packetIndex: a }, { packetIndex: b }) => a - b)
-      .reduce<{ data: string, status?: number }>((acc, { data, status }) =>
-        ({ data: acc.data + data, status }), { data: '' });
+    const result = decode(packagesBuffer);
     if (result.status !== Status.RSP_SUCCESS_CODE) {
       throw new TransportError(`${safeJSONparse(result.data)?.payload ?? 'unknown error'}`, result.status ?? Status.RSP_FAILURE_CODE);
     }
