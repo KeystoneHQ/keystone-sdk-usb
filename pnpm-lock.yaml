@@ -246,6 +246,9 @@ importers:
       '@keystonehq/bc-ur-registry-eth':
         specifier: ^0.8.1-alpha.0
         version: 0.8.1-alpha.0
+      '@keystonehq/hw-transport-error':
+        specifier: workspace:../hw-transport-error
+        version: link:../hw-transport-error
       '@keystonehq/hw-transport-webusb':
         specifier: workspace:../hw-transport-webusb
         version: link:../hw-transport-webusb

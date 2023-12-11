@@ -4,6 +4,7 @@ import {
   Transaction,
   FeeMarketEIP1559Transaction,
 } from '@ethereumjs/tx';
+import { throwTransportError, Status } from '@keystonehq/hw-transport-error';
 import * as uuid from 'uuid';
 import * as rlp from 'rlp';
 import { UR, UREncoder, URDecoder } from '@ngraveio/bc-ur';
@@ -42,7 +43,7 @@ export default class Eth {
 
   #send = async <T>(action: Actions, data: unknown) => {
     if (!this.transport) {
-      throw new Error('Transport has not been set');
+      throwTransportError(Status.ERR_TRANSPORT_HAS_NOT_BEEN_SET);
     }
     return await this.transport.send<T>(action, data);
   };
@@ -83,12 +84,12 @@ export default class Eth {
     const decoder = new URDecoder();
     decoder.receivePart(signatureResponse.payload);
     if (!decoder.isComplete()) {
-      throw new Error('UR did not complete');
+      throwTransportError(Status.ERR_UR_INCOMPLETE);
     }
 
     const resultUr = decoder.resultUR();
     if (resultUr.type !== 'eth-signature') {
-      throw new Error('Invalid UR type');
+      throwTransportError(Status.ERR_UR_INVALID_TYPE);
     }
 
     const ethSignature = ETHSignature.fromCBOR(Buffer.from(resultUr.cbor.toString('hex'), 'hex'));

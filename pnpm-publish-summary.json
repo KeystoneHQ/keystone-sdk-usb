@@ -2,15 +2,15 @@
 	"publishedPackages": [
 		{
 			"name": "@keystonehq/hw-transport-error",
-			"version": "0.0.1"
+			"version": "0.0.2"
 		},
 		{
 			"name": "@keystonehq/hw-transport-webusb",
-			"version": "0.2.24"
+			"version": "0.3.0"
 		},
 		{
 			"name": "@keystonehq/hw-app-eth",
-			"version": "0.2.24"
+			"version": "0.3.0"
 		}
 	]
 }
