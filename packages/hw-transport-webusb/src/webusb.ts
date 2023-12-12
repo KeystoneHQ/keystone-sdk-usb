@@ -1,7 +1,6 @@
 import { USBInterfaceNumber, USBConfigurationValue } from './constants';
 import { isEmpty } from './helper';
-import { throwTransportError } from './error';
-import { Status } from './status-code';
+import { throwTransportError, Status } from '@keystonehq/hw-transport-error';
 import { Buffer } from 'buffer';
 
 export const keystoneUSBVendorId = 4617;

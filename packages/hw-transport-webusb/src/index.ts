@@ -1,16 +1,15 @@
 import { Buffer } from 'buffer';
 import { Actions } from './actions';
-import { Status } from './status-code';
-import { generateApduPackets, parseApduPacket } from './frame';
+import { Status, throwTransportError, TransportError, ErrorInfo } from '@keystonehq/hw-transport-error';
+import { decode, encode } from './frame';
 import { OFFSET_P1, USBPackageSize, OFFSET_INS, OFFSET_LC, USBTimeout, MAXUSBPackets } from './constants';
 import { requestKeystoneDevice, close, open, isSupported, getKeystoneDevices, request, initializeDisconnectListener } from './webusb';
 import { safeJSONStringify, safeJSONparse, generateRequestID } from './helper';
-import { throwTransportError, TransportError, ErrorInfo } from './error';
 import { logMethod } from './decorators';
 
 export { Actions } from './actions';
 export * from './webusb';
-export { Status as StatusCode } from './status-code';
+export { Status as StatusCode } from '@keystonehq/hw-transport-error';
 export { Chain } from './chain';
 export * from './decorators';
 
@@ -82,7 +81,7 @@ export class TransportWebUSB {
 
     const requestID = generateRequestID();
 
-    const packages = generateApduPackets(action, requestID, String(data));
+    const packages = encode(action, requestID, String(data));
     if (this.maxPacketSize < packages.length) {
       throwTransportError(Status.ERR_DATA_TOO_LARGE);
     }
@@ -138,14 +137,7 @@ export class TransportWebUSB {
       counter += 1;
     } while (counter < totalPackets || shouldContinue);
 
-    const result: {
-      data: string,
-      status?: Status
-    } = packagesBuffer
-      .map((buffer) => parseApduPacket(buffer))
-      .sort(({ packetIndex: a }, { packetIndex: b }) => a - b)
-      .reduce<{ data: string, status?: number }>((acc, { data, status }) =>
-        ({ data: acc.data + data, status }), { data: '' });
+    const result = decode(packagesBuffer);
     if (result.status !== Status.RSP_SUCCESS_CODE) {
       throw new TransportError(`${safeJSONparse(result.data)?.payload ?? 'unknown error'}`, result.status ?? Status.RSP_FAILURE_CODE);
     }

@@ -1,16 +1,15 @@
 import { Actions, TransportWebUSB, Chain, type TransportConfig, logMethod } from '@keystonehq/hw-transport-webusb';
 import {
-  TransactionFactory,
   Transaction,
   FeeMarketEIP1559Transaction,
 } from '@ethereumjs/tx';
+import { throwTransportError, Status } from '@keystonehq/hw-transport-error';
 import * as uuid from 'uuid';
 import * as rlp from 'rlp';
 import { UR, UREncoder, URDecoder } from '@ngraveio/bc-ur';
 import {
   DataType,
   EthSignRequest,
-  ETHSignature,
   CryptoAccount,
   CryptoHDKey,
 } from '@keystonehq/bc-ur-registry-eth';
@@ -21,6 +20,7 @@ import {
   ExportPubKey,
   PromiseReturnType,
 } from './request';
+import { parseExportedPublicKeyOrAddress, parseTransaction } from './ur-parser';
 
 export { HDPathType } from './path-type';
 export * from './request';
@@ -42,7 +42,7 @@ export default class Eth {
 
   #send = async <T>(action: Actions, data: unknown) => {
     if (!this.transport) {
-      throw new Error('Transport has not been set');
+      throwTransportError(Status.ERR_TRANSPORT_HAS_NOT_BEEN_SET);
     }
     return await this.transport.send<T>(action, data);
   };
@@ -83,28 +83,10 @@ export default class Eth {
     const decoder = new URDecoder();
     decoder.receivePart(signatureResponse.payload);
     if (!decoder.isComplete()) {
-      throw new Error('UR did not complete');
+      throwTransportError(Status.ERR_UR_INCOMPLETE);
     }
-
-    const resultUr = decoder.resultUR();
-    if (resultUr.type !== 'eth-signature') {
-      throw new Error('Invalid UR type');
-    }
-
-    const ethSignature = ETHSignature.fromCBOR(Buffer.from(resultUr.cbor.toString('hex'), 'hex'));
-    const signature = ethSignature.getSignature();
-    const r = signature.slice(0, 32);
-    const s = signature.slice(32, 64);
-    const v = signature.slice(64);
-    const txJson = tx.toJSON();
-    txJson.v = v;
-    txJson.s = s;
-    txJson.r = r;
-    txJson.type = tx.type;
-    const transaction = TransactionFactory.fromTxData(txJson, {
-      common: tx.common,
-    });
-    return transaction;
+    
+    return parseTransaction(signatureResponse.payload, tx);
   };
 
   @logMethod
@@ -119,14 +101,7 @@ export default class Eth {
       wallet: Wallet.Rabby,
       ...params,
     });
-    const decoder = new URDecoder();
-    decoder.receivePart(pubKeyUr);
-    const result = decoder.resultUR();
-    const cbor = result.cbor.toString('hex');
-    if (result.type === 'crypto-hdkey') {
-      return CryptoHDKey.fromCBOR(Buffer.from(cbor, 'hex'));
-    } else {
-      return CryptoAccount.fromCBOR(Buffer.from(cbor, 'hex'));
-    }
+
+    return parseExportedPublicKeyOrAddress(pubKeyUr);
   };
 }

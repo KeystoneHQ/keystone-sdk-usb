@@ -23,6 +23,9 @@ export const ErrorInfo = {
   [Status.ERR_BUFFER_MISMATCH]: 'The buffer mismatched.',
   [Status.ERR_RECEIVED_BABBLE]: 'The USB device received babble.',
   [Status.ERR_INVALID_PACKET_SIZE]: 'The packet size is invalid.',
+  [Status.ERR_TRANSPORT_HAS_NOT_BEEN_SET]: 'The transport has not been set.',
+  [Status.ERR_UR_INCOMPLETE]: 'The UR is incomplete.',
+  [Status.ERR_UR_INVALID_TYPE]: 'The UR type is invalid.',
 };
 
 export const throwTransportError = (status: Status): never => {

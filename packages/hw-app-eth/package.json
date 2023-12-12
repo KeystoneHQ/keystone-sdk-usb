@@ -1,6 +1,6 @@
 {
   "name": "@keystonehq/hw-app-eth",
-  "version": "0.2.23",
+  "version": "0.3.2",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
@@ -23,6 +23,7 @@
     "@ethereumjs/tx": "^3.3.2",
     "@keystonehq/bc-ur-registry-eth": "^0.8.1-alpha.0",
     "@keystonehq/hw-transport-webusb": "workspace:../hw-transport-webusb",
+    "@keystonehq/hw-transport-error": "workspace:../hw-transport-error",
     "@ngraveio/bc-ur": "^1.1.6",
     "buffer": "^6.0.3",
     "hdkey": "^2.0.1",
