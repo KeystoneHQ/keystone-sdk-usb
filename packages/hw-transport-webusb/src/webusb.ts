@@ -43,7 +43,6 @@ export const open = async (device: USBDevice): Promise<USBDevice> => {
   await device.open();
   await selectDefaultConfiguration(device);
   await gracefullyResetDevice(device);
-
   try {
     await device.claimInterface(USBInterfaceNumber);
   } catch (e: any) {

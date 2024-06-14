@@ -32,3 +32,7 @@ export const isEmpty = (value: any) => {
 export const generateRequestID = () => {
   return Math.floor(Math.random() * 65535);
 };
+
+export const isUint8Array = (data: any): data is Uint8Array => data instanceof Uint8Array;
+
+export const isString = (data: any): data is string => typeof data === 'string';

@@ -21,6 +21,8 @@ import {
   PromiseReturnType,
 } from './request';
 import { parseExportedPublicKeyOrAddress, parseTransaction } from './ur-parser';
+import { ExportPubKeyParams } from './types';
+import { ExportPubKeyParamsSerializer } from './serializer';
 
 export { HDPathType } from './path-type';
 export * from './request';
@@ -85,7 +87,7 @@ export default class Eth {
     if (!decoder.isComplete()) {
       throwTransportError(Status.ERR_UR_INCOMPLETE);
     }
-    
+
     return parseTransaction(signatureResponse.payload, tx);
   };
 
@@ -95,12 +97,17 @@ export default class Eth {
     return result;
   }
 
-  exportPubKeyFromUr = async (params): Promise<CryptoHDKey | CryptoAccount> => {
-    const { payload: pubKeyUr } = await this.#send<PromiseReturnType<ExportPubKey>>(Actions.CMD_EXPORT_ADDRESS, {
-      chain: Chain.ETH,
-      wallet: Wallet.Rabby,
-      ...params,
-    });
+  exportPubKeyFromUr = async (
+    params: ExportPubKeyParams,
+    serializer: (params: ExportPubKeyParams) => any = ExportPubKeyParamsSerializer.v2,
+  ): Promise<CryptoHDKey | CryptoAccount> => {
+    const { payload: pubKeyUr } = await this.#send<PromiseReturnType<ExportPubKey>>(
+      Actions.CMD_EXPORT_ADDRESS, serializer({
+        chain: Chain.ETH,
+        wallet: Wallet.Rabby,
+        ...params,
+      })
+    );
 
     return parseExportedPublicKeyOrAddress(pubKeyUr);
   };

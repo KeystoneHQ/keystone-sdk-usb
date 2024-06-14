@@ -1,5 +1,5 @@
 import { Buffer } from 'buffer';
-import { setUint16, safeJSONparse } from './helper';
+import { setUint16, isString } from './helper';
 import { Actions } from './actions';
 import {
   OFFSET_CLA,
@@ -31,8 +31,8 @@ const dataParser = (buffer: Uint8Array) => {
  * @param strData 
  * @returns 
  */
-export const encode = (command: Actions, requestID: number, strData: string) => {
-  if (!strData || strData.length === 0) {
+export const encode = (command: Actions, requestID: number, data: string | Uint8Array) => {
+  if (isString(data) && (!data || data.length === 0)) {
     const packet = new Uint8Array(9);
     packet[OFFSET_CLA] = 0;  // Fixed header
     setUint16(packet, OFFSET_INS, command);  // Command byte
@@ -42,12 +42,12 @@ export const encode = (command: Actions, requestID: number, strData: string) => 
     return [packet];
   }
 
-  const data = new TextEncoder().encode(strData);
+  const _data = isString(data) ? new TextEncoder().encode(data) : data;
   const packets: Uint8Array[] = [];
-  const totalPackets = Math.ceil(data.length / MAX_DATA_SIZE);
+  const totalPackets = Math.ceil(_data.length / MAX_DATA_SIZE);
 
   for (let i = 0; i < totalPackets; i++) {
-    const packetData = data.slice(i * MAX_DATA_SIZE, (i + 1) * MAX_DATA_SIZE);
+    const packetData = _data.slice(i * MAX_DATA_SIZE, (i + 1) * MAX_DATA_SIZE);
     const packetLen = HEADER_SIZE + packetData.length;
 
     const packet = new Uint8Array(packetLen);

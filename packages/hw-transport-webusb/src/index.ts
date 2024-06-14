@@ -4,7 +4,7 @@ import { Status, throwTransportError, TransportError, ErrorInfo } from '@keyston
 import { decode, encode } from './frame';
 import { OFFSET_P1, USBPackageSize, OFFSET_INS, OFFSET_LC, USBTimeout, MAXUSBPackets } from './constants';
 import { requestKeystoneDevice, close, open, isSupported, getKeystoneDevices, request, initializeDisconnectListener } from './webusb';
-import { safeJSONStringify, safeJSONparse, generateRequestID } from './helper';
+import { safeJSONStringify, safeJSONparse, generateRequestID, isString, isUint8Array } from './helper';
 import { logMethod } from './decorators';
 
 export { Actions } from './actions';
@@ -12,6 +12,7 @@ export * from './webusb';
 export { Status as StatusCode } from '@keystonehq/hw-transport-error';
 export { Chain } from './chain';
 export * from './decorators';
+export * from './helper';
 
 export interface TransportConfig {
   endpoint?: number;
@@ -75,13 +76,13 @@ export class TransportWebUSB {
       throwTransportError(Status.ERR_DEVICE_NOT_OPENED);
     }
 
-    if (typeof data !== 'string') {
+    if (!isUint8Array(data) && !isString(data)) {
       data = safeJSONStringify(data);
     }
 
     const requestID = generateRequestID();
 
-    const packages = encode(action, requestID, String(data));
+    const packages = encode(action, requestID, data as Uint8Array | string);
     if (this.maxPacketSize < packages.length) {
       throwTransportError(Status.ERR_DATA_TOO_LARGE);
     }
