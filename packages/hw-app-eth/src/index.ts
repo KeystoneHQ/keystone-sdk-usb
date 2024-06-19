@@ -102,24 +102,16 @@ export default class Eth {
     params: ExportPubKeyParams,
     serializer: (params: ExportPubKeyParams) => any = ExportPubKeyParamsSerializer.v2,
   ): Promise<CryptoHDKey | CryptoAccount> => {
-    try {
-      const versionInfo = await this.CheckDeviceVersion();
-      const { payload: pubKeyUr } = await this.#send<PromiseReturnType<ExportPubKey>>(
-        Actions.CMD_EXPORT_ADDRESS, serializer({
-          chain: Chain.ETH,
-          wallet: Wallet.Rabby,
-          ...params,
-        })
-      );
-      return parseExportedPublicKeyOrAddress(pubKeyUr);
-    } catch (error) {
-      const { payload: pubKeyUr } = await this.#send<PromiseReturnType<ExportPubKey>>(Actions.CMD_EXPORT_ADDRESS, {
+    await this.CheckDeviceVersion().catch(() => serializer = ExportPubKeyParamsSerializer.v1);
+    const { payload: pubKeyUr } = await this.#send<PromiseReturnType<ExportPubKey>>(
+      Actions.CMD_EXPORT_ADDRESS,
+      serializer({
         chain: Chain.ETH,
         wallet: Wallet.Rabby,
         ...params,
-      });
-      return parseExportedPublicKeyOrAddress(pubKeyUr);
-    }
+      }),
+    );
+    return parseExportedPublicKeyOrAddress(pubKeyUr);
   };
 
   CheckDeviceVersion: CheckDeviceVersion = async () => {
