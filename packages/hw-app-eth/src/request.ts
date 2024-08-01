@@ -11,6 +11,9 @@ export type CheckLockStatusResponse = boolean;
 
 export type CheckLockStatus = () => Promise<Response<CheckLockStatusResponse>>;
 
+export type DeviceVersionResponse = string;
+export type CheckDeviceVersion = () => Promise<Response<DeviceVersionResponse>>;
+
 export type SignTransactionFromUrResponse = string;
 
 export type SignTransactionFromUr = (urString: string) => Promise<Response<SignTransactionFromUrResponse>>;
