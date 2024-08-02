@@ -3,6 +3,7 @@ import { Button, Space, Spin, message, Select } from 'antd';
 import { ApiOutlined, EditOutlined, LockOutlined, DatabaseOutlined } from '@ant-design/icons';
 import { TransportWebUSB, getKeystoneDevices } from '@keystonehq/hw-transport-webusb';
 import Eth, { HDPathType } from '@keystonehq/hw-app-eth';
+import Solana from '@keystonehq/hw-app-sol';
 import './App.css';
 
 const mockTxUR = 'UR:ETH-SIGN-REQUEST/ONADTPDAGDGEJKFXCSVANTFDPLMTCWEYVYWDKOWZZMAOHDIYYAIEGYLALFOEASMWROSTJYLFVEHECTFYUECHFEYKDWJYFWJZIACWUTGMLAROFYPTAHNSRKAEAEAEAEAEAEAEAEAEAEAEAEHDCXTTKSWKLADAFHOYCFSBZEVLGASORPNDYAWMRHAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAXLGKBOXSWLAAEADLALAAXADAAADAHTAADDYOEADLECSDWYKCSFNYKAEYKAEWKAEWKAOCYGMJYFLAXPAUEFEIS';
@@ -10,6 +11,7 @@ const mockTxUR = 'UR:ETH-SIGN-REQUEST/ONADTPDAGDGEJKFXCSVANTFDPLMTCWEYVYWDKOWZZM
 function App() {
   const [loading, setLoading] = React.useState(false);
   const [eth, setEth] = React.useState<Eth | null>(null);
+  const [solana, setSolana] = React.useState<Solana | null>(null);
   const [messageApi, contextHolder] = message.useMessage();
   const [accountType, setAccountType] = React.useState<HDPathType>(HDPathType.LedgerLive);
 
@@ -44,6 +46,7 @@ function App() {
       });
       await transport.close();
       setEth(new Eth(transport!));
+      setSolana(new Solana(transport!));
       success('🎉 Link to Keystone3 Device Success!');
     } catch (e: any) {
       error(e?.message ?? 'Link to Keystone3 Device failed!');
@@ -98,6 +101,18 @@ function App() {
     console.log(checkResult);
   }, [error, eth, setLoading, accountType]);
 
+  const handleGetSolanaAddress= React.useCallback(async () => {
+    if (!solana) {
+      error('Please link to Keystone3 Device first!');
+      return;
+    }
+    setLoading(true);
+
+    const path = "M/44'/501'/0'/0'/0'"
+    const address = await solana?.getAddress(path);
+    console.log(address);
+  }, [error, solana, setLoading]);
+
   return (
     <div className='App'>
       <Spin spinning={loading}>
@@ -107,6 +122,7 @@ function App() {
           <Button icon={<ApiOutlined />} onClick={handleLink2Device}>Link to Keystone3 Device</Button>
           <Button icon={<EditOutlined />} onClick={handleSignTx}>Sign ETH tx</Button>
           <Button icon={<LockOutlined />} onClick={handleCheckDeviceLockStatus}>Check Device Lock Status</Button>
+          <Button icon={<LockOutlined />} onClick={handleGetSolanaAddress}>Get SOL Address</Button>
           <Space>
             <Select value={accountType} onChange={setAccountType} style={{ width: 200 }} options={[
               {

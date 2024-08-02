@@ -326,7 +326,8 @@ module.exports = function (webpackEnv) {
         url: require.resolve('url'),
         zlib: require.resolve('browserify-zlib'),
         https: require.resolve('https-browserify'),
-        http: require.resolve('stream-http')
+        http: require.resolve('stream-http'),
+        vm: require.resolve("vm-browserify"),
       },
       plugins: [
         // Prevents users from importing files from outside of src/ (or node_modules/).
