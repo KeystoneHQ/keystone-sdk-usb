@@ -6,7 +6,7 @@ import {
 import { UR, UREncoder, URDecoder } from '@ngraveio/bc-ur';
 import { Actions, TransportWebUSB, Chain, type TransportConfig, logMethod } from '@keystonehq/hw-transport-webusb';
 import { throwTransportError, Status } from '@keystonehq/hw-transport-error';
-import { SignType, SolSignRequest } from '@keystonehq/bc-ur-registry-sol'
+import { SignType, SolSignRequest, SolSignature } from '@keystonehq/bc-ur-registry-sol'
 
 
 const pathToKeypath = (path: string): CryptoKeypath => {
@@ -22,6 +22,7 @@ const pathToKeypath = (path: string): CryptoKeypath => {
 export default class Solana {
     private transport: TransportWebUSB;
     private mfp: string | undefined;
+    // private path: string | undefined;
     constructor(transport: TransportWebUSB) {
         // Initialize Solana connection
         this.transport = transport;
@@ -32,7 +33,7 @@ export default class Solana {
             throwTransportError(Status.ERR_TRANSPORT_HAS_NOT_BEEN_SET);
         }
         if (!this.mfp) {
-            new Error("missing mfp for this wallet");
+            throw new Error("missing mfp for this wallet");
         }
     }
 
@@ -50,63 +51,59 @@ export default class Solana {
         const hardwareCall = new QRHardwareCall(QRHardwareCallType.KeyDerivation, keyDerivation, origin)
         let ur = hardwareCall.toUR()
         const encodedUR = new UREncoder(ur, Infinity).nextPart().toUpperCase();
-
-        console.log('--------', encodedUR);
-
         const response = await this.sendToDevice(Actions.CMD_RESOLVE_UR, encodedUR);
-
         let resultUR = parseResponoseUR(response.payload);
-        
+
         let account = CryptoMultiAccounts.fromCBOR(resultUR.cbor);
-
-        let keys = account.getKeys()[0];
-
+        let key = account.getKeys()[0];
         this.mfp = account.getMasterFingerprint().toString('hex');
-        
-        console.log("--------------")
-        console.log(keys)
-        console.log("--------------")
-    
+        const pubkey = key.getKey();
+
+        // set the key path for signing requests
+        // this.path = `m/${key.getOrigin().getPath()}`;
         return {
-            address: Buffer.from("")
+            address: pubkey
         }
     }
 
-    // async signTransaction(path: string, txBuffer: Buffer): Promise<{ signature: Buffer }> {
+    private async sign(path: string, data: Buffer, type: SignType): Promise<{ signature: Buffer }> {
+        this.precheck();
+        const encodedUR = constructURRequest(data, path, this.mfp!, type);
+        const response = await this.sendToDevice(Actions.CMD_RESOLVE_UR, encodedUR);
+        let resultUR = parseResponoseUR(response.payload);
 
-    //     const requestId = uuid.v4();
-    //     let solRequest = SolSignRequest.constructSOLRequest(
-    //         txBuffer,
-    //         path,
-    //         this.mfp!,
-    //         SignType.Transaction,
-    //         requestId
-    //     );
+        return {
+            signature: parseSignatureUR(resultUR)
+        }
+    }
 
-    //     const ur = solRequest.toUR();
+    async signTransaction(path: string, txBuffer: Buffer): Promise<{ signature: Buffer }> {
+        return this.sign(path, txBuffer, SignType.Transaction);
+    }
 
-    //     const encodedUR = new UREncoder(ur, Infinity).nextPart().toUpperCase();
-
-    //     const response = await this.sendToDevice(Actions.CMD_RESOLVE_UR, encodedUR);
+    async signOffchainMessage(path: string, msgBuffer: Buffer): Promise<{ signature: Buffer }> {
+        return this.sign(path, msgBuffer, SignType.Message);
+    }
 
 
-    //     const decoder = new URDecoder();
-    //     decoder.receivePart(response.payload);
-    //     if (!decoder.isComplete()) {
-    //         throwTransportError(Status.ERR_UR_INCOMPLETE);
-    //     }
-
-    //     return parseTransaction(signatureResponse.payload, tx);
-    // }
-
-    // async signOffchainMessage(path: string, msgBuffer: Buffer): Promise<{ signature: Buffer }> {
-    //     return {
-    //         signature: Buffer.from("")
-    //     }
-    // }
 }
 
-const parseResponoseUR = (urPlayload:string) => {
+
+const constructURRequest = (txBuffer: Buffer, path: string, mfp: string, type: SignType): string => {
+    const requestId = uuid.v4();
+    let solRequest = SolSignRequest.constructSOLRequest(
+        txBuffer,
+        path,
+        mfp!,
+        type,
+        requestId
+    );
+    const ur = solRequest.toUR();
+    const encodedUR = new UREncoder(ur, Infinity).nextPart().toUpperCase();
+    return encodedUR;
+}
+
+const parseResponoseUR = (urPlayload: string): UR => {
     const decoder = new URDecoder();
     decoder.receivePart(urPlayload);
     if (!decoder.isComplete()) {
@@ -117,8 +114,9 @@ const parseResponoseUR = (urPlayload:string) => {
 }
 
 
-const parseSignatureUR = (payload) => {
-
+const parseSignatureUR = (ur: UR) => {
+    let signature = SolSignature.fromCBOR(ur.cbor)
+    return signature.getSignature();
 }
 
 
