@@ -4,6 +4,7 @@ import { ApiOutlined, EditOutlined, LockOutlined, DatabaseOutlined } from '@ant-
 import { TransportWebUSB, getKeystoneDevices } from '@keystonehq/hw-transport-webusb';
 import Eth, { HDPathType } from '@keystonehq/hw-app-eth';
 import Solana from '@keystonehq/hw-app-sol';
+import { PublicKey } from "@solana/web3.js";
 import './App.css';
 
 const mockTxUR = 'UR:ETH-SIGN-REQUEST/ONADTPDAGDGEJKFXCSVANTFDPLMTCWEYVYWDKOWZZMAOHDIYYAIEGYLALFOEASMWROSTJYLFVEHECTFYUECHFEYKDWJYFWJZIACWUTGMLAROFYPTAHNSRKAEAEAEAEAEAEAEAEAEAEAEAEHDCXTTKSWKLADAFHOYCFSBZEVLGASORPNDYAWMRHAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAXLGKBOXSWLAAEADLALAAXADAAADAHTAADDYOEADLECSDWYKCSFNYKAEYKAEWKAEWKAOCYGMJYFLAXPAUEFEIS';
@@ -12,6 +13,7 @@ function App() {
   const [loading, setLoading] = React.useState(false);
   const [eth, setEth] = React.useState<Eth | null>(null);
   const [solana, setSolana] = React.useState<Solana | null>(null);
+  const [solAddress, setSolAddress] = React.useState<string>('');
   const [messageApi, contextHolder] = message.useMessage();
   const [accountType, setAccountType] = React.useState<HDPathType>(HDPathType.LedgerLive);
 
@@ -42,7 +44,7 @@ function App() {
        * 2. Connect to the device.
        */
       const transport = await TransportWebUSB.connect({
-        timeout: 5000,
+        timeout: 300000,
       });
       await transport.close();
       setEth(new Eth(transport!));
@@ -108,9 +110,18 @@ function App() {
     }
     setLoading(true);
 
-    const path = "M/44'/501'/0'/0'/0'"
-    const address = await solana?.getAddress(path);
-    console.log(address);
+    const path = "m/44'/501'/0'"
+    try {
+      const result = await solana?.getAddress(path);
+      const pubkey = new PublicKey(result.address);
+      console.log(pubkey.toString());
+      setSolAddress(pubkey.toString());
+    } catch (e) {
+      console.error(e)
+      setLoading(false);
+    }
+    setLoading(false);
+    
   }, [error, solana, setLoading]);
 
   return (
@@ -123,6 +134,7 @@ function App() {
           <Button icon={<EditOutlined />} onClick={handleSignTx}>Sign ETH tx</Button>
           <Button icon={<LockOutlined />} onClick={handleCheckDeviceLockStatus}>Check Device Lock Status</Button>
           <Button icon={<LockOutlined />} onClick={handleGetSolanaAddress}>Get SOL Address</Button>
+          <div>{solAddress}</div>
           <Space>
             <Select value={accountType} onChange={setAccountType} style={{ width: 200 }} options={[
               {
