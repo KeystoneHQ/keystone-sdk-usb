@@ -59,6 +59,7 @@ export class TransportWebUSB {
   constructor(device: USBDevice, config?: TransportConfig) {
     this.endpoint = config?.endpoint ?? this.endpoint;
     this.requestTimeout = config?.timeout ?? this.requestTimeout;
+    console.log('this timeout time',this.requestTimeout);
     this.maxPacketSize = config?.maxPacketSize ?? this.maxPacketSize;
     this.device = device;
   }
