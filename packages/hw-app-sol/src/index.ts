@@ -105,6 +105,7 @@ export default class Solana {
     private async sign(path: string, data: Buffer, type: SignType): Promise<{ signature: Buffer }> {
         this.precheck();
         const encodedUR = constructURRequest(data, path, this.mfp!, type);
+        console.log(`ur`, encodedUR);
         const response = await this.sendToDevice(Actions.CMD_RESOLVE_UR, encodedUR);
         let resultUR = parseResponoseUR(response.payload);
 

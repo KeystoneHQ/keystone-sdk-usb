@@ -2,8 +2,8 @@ export const USBConfigurationValue = 1;
 export const USBInterfaceNumber = 1;
 export const USBPackageSize = 64;
 export const MAXUSBPackets = 200;
-// 2 mins to set the usb timeout since it may need users' action on the device.
-export const USBTimeout = 1000 * 3000;
+// 15s to set the usb timeout since it may need users' action on the device.
+export const USBTimeout = 1000 * 15;
 export const OFFSET_CLA = 0;
 export const OFFSET_INS = 1;
 export const OFFSET_P1 = 3;

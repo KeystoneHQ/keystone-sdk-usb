@@ -9,11 +9,17 @@ import './App.css';
 
 const mockTxUR = 'UR:ETH-SIGN-REQUEST/ONADTPDAGDGEJKFXCSVANTFDPLMTCWEYVYWDKOWZZMAOHDIYYAIEGYLALFOEASMWROSTJYLFVEHECTFYUECHFEYKDWJYFWJZIACWUTGMLAROFYPTAHNSRKAEAEAEAEAEAEAEAEAEAEAEAEHDCXTTKSWKLADAFHOYCFSBZEVLGASORPNDYAWMRHAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAXLGKBOXSWLAAEADLALAAXADAAADAHTAADDYOEADLECSDWYKCSFNYKAEYKAEWKAEWKAOCYGMJYFLAXPAUEFEIS';
 
+
+const solTxHex = "010001035eb9862fe23e544a2a0969cc157cb31fd72901cc2824d536a67fb8ee911e02363b9ba3a2ebaf40c1cd672a80a8e1932b982cca8264be33c39359701e113c3da20000000000000000000000000000000000000000000000000000000000000000030303030303030303030303030303030303030303030303030303030303030301020200010c020000002a00000000000000"
+
+
 function App() {
   const [loading, setLoading] = React.useState(false);
   const [eth, setEth] = React.useState<Eth | null>(null);
   const [solana, setSolana] = React.useState<Solana | null>(null);
+  const [index, setIndex] = React.useState(0);
   const [solAddress, setSolAddress] = React.useState<string>('');
+  const [mfp, setMfp] = React.useState<string>('');
   const [messageApi, contextHolder] = message.useMessage();
   const [accountType, setAccountType] = React.useState<HDPathType>(HDPathType.LedgerLive);
 
@@ -44,7 +50,7 @@ function App() {
        * 2. Connect to the device.
        */
       const transport = await TransportWebUSB.connect({
-        timeout: 300000,
+        timeout: 100000,
       });
       await transport.close();
       setEth(new Eth(transport!));
@@ -103,7 +109,30 @@ function App() {
     console.log(checkResult);
   }, [error, eth, setLoading, accountType]);
 
-  const handleGetSolanaAddress= React.useCallback(async () => {
+  const handleGetSolanaAddress = React.useCallback(async () => {
+    if (!solana) {
+      error('Please link to Keystone3 Device first!');
+      return;
+    }
+    setLoading(true);
+
+    const path = `m/44'/501'/${index}'`
+    try {
+      const result = await solana?.getAddress(path);
+      const pubkey = new PublicKey(result.address);
+      const mfp = result.mfp;
+      setMfp(mfp);
+      console.log(pubkey.toString());
+      setSolAddress(pubkey.toString());
+    } catch (e) {
+      console.error(e)
+    }
+    setIndex(index + 1);
+    setLoading(false);
+  }, [error, solana, setLoading, index]);
+
+
+  const handleSolTx = React.useCallback(async () => {
     if (!solana) {
       error('Please link to Keystone3 Device first!');
       return;
@@ -112,16 +141,13 @@ function App() {
 
     const path = "m/44'/501'/0'"
     try {
-      const result = await solana?.getAddress(path);
-      const pubkey = new PublicKey(result.address);
-      console.log(pubkey.toString());
-      setSolAddress(pubkey.toString());
+      const result = await solana.signTransaction(path, Buffer.from(solTxHex, 'hex'));
+
+      console.log(result.signature.toString('hex'))
     } catch (e) {
       console.error(e)
-      setLoading(false);
     }
     setLoading(false);
-    
   }, [error, solana, setLoading]);
 
   return (
@@ -134,6 +160,7 @@ function App() {
           <Button icon={<EditOutlined />} onClick={handleSignTx}>Sign ETH tx</Button>
           <Button icon={<LockOutlined />} onClick={handleCheckDeviceLockStatus}>Check Device Lock Status</Button>
           <Button icon={<LockOutlined />} onClick={handleGetSolanaAddress}>Get SOL Address</Button>
+          <Button icon={<LockOutlined />} onClick={handleSolTx}>Sign SOL Tx</Button>
           <div>{solAddress}</div>
           <Space>
             <Select value={accountType} onChange={setAccountType} style={{ width: 200 }} options={[
