@@ -2,7 +2,7 @@ import { Buffer } from 'buffer';
 import { Actions } from './actions';
 import { Status, throwTransportError, TransportError, ErrorInfo } from '@keystonehq/hw-transport-error';
 import { decode, encode } from './frame';
-import { OFFSET_P1, USBPackageSize, OFFSET_INS, OFFSET_LC, USBTimeout, MAXUSBPackets } from './constants';
+import { OFFSET_P1, USBPackageSize, OFFSET_INS, OFFSET_LC, USBTimeout, MAXUSBPackets, USBInterfaceNumber } from './constants';
 import { requestKeystoneDevice, close, open, isSupported, getKeystoneDevices, request, initializeDisconnectListener } from './webusb';
 import { safeJSONStringify, safeJSONparse, generateRequestID, isString, isUint8Array } from './helper';
 import { logMethod } from './decorators';
@@ -153,4 +153,25 @@ export class TransportWebUSB {
   };
 
   close = async () => this.device?.opened && close(this.device);
+}
+
+
+async function clearUSBState(device) {
+  console.log('Received error, resetting device...');
+  try {
+    if (device && device.opened) {
+      // Release all interfaces
+      if (device.configuration) {
+        await device.releaseInterface(USBInterfaceNumber);
+      }
+      // Close the device connection
+      // await device.close();
+    }
+  } catch (error) {
+    console.error("Error during USB state cleanup:", error);
+  } finally {
+    // Reset application state
+    // device = null; // if reconnection is required, device can be set to null
+    console.log('reset action done');
+  }
 }
