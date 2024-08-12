@@ -1,5 +1,5 @@
 export const USBConfigurationValue = 1;
-export const USBInterfaceNumber = 1;
+export const USBInterfaceNumber = process.env.NODE_ENV === 'production' ? 0 : 1;
 export const USBPackageSize = 64;
 export const MAXUSBPackets = 200;
 // 15s to set the usb timeout since it may need users' action on the device.
