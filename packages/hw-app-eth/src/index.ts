@@ -27,6 +27,7 @@ import { ExportPubKeyParamsSerializer } from './serializer';
 
 export { HDPathType } from './path-type';
 export * from './request';
+export * from './new';
 
 export default class EthLegacy {
   private transport: Nullable<TransportWebUSB>;
