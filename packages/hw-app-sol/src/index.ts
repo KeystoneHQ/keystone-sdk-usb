@@ -159,7 +159,6 @@ export default class Solana {
     *          - mfp: A string representing the master fingerprint of the wallet
     * @throws Will throw an error if the device communication fails or if the response cannot be parsed
     */
-
     async getAppConfig(): Promise<any> {
         let response = await this.sendToDevice(Actions.CMD_GET_DEVICE_VERSION, '');
         let result = response.payload
