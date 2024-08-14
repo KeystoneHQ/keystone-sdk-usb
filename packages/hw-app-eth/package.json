@@ -13,6 +13,7 @@
   "keywords": [],
   "author": "",
   "devDependencies": {
+    "@types/elliptic": "^6.4.18",
     "@types/node": "^16.18.52",
     "@types/w3c-web-usb": "^1.0.6",
     "eslint": "^8.49.0",
@@ -21,11 +22,13 @@
   "license": "ISC",
   "dependencies": {
     "@ethereumjs/tx": "^3.3.2",
+    "@ethereumjs/util": "^9.0.3",
     "@keystonehq/bc-ur-registry-eth": "^0.8.1-alpha.0",
-    "@keystonehq/hw-transport-webusb": "workspace:../hw-transport-webusb",
     "@keystonehq/hw-transport-error": "workspace:../hw-transport-error",
+    "@keystonehq/hw-transport-webusb": "workspace:../hw-transport-webusb",
     "@ngraveio/bc-ur": "^1.1.6",
     "buffer": "^6.0.3",
+    "elliptic": "^6.5.7",
     "rlp": "^2.2.6",
     "uuid": "^8.3.2"
   }
