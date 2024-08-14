@@ -34,7 +34,7 @@ export default class Eth {
      * @param mfp - Optional parameter of type string, default is undefined, but the mfp should exist in the signing process.
      */
     constructor(transport: TransportWebUSB, mfp?: string) {
-        // Initialize Solana connection
+        // Initialize usb connection
         this.transport = transport;
         if (mfp) {
             this.mfp = mfp;
