@@ -73,7 +73,8 @@ export default class Eth {
         // Send a request to the device to get the address at the specified path
         const curve = Curve.secp256k1;
         const algo = DerivationAlgorithm.slip10
-        const kds = new KeyDerivationSchema(pathToKeypath(path), curve, algo, "ETH")
+        
+        const kds = new KeyDerivationSchema(pathToKeypath(`M/${path}`), curve, algo, "ETH")
         const keyDerivation = new KeyDerivation([kds])
         const hardwareCall = new QRHardwareCall(QRHardwareCallType.KeyDerivation, keyDerivation, "Keystone USB SDK", QRHardwareCallVersion.V1);
         let ur = hardwareCall.toUR();
@@ -109,7 +110,7 @@ export default class Eth {
 
     private async sign(path: string, data: Buffer, type: DataType): Promise<{ r: string, s:string, v:string }> {
         this.precheck();
-        const encodedUR = constructURRequest(data, path, this.mfp!, type);
+        const encodedUR = constructURRequest(data, `M/${path}`, this.mfp!, type);
         console.log(`ur`, encodedUR);
         const response = await this.sendToDevice(Actions.CMD_RESOLVE_UR, encodedUR);
         let resultUR = parseResponoseUR(response.payload);
