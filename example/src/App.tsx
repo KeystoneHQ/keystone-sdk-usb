@@ -14,6 +14,8 @@ const solTxHex = "010001035eb9862fe23e544a2a0969cc157cb31fd72901cc2824d536a67fb8
 
 const solMsg = "ff736f6c616e61206f6666636861696e00001c004c6f6e67204f66662d436861696e2054657374204d6573736167652e"
 
+const ethTx = "02ee016d843b9aca0084ca0b23568252089449ab56b91fc982fd6ec1ec7bb87d74efa6da30ab87038d7ea4c6800080c0"
+
 function App() {
   const [loading, setLoading] = React.useState(false);
   const [ethLeagcy, setEthLeagcy] = React.useState<EthLeagcy | null>(null);
@@ -74,7 +76,7 @@ function App() {
   }, [ethLeagcy]);
 
   const handleSignTx = React.useCallback(async () => {
-    if (!eth) {
+    if (!ethLeagcy) {
       error('Please link to Keystone3 Device first!');
       return;
     }
@@ -87,6 +89,25 @@ function App() {
     }
     setLoading(false)
   }, [eth, error, setLoading]);
+
+
+
+  const handleSignTxNew = React.useCallback(async () => {
+    if (!eth) {
+      error('Please link to Keystone3 Device first!');
+      return;
+    }
+    setLoading(true);
+    try {
+      const path = "m/44'/60'/0'/0/0"
+      const txResult = await eth?.signTransaction(path, ethTx);
+      alert(txResult);
+    } catch (e: any) {
+      error(e?.message ?? 'Sign ETH tx failed!');
+    }
+    setLoading(false)
+  }, [eth, error, setLoading]);
+
 
   const handleCheckDeviceLockStatus = React.useCallback(async () => {
     if (!eth) {
@@ -205,6 +226,7 @@ function App() {
           <Button icon={<LockOutlined />} onClick={handleSolTx}>Sign SOL Tx</Button>
           <Button icon={<LockOutlined />} onClick={handleSolMsg}>Sign SOL Msg</Button>
           <Button icon={<LockOutlined />} onClick={handleEthAddressNew}>Get ETH Address New</Button>
+          <Button icon={<LockOutlined />} onClick={handleSignTxNew}>Sign ETH tx New</Button>
           <div>{solAddress}</div>
           <Space>
             <Select value={accountType} onChange={setAccountType} style={{ width: 200 }} options={[

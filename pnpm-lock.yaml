@@ -268,14 +268,17 @@ importers:
       '@ethereumjs/util':
         specifier: ^9.0.3
         version: 9.0.3
+      '@keystonehq/bc-ur-registry':
+        specifier: 0.7.0
+        version: 0.7.0
       '@keystonehq/bc-ur-registry-eth':
         specifier: ^0.8.1-alpha.0
         version: 0.8.1-alpha.0
       '@keystonehq/hw-transport-error':
-        specifier: workspace:../hw-transport-error
+        specifier: workspace:^
         version: link:../hw-transport-error
       '@keystonehq/hw-transport-webusb':
-        specifier: workspace:../hw-transport-webusb
+        specifier: workspace:^
         version: link:../hw-transport-webusb
       '@ngraveio/bc-ur':
         specifier: ^1.1.6
