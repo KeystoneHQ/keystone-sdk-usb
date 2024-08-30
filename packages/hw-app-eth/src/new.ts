@@ -80,7 +80,6 @@ export default class Eth {
         let ur = hardwareCall.toUR();
         const encodedUR = new UREncoder(ur, Infinity).nextPart().toUpperCase();
 
-        console.log(`ur`, encodedUR);
         const response = await this.sendToDevice(Actions.CMD_RESOLVE_UR, encodedUR);
         let resultUR = parseResponoseUR(response.payload);
 
@@ -93,8 +92,6 @@ export default class Eth {
         const pubkey = key.getKey();
 
         const chainCode = key.getChainCode();
-
-        console.log(pubkey.toString('hex'))
 
         const uncompressedPubkey = convertCompresskey(pubkey.toString('hex'));
         const keyBuffer = Buffer.from(uncompressedPubkey, 'hex').slice(1);
@@ -111,7 +108,6 @@ export default class Eth {
     private async sign(path: string, data: Buffer, type: DataType): Promise<{ r: string, s:string, v:string }> {
         this.precheck();
         const encodedUR = constructURRequest(data, path, this.mfp!, type);
-        console.log(`ur`, encodedUR);
         const response = await this.sendToDevice(Actions.CMD_RESOLVE_UR, encodedUR);
         let resultUR = parseResponoseUR(response.payload);
         return parseSignatureUR(resultUR);
