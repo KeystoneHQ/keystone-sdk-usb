@@ -83,7 +83,6 @@ export default class Solana {
         let ur = hardwareCall.toUR();
         const encodedUR = new UREncoder(ur, Infinity).nextPart().toUpperCase();
 
-        console.log(`ur`, encodedUR);
         const response = await this.sendToDevice(Actions.CMD_RESOLVE_UR, encodedUR);
         let resultUR = parseResponoseUR(response.payload);
 
@@ -94,8 +93,6 @@ export default class Solana {
         this.mfp = account.getMasterFingerprint().toString('hex');
         const pubkey = key.getKey();
 
-        console.log(pubkey.toString('hex'))
-
         return {
             address: pubkey,
             mfp: this.mfp,
@@ -105,7 +102,6 @@ export default class Solana {
     private async sign(path: string, data: Buffer, type: SignType): Promise<{ signature: Buffer }> {
         this.precheck();
         const encodedUR = constructURRequest(data, path, this.mfp!, type);
-        console.log(`ur`, encodedUR);
         const response = await this.sendToDevice(Actions.CMD_RESOLVE_UR, encodedUR);
         let resultUR = parseResponoseUR(response.payload);
 
@@ -159,7 +155,6 @@ export default class Solana {
     *          - mfp: A string representing the master fingerprint of the wallet
     * @throws Will throw an error if the device communication fails or if the response cannot be parsed
     */
-
     async getAppConfig(): Promise<any> {
         let response = await this.sendToDevice(Actions.CMD_GET_DEVICE_VERSION, '');
         let result = response.payload

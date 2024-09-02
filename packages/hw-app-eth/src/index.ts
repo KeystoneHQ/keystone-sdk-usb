@@ -27,8 +27,11 @@ import { ExportPubKeyParamsSerializer } from './serializer';
 
 export { HDPathType } from './path-type';
 export * from './request';
+import Eth from './new';
 
-export default class Eth {
+export {Eth};
+
+export default class EthLegacy {
   private transport: Nullable<TransportWebUSB>;
 
   constructor(transport: TransportWebUSB) {
@@ -37,10 +40,10 @@ export default class Eth {
 
   static async createWithUSBTransport(
     config?: TransportConfig,
-  ): Promise<Eth> {
+  ): Promise<EthLegacy> {
     const transport = await TransportWebUSB.connect(config);
     await transport.close();
-    return new Eth(transport);
+    return new EthLegacy(transport);
   }
 
   #send = async <T>(action: Actions, data: unknown) => {
