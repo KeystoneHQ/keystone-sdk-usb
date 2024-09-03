@@ -272,8 +272,8 @@ importers:
         specifier: 0.7.0
         version: 0.7.0
       '@keystonehq/bc-ur-registry-eth':
-        specifier: ^0.8.1-alpha.0
-        version: 0.8.1-alpha.0
+        specifier: 0.21.0
+        version: 0.21.0
       '@keystonehq/hw-transport-error':
         specifier: workspace:^
         version: link:../hw-transport-error
@@ -1421,14 +1421,11 @@ packages:
   '@jridgewell/trace-mapping@0.3.19':
     resolution: {integrity: sha512-kf37QtfW+Hwx/buWGMPcR60iF9ziHa6r/CZJIHbmcm4+0qrXiVdxegAH0F6yddEVQ7zdkjcGCgCzUu+BcbhQxw==}
 
-  '@keystonehq/bc-ur-registry-eth@0.8.1-alpha.0':
-    resolution: {integrity: sha512-mNzGX5gfB2TkgNC6D+Cj5LTsc5m8FogJJh+u/nAa4x1slLAU+J8SePaRR8dtzCLOQhz1HLwXGGVag9h0Tch10w==}
+  '@keystonehq/bc-ur-registry-eth@0.21.0':
+    resolution: {integrity: sha512-zINEpmaH+oPwqY6E0qKUvm13AhdOb+BIJ9OVWTGUDhUNltFH4dehicJv6bCg8gTSnBGc9ghWzpGRw5+PflGtMg==}
 
   '@keystonehq/bc-ur-registry-sol@0.9.3':
     resolution: {integrity: sha512-ZjTeInzS4y10tIZlgEN4NGW9W6vTBxzZrM9CaNNeVqTgtyiOB2JvPIW8buxlZUKYj2M5Mu5jPHuAjVRCK6Jm9Q==}
-
-  '@keystonehq/bc-ur-registry@0.5.5':
-    resolution: {integrity: sha512-PoclPHf0OhpIKLfLwzymsu+CjkWf5ZKvaVjpkq3HUalcI4KW8wLk0m8qI2kBVv6F0BQ0ERPqW8OfjLTVqIgWLA==}
 
   '@keystonehq/bc-ur-registry@0.6.4':
     resolution: {integrity: sha512-j8Uy44DuAkvYkbf0jMxRY3UizJfn8wsEQr7GS3miRF44vcq7k0/yemVkftbn3jQ+0JYaUXf5wY7lVpLhAeW5nQ==}
@@ -8627,10 +8624,10 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.1
       '@jridgewell/sourcemap-codec': 1.4.15
 
-  '@keystonehq/bc-ur-registry-eth@0.8.1-alpha.0':
+  '@keystonehq/bc-ur-registry-eth@0.21.0':
     dependencies:
-      '@keystonehq/bc-ur-registry': 0.5.5
-      ethereumjs-util: 7.1.5
+      '@ethereumjs/util': 9.0.3
+      '@keystonehq/bc-ur-registry': 0.7.0
       hdkey: 2.1.0
       uuid: 8.3.2
 
@@ -8639,12 +8636,6 @@ snapshots:
       '@keystonehq/bc-ur-registry': 0.6.4
       bs58check: 2.1.2
       uuid: 8.3.2
-
-  '@keystonehq/bc-ur-registry@0.5.5':
-    dependencies:
-      '@ngraveio/bc-ur': 1.1.6
-      bs58check: 2.1.2
-      tslib: 2.6.2
 
   '@keystonehq/bc-ur-registry@0.6.4':
     dependencies:
