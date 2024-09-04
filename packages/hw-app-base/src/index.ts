@@ -19,7 +19,7 @@ export const pathToKeypath = (path: string): CryptoKeypath => {
 
 export default class Base {
     private transport: TransportWebUSB;
-    private mfp: string | undefined;
+    public mfp: string | undefined;
 
     /**
      * Constructs a new instance of the class.

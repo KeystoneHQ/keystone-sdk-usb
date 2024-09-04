@@ -1,14 +1,21 @@
-import Base from "@keystonehq/hw-app-base";
-import { Actions, TransportWebUSB, Chain, type TransportConfig, logMethod } from '@keystonehq/hw-transport-webusb';
-import { throwTransportError, Status } from '@keystonehq/hw-transport-error';
+import * as uuid from 'uuid';
+import Base, { parseResponoseUR } from "@keystonehq/hw-app-base";
+import { Actions, TransportWebUSB, type TransportConfig } from '@keystonehq/hw-transport-webusb';
 import { Curve, DerivationAlgorithm } from "@keystonehq/bc-ur-registry";
+import { CosmosSignRequest, CosmosSignature, CryptoKeypath, PathComponent, SignDataType as DataType } from '@keystonehq/bc-ur-registry-cosmos'
 import { sha256 } from "@noble/hashes/sha256";
 import { ripemd160 } from "@noble/hashes/ripemd160";
 import { bech32 } from "bech32";
+import { UREncoder, UR } from '@ngraveio/bc-ur';
 
 export interface ResponseAddress {
     bech32_address: string;
     compressed_pk: string;
+}
+
+export enum TxDataType {
+    amino = "amino",
+    json = "json",
 }
 
 export default class Cosmos extends Base {
@@ -23,7 +30,6 @@ export default class Cosmos extends Base {
         super(transport, mfp);
     }
 
-    
     /**
      * Retrieves the public key and master fingerprint for a given Cosmos account.
      * 
@@ -103,15 +109,47 @@ export default class Cosmos extends Base {
     }
 
 
-    
-    async sign(path: string, data: Buffer): Promise<{
+    async sign(path: string, data: Buffer, txType: TxDataType = TxDataType.amino): Promise<{
         signature: string;
     }> {
-        // this.precheck();
+        this.precheck();
+        let encodedUR = "";
+        if (txType == TxDataType.amino) {
+            encodedUR = constructURRequest(data, path, this.mfp!, DataType.amino);
+        } else {
+            encodedUR = constructURRequest(data, path, this.mfp!, DataType.direct);
+        }
+        const response = await this.sendToDevice(Actions.CMD_RESOLVE_UR, encodedUR);
+        let resultUR = parseResponoseUR(response.payload);
         return {
-            signature: ""
+            signature: parseSignatureUR(resultUR)
         }
     }
+}
+
+
+function constructURRequest(txBuffer: Buffer, path: string, mfp: string, type: DataType): string {
+    const requestId = uuid.v4();
+    let xfps = [mfp]
+    let paths = [path]
+    let cosmosUR = CosmosSignRequest.constructCosmosRequest(
+        requestId,
+        xfps,
+        txBuffer,
+        type,
+        paths
+    )
+
+    const ur = cosmosUR.toUR();
+    const encodedUR = new UREncoder(ur, Infinity).nextPart().toUpperCase();
+    return encodedUR;
+}
+
+
+const parseSignatureUR = (ur: UR) => {
+    let signature = CosmosSignature.fromCBOR(ur.cbor)
+    let signatureBuffer = signature.getSignature();
+    return signatureBuffer.toString('hex');
 }
 
 
