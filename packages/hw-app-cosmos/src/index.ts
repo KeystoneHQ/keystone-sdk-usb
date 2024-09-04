@@ -2,7 +2,7 @@ import * as uuid from 'uuid';
 import Base, { parseResponoseUR } from "@keystonehq/hw-app-base";
 import { Actions, TransportWebUSB, type TransportConfig } from '@keystonehq/hw-transport-webusb';
 import { Curve, DerivationAlgorithm } from "@keystonehq/bc-ur-registry";
-import { CosmosSignRequest, CosmosSignature, CryptoKeypath, PathComponent, SignDataType as DataType } from '@keystonehq/bc-ur-registry-cosmos'
+import { CosmosSignRequest, CosmosSignature, SignDataType as DataType } from '@keystonehq/bc-ur-registry-cosmos'
 import { sha256 } from "@noble/hashes/sha256";
 import { ripemd160 } from "@noble/hashes/ripemd160";
 import { bech32 } from "bech32";
@@ -11,6 +11,7 @@ import { UREncoder, UR } from '@ngraveio/bc-ur';
 export interface ResponseAddress {
     bech32_address: string;
     compressed_pk: string;
+    mfp: string;
 }
 
 export enum TxDataType {
@@ -105,6 +106,7 @@ export default class Cosmos extends Base {
         return {
             bech32_address,
             compressed_pk: publicKey,
+            mfp
         }
     }
 
