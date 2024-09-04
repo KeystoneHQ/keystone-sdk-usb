@@ -1,0 +1,30 @@
+{
+    "name": "@keystonehq/hw-app-base",
+    "version": "0.1.0",
+    "description": "The base library of Keystone hardware wallet usb support",
+    "main": "lib/index.js",
+    "scripts": {
+      "build": "tsc",
+      "watch": "tsc -w",
+      "lint": "eslint .",
+      "lint:fix": "eslint . --fix",
+      "test": "jest"
+    },
+    "keywords": ["base", "blockchain", "keystone", "hardware wallet"],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+      "uuid": "^8.3.2",
+      "@ngraveio/bc-ur": "^1.1.6",
+      "@keystonehq/bc-ur-registry": "0.7.0",
+      "@keystonehq/hw-transport-webusb": "workspace:^",
+      "@keystonehq/hw-transport-error": "workspace:^"
+    },
+    "devDependencies": {
+      "@types/jest": "^27.5.2",
+      "@types/node": "^16.18.52",
+      "eslint": "^8.49.0",
+      "jest": "^27.4.3",
+      "typescript": "^5.2.2"
+    }
+  }

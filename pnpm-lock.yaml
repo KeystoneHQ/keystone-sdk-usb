@@ -260,6 +260,83 @@ importers:
         specifier: ^5.17.0
         version: 5.17.0
 
+  packages/hw-app-base:
+    dependencies:
+      '@keystonehq/bc-ur-registry':
+        specifier: 0.7.0
+        version: 0.7.0
+      '@keystonehq/hw-transport-error':
+        specifier: workspace:^
+        version: link:../hw-transport-error
+      '@keystonehq/hw-transport-webusb':
+        specifier: workspace:^
+        version: link:../hw-transport-webusb
+      '@ngraveio/bc-ur':
+        specifier: ^1.1.6
+        version: 1.1.6
+      uuid:
+        specifier: ^8.3.2
+        version: 8.3.2
+    devDependencies:
+      '@types/jest':
+        specifier: ^27.5.2
+        version: 27.5.2
+      '@types/node':
+        specifier: ^16.18.52
+        version: 16.18.52
+      eslint:
+        specifier: ^8.49.0
+        version: 8.49.0
+      jest:
+        specifier: ^27.4.3
+        version: 27.5.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      typescript:
+        specifier: ^5.2.2
+        version: 5.2.2
+
+  packages/hw-app-cosmos:
+    dependencies:
+      '@keystonehq/bc-ur-registry':
+        specifier: 0.7.0
+        version: 0.7.0
+      '@keystonehq/bc-ur-registry-cosmos':
+        specifier: 0.1.0
+        version: 0.1.0
+      '@keystonehq/hw-app-base':
+        specifier: workspace:^
+        version: link:../hw-app-base
+      '@keystonehq/hw-transport-error':
+        specifier: workspace:^
+        version: link:../hw-transport-error
+      '@keystonehq/hw-transport-webusb':
+        specifier: workspace:^
+        version: link:../hw-transport-webusb
+      '@ngraveio/bc-ur':
+        specifier: ^1.1.6
+        version: 1.1.6
+      '@noble/hashes':
+        specifier: ^1.5.0
+        version: 1.5.0
+      bech32:
+        specifier: ^2.0.0
+        version: 2.0.0
+    devDependencies:
+      '@types/jest':
+        specifier: ^27.5.2
+        version: 27.5.2
+      '@types/node':
+        specifier: ^16.18.52
+        version: 16.18.52
+      eslint:
+        specifier: ^8.49.0
+        version: 8.49.0
+      jest:
+        specifier: ^27.4.3
+        version: 27.5.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      typescript:
+        specifier: ^5.2.2
+        version: 5.2.2
+
   packages/hw-app-eth:
     dependencies:
       '@ethereumjs/tx':
@@ -1421,11 +1498,17 @@ packages:
   '@jridgewell/trace-mapping@0.3.19':
     resolution: {integrity: sha512-kf37QtfW+Hwx/buWGMPcR60iF9ziHa6r/CZJIHbmcm4+0qrXiVdxegAH0F6yddEVQ7zdkjcGCgCzUu+BcbhQxw==}
 
+  '@keystonehq/bc-ur-registry-cosmos@0.1.0':
+    resolution: {integrity: sha512-vkJqFfTx0j6W8hMKTF1P3d82AQuAjmZV7RHlLVfHCsTU+3/chvBr0b0FiK8X+f3QgHBPdjAY5h3mcvjfFLHpeA==}
+
   '@keystonehq/bc-ur-registry-eth@0.21.0':
     resolution: {integrity: sha512-zINEpmaH+oPwqY6E0qKUvm13AhdOb+BIJ9OVWTGUDhUNltFH4dehicJv6bCg8gTSnBGc9ghWzpGRw5+PflGtMg==}
 
   '@keystonehq/bc-ur-registry-sol@0.9.3':
     resolution: {integrity: sha512-ZjTeInzS4y10tIZlgEN4NGW9W6vTBxzZrM9CaNNeVqTgtyiOB2JvPIW8buxlZUKYj2M5Mu5jPHuAjVRCK6Jm9Q==}
+
+  '@keystonehq/bc-ur-registry@0.5.4':
+    resolution: {integrity: sha512-z7bZe10I5k0zz9znmDTXh+o3Rzb5XsRVpwAzexubOaLxVdZ0F7aMbe2LoEsw766Hpox/7zARi7UGmLz5C8BAzA==}
 
   '@keystonehq/bc-ur-registry@0.6.4':
     resolution: {integrity: sha512-j8Uy44DuAkvYkbf0jMxRY3UizJfn8wsEQr7GS3miRF44vcq7k0/yemVkftbn3jQ+0JYaUXf5wY7lVpLhAeW5nQ==}
@@ -1448,6 +1531,10 @@ packages:
   '@noble/hashes@1.4.0':
     resolution: {integrity: sha512-V1JJ1WTRUqHHrOSh597hURcMqVKVGL/ea3kv0gSnEdsEZ0/+VyPghM1lMNGc00z7CIQorSvbKpuJkxvuHbvdbg==}
     engines: {node: '>= 16'}
+
+  '@noble/hashes@1.5.0':
+    resolution: {integrity: sha512-1j6kQFb7QRru7eKN3ZDvRcP13rugwdxZqCjbiAVZfIJwgj2A65UmT4TgARXGlXgnRkORLTDTrO19ZErt7+QXgA==}
+    engines: {node: ^14.21.3 || >=16}
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -2334,6 +2421,9 @@ packages:
 
   batch@0.6.1:
     resolution: {integrity: sha512-x+VAiMRL6UPkx+kudNvxTl6hB2XNNCG2r+7wixVfIYwu/2HKRXimwQyaumLjMveWvT2Hkd/cAJw+QBMfJ/EKVw==}
+
+  bech32@2.0.0:
+    resolution: {integrity: sha512-LcknSilhIGatDAsY1ak2I8VtGaHNhgMSYVxFrGLXv+xLHytaKZKcaUJJUE7qmBr7h33o5YQwP55pMI0xmkpJwg==}
 
   bfj@7.1.0:
     resolution: {integrity: sha512-I6MMLkn+anzNdCUp9hMRyui1HaNEUCco50lxbvNS4+EyXg8lN3nJ48PjPWtbH8UVS9CuMoaKE9U2V3l29DaRQw==}
@@ -8624,6 +8714,12 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.1
       '@jridgewell/sourcemap-codec': 1.4.15
 
+  '@keystonehq/bc-ur-registry-cosmos@0.1.0':
+    dependencies:
+      '@keystonehq/bc-ur-registry': 0.5.4
+      bs58check: 2.1.2
+      uuid: 8.3.2
+
   '@keystonehq/bc-ur-registry-eth@0.21.0':
     dependencies:
       '@ethereumjs/util': 9.0.3
@@ -8636,6 +8732,12 @@ snapshots:
       '@keystonehq/bc-ur-registry': 0.6.4
       bs58check: 2.1.2
       uuid: 8.3.2
+
+  '@keystonehq/bc-ur-registry@0.5.4':
+    dependencies:
+      '@ngraveio/bc-ur': 1.1.6
+      bs58check: 2.1.2
+      tslib: 2.6.2
 
   '@keystonehq/bc-ur-registry@0.6.4':
     dependencies:
@@ -8670,6 +8772,8 @@ snapshots:
       '@noble/hashes': 1.4.0
 
   '@noble/hashes@1.4.0': {}
+
+  '@noble/hashes@1.5.0': {}
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
@@ -9850,6 +9954,8 @@ snapshots:
   base64-js@1.5.1: {}
 
   batch@0.6.1: {}
+
+  bech32@2.0.0: {}
 
   bfj@7.1.0:
     dependencies:
