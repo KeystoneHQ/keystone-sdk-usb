@@ -6,6 +6,6 @@ export const convertCompresskey = (compressedPublicKey: string) => {
     const key = ec.keyFromPublic(compressedPublicKey, 'hex');
 
     // Get the uncompressed public key
-    let uncompressed =  key.getPublic();
+    const uncompressed =  key.getPublic();
     return uncompressed.encode('hex', false);
-}
+};

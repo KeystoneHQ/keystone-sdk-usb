@@ -3,25 +3,25 @@
 import * as uuid from 'uuid';
 import {
     QRHardwareCall, CryptoKeypath, PathComponent, KeyDerivation, KeyDerivationSchema, Curve,
-    DerivationAlgorithm, QRHardwareCallType, CryptoMultiAccounts, QRHardwareCallVersion
-} from '@keystonehq/bc-ur-registry'
+    DerivationAlgorithm, QRHardwareCallType, CryptoMultiAccounts, QRHardwareCallVersion,
+} from '@keystonehq/bc-ur-registry';
 import { UR, UREncoder, URDecoder } from '@ngraveio/bc-ur';
 import { Actions, TransportWebUSB, Chain, type TransportConfig, logMethod } from '@keystonehq/hw-transport-webusb';
 import { throwTransportError, Status } from '@keystonehq/hw-transport-error';
-import { ETHSignature, EthSignRequest, DataType } from '@keystonehq/bc-ur-registry-eth'
+import { ETHSignature, EthSignRequest, DataType } from '@keystonehq/bc-ur-registry-eth';
 import { Address } from '@ethereumjs/util';
 import { convertCompresskey } from './util';
 
 
 const pathToKeypath = (path: string): CryptoKeypath => {
-    const paths = path.replace(/[m|M]\//, '').split('/')
+    const paths = path.replace(/[m|M]\//, '').split('/');
     const pathComponents = paths.map(path => {
-        const index = parseInt(path.replace("'", ''), 10)
-        const isHardened = path.endsWith("'")
-        return new PathComponent({ index, hardened: isHardened })
-    })
-    return new CryptoKeypath(pathComponents)
-}
+        const index = parseInt(path.replace('\'', ''), 10);
+        const isHardened = path.endsWith('\'');
+        return new PathComponent({ index, hardened: isHardened });
+    });
+    return new CryptoKeypath(pathComponents);
+};
 
 export default class Eth {
     private transport: TransportWebUSB;
@@ -46,7 +46,7 @@ export default class Eth {
             throwTransportError(Status.ERR_TRANSPORT_HAS_NOT_BEEN_SET);
         }
         if (!this.mfp) {
-            throw new Error("missing mfp for this wallet");
+            throw new Error('missing mfp for this wallet');
         }
     }
 
@@ -55,7 +55,7 @@ export default class Eth {
     }
 
     private async checkDeviceLockStatus(): Promise<boolean> {
-        let result = await this.sendToDevice(Actions.CMD_CHECK_LOCK_STATUS, '');
+        const result = await this.sendToDevice(Actions.CMD_CHECK_LOCK_STATUS, '');
         return result.payload;
     }
 
@@ -68,24 +68,29 @@ export default class Eth {
      * @param chainId - The ID of the Ethereum chain (default: undefined)
      * @returns A Promise object containing the address, public key, master fingerprint, and optionally the chain code
      */
-    async getAddress(path: string, boolDisplay: boolean = false, boolChainCode?: boolean, chainId?: string): Promise<{ address: string, publicKey: string, mfp: string, chainCode?: string; }> {
+    async getAddress(
+        path: string,
+        boolDisplay = false,
+        boolChainCode?: boolean,
+        chainId?: string,
+    ): Promise<{ address: string, publicKey: string, mfp: string, chainCode?: string; }> {
 
         // Send a request to the device to get the address at the specified path
         const curve = Curve.secp256k1;
-        const algo = DerivationAlgorithm.slip10
+        const algo = DerivationAlgorithm.slip10;
         
-        const kds = new KeyDerivationSchema(pathToKeypath(path), curve, algo, "ETH")
-        const keyDerivation = new KeyDerivation([kds])
-        const hardwareCall = new QRHardwareCall(QRHardwareCallType.KeyDerivation, keyDerivation, "Keystone USB SDK", QRHardwareCallVersion.V1);
-        let ur = hardwareCall.toUR();
+        const kds = new KeyDerivationSchema(pathToKeypath(path), curve, algo, 'ETH');
+        const keyDerivation = new KeyDerivation([kds]);
+        const hardwareCall = new QRHardwareCall(QRHardwareCallType.KeyDerivation, keyDerivation, 'Keystone USB SDK', QRHardwareCallVersion.V1);
+        const ur = hardwareCall.toUR();
         const encodedUR = new UREncoder(ur, Infinity).nextPart().toUpperCase();
 
         const response = await this.sendToDevice(Actions.CMD_RESOLVE_UR, encodedUR);
-        let resultUR = parseResponoseUR(response.payload);
+        const resultUR = parseResponoseUR(response.payload);
 
-        let account = CryptoMultiAccounts.fromCBOR(resultUR.cbor);
+        const account = CryptoMultiAccounts.fromCBOR(resultUR.cbor);
 
-        let key = account.getKeys()[0];
+        const key = account.getKeys()[0];
         // reset the mfp when getting the address.
         this.mfp = account.getMasterFingerprint().toString('hex');
         // the compressed public key from 
@@ -102,14 +107,14 @@ export default class Eth {
             publicKey: uncompressedPubkey,
             chainCode: boolChainCode ? chainCode.toString('hex') : undefined,
             mfp: this.mfp,
-        }
+        };
     }
 
     private async sign(path: string, data: Buffer, type: DataType): Promise<{ r: string, s:string, v:string }> {
         this.precheck();
         const encodedUR = constructURRequest(data, path, this.mfp!, type);
         const response = await this.sendToDevice(Actions.CMD_RESOLVE_UR, encodedUR);
-        let resultUR = parseResponoseUR(response.payload);
+        const resultUR = parseResponoseUR(response.payload);
         return parseSignatureUR(resultUR);
     }
 
@@ -122,7 +127,11 @@ export default class Eth {
      * @returns A Promise object containing the signature data (r, s, v)
      * @throws Error if unable to sign the transaction
      */
-    async signTransaction(path: string, rawTxHex: string, isLegacy: boolean = false): Promise<{ r: string, s:string, v:string }> {
+    async signTransaction(
+        path: string,
+        rawTxHex: string,
+        isLegacy = false):
+    Promise<{ r: string, s:string, v:string }> {
         const txBuffer = Buffer.from(rawTxHex, 'hex');
         if(isLegacy) {
             return this.sign(path, txBuffer, DataType.transaction);
@@ -146,7 +155,7 @@ export default class Eth {
      *         - v: A string representing the "v" value of the signature.
      *
     */
-    async signEIP712Message(path: string, jsonMessage: Object): Promise<{ r: string, s:string, v:string }> {
+    async signEIP712Message(path: string, jsonMessage: unknown): Promise<{ r: string, s:string, v:string }> {
         const messageBuffer = Buffer.from(JSON.stringify(jsonMessage), 'utf-8');
         return this.sign(path, messageBuffer, DataType.typedData);
     }
@@ -166,7 +175,7 @@ export default class Eth {
      *         - v: A string representing the "v" value of the signature.
      */
     async signPersonalMessage(path: string, messageHex: string): Promise<{ r: string, s: string, v: string }> {
-        const messageBuffer = Buffer.from(messageHex, "utf-8");
+        const messageBuffer = Buffer.from(messageHex, 'utf-8');
         return this.sign(path, messageBuffer, DataType.personalMessage);
     }
 
@@ -182,20 +191,20 @@ export default class Eth {
     * @throws Will throw an error if the device communication fails or if the response cannot be parsed
     */
     async getAppConfig(): Promise<any> {
-        let response = await this.sendToDevice(Actions.CMD_GET_DEVICE_VERSION, '');
-        let result = response.payload
-        let appConfig = JSON.parse(result);
+        const response = await this.sendToDevice(Actions.CMD_GET_DEVICE_VERSION, '');
+        const result = response.payload;
+        const appConfig = JSON.parse(result);
         return {
             version: appConfig['firmwareVersion'],
-            mfp: appConfig['walletMFP']
-        }
+            mfp: appConfig['walletMFP'],
+        };
     }
 }
 
 
 const constructURRequest = (txBuffer: Buffer, path: string, mfp: string, type: DataType): string => {
     const requestId = uuid.v4();
-    let urRequest = EthSignRequest.constructETHRequest(
+    const urRequest = EthSignRequest.constructETHRequest(
         txBuffer,
         type,
         path,
@@ -205,7 +214,7 @@ const constructURRequest = (txBuffer: Buffer, path: string, mfp: string, type: D
     const ur = urRequest.toUR();
     const encodedUR = new UREncoder(ur, Infinity).nextPart().toUpperCase();
     return encodedUR;
-}
+};
 
 const parseResponoseUR = (urPlayload: string): UR => {
     const decoder = new URDecoder();
@@ -215,21 +224,21 @@ const parseResponoseUR = (urPlayload: string): UR => {
     }
     const resultUR = decoder.resultUR();
     return resultUR;
-}
+};
 
 
 const parseSignatureUR = (ur: UR) => {
-    let signature = ETHSignature.fromCBOR(ur.cbor)
-    let signatureBuffer = signature.getSignature();
+    const signature = ETHSignature.fromCBOR(ur.cbor);
+    const signatureBuffer = signature.getSignature();
     const r = signatureBuffer.slice(0, 32).toString('hex');
-    const s = signatureBuffer.slice(32, 64).toString('hex');;
-    const v = signatureBuffer.slice(64).toString('hex');;
+    const s = signatureBuffer.slice(32, 64).toString('hex');
+    const v = signatureBuffer.slice(64).toString('hex');
     return {
         r,
         s,
-        v
-    }
-}
+        v,
+    };
+};
 
 
 
