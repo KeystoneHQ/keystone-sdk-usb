@@ -168,7 +168,7 @@ async function clearUSBState(device) {
       // await device.close();
     }
   } catch (error) {
-    console.error("Error during USB state cleanup:", error);
+    console.error('Error during USB state cleanup:', error);
   } finally {
     // Reset application state
     // device = null; // if reconnection is required, device can be set to null
