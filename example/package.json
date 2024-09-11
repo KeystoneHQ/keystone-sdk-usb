@@ -78,7 +78,8 @@
     "@solana/web3.js": "^1.95.2"
   },
   "scripts": {
-    "start": "node scripts/start.js",
+    "start:dev": "KEYSTONE_USB_ENV=development node scripts/start.js",
+    "start:prod": "KEYSTONE_USB_ENV=production node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js"
   },
