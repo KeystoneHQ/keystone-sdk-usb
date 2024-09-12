@@ -53,7 +53,9 @@ export default class Base {
         return result.payload;
     }
 
-
+    // Caution: this function is designed for the existing QR based intergartion 
+    // which includes UR in the application logic
+    // Don't use this directly if you are doing the USB integration from scratch.
     async getURAccount(path: string, curve: Curve, algo: DerivationAlgorithm): Promise<CryptoMultiAccounts> {
         const kds = new KeyDerivationSchema(pathToKeypath(path), curve, algo, "ETH")
         const keyDerivation = new KeyDerivation([kds])
@@ -68,6 +70,9 @@ export default class Base {
     }
 
 
+    // Caution: this function is designed for the existing QR based intergartion 
+    // which includes UR in the application logic
+    // Don't use this directly if you are doing the USB integration from scratch
     async sendURRequest(encodedUR: string): Promise<UR> {
         const response = await this.sendToDevice(Actions.CMD_RESOLVE_UR, encodedUR);
         return parseResponoseUR(response.payload);
