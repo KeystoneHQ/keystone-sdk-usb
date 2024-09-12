@@ -53,9 +53,8 @@ export default class Base {
         return result.payload;
     }
 
-    async getPubkey(path: string, curve: Curve, algo: DerivationAlgorithm): Promise<{ publicKey: string, mfp: string, chainCode: Buffer }> {
 
-        // Send a request to the device to get the address at the specified path
+    async getURAccount(path: string, curve: Curve, algo: DerivationAlgorithm): Promise<CryptoMultiAccounts> {
         const kds = new KeyDerivationSchema(pathToKeypath(path), curve, algo, "ETH")
         const keyDerivation = new KeyDerivation([kds])
         const hardwareCall = new QRHardwareCall(QRHardwareCallType.KeyDerivation, keyDerivation, "Keystone USB SDK", QRHardwareCallVersion.V1);
@@ -65,8 +64,19 @@ export default class Base {
         const response = await this.sendToDevice(Actions.CMD_RESOLVE_UR, encodedUR);
         let resultUR = parseResponoseUR(response.payload);
 
-        let account = CryptoMultiAccounts.fromCBOR(resultUR.cbor);
+        return CryptoMultiAccounts.fromCBOR(resultUR.cbor);
+    }
 
+
+    async sendURRequest(encodedUR: string): Promise<UR> {
+        const response = await this.sendToDevice(Actions.CMD_RESOLVE_UR, encodedUR);
+        return parseResponoseUR(response.payload);
+    }
+
+    async getPubkey(path: string, curve: Curve, algo: DerivationAlgorithm): Promise<{ publicKey: string, mfp: string, chainCode: Buffer }> {
+
+        // Send a request to the device to get the address at the specified path
+        const account = await this.getURAccount(path, curve, algo);
         let key = account.getKeys()[0];
         // reset the mfp when getting the address.
         this.mfp = account.getMasterFingerprint().toString('hex');
