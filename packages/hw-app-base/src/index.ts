@@ -109,11 +109,9 @@ export default class Base {
     */
     async getAppConfig(): Promise<any> {
         let response = await this.sendToDevice(Actions.CMD_GET_DEVICE_VERSION, '');
-        let result = response.payload
-        let appConfig = JSON.parse(result);
         return {
-            version: appConfig['firmwareVersion'],
-            mfp: appConfig['walletMFP']
+            version: response['firmwareVersion'],
+            mfp: response['walletMFP']
         }
     }
 }
