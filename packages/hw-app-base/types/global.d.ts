@@ -9,12 +9,15 @@ type BuildCryptoHDKeyArgs = {
   note?: string,
 }
 
-type BuildCryptoAccountArgs = {
-  startIndex: number,
-  endIndex: number,
+type KeyInfo = {
   publicKey: string,
   chainCode: string,
   mfp: string,
+}
+
+type BuildCryptoAccountArgs = {
+  startIndex?: number,
+  keys: KeyInfo[],
   origin: string,
   note?: string,
 }

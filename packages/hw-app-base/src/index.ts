@@ -137,19 +137,18 @@ export const parseResponoseUR = (urPlayload: string): UR => {
 };
 
 export const buildCryptoAccount = (args: BuildCryptoAccountArgs): CryptoAccount => {
-    const { startIndex, endIndex, publicKey, chainCode, mfp, origin, note } = args;
-    const arr = Array.from({ length: endIndex - startIndex + 1 }, (v, k) => k + startIndex);
+    const { keys, origin, note, startIndex = 0 } = args;
     return new CryptoAccount(
-        Buffer.from(mfp, 'hex'),
-        arr.map((index) => {
+        Buffer.from(keys[0].mfp, 'hex'),
+        keys.map((key, index) => {
             return new CryptoOutput(
                 [],
                 buildCryptoHDKey({
-                    publicKey: publicKey,
-                    chainCode: chainCode,
-                    mfp: mfp,
+                    publicKey: key.publicKey,
+                    chainCode: key.chainCode,
+                    mfp: key.mfp,
                     origin: origin,
-                    originIndex: index,
+                    originIndex: startIndex + index,
                     note: note,
                 })
             );
