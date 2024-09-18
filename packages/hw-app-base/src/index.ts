@@ -1,21 +1,11 @@
 import {
     QRHardwareCall, CryptoKeypath, PathComponent, KeyDerivation, KeyDerivationSchema, Curve,
-    DerivationAlgorithm, QRHardwareCallType, CryptoMultiAccounts, QRHardwareCallVersion
-} from '@keystonehq/bc-ur-registry'
+    DerivationAlgorithm, QRHardwareCallType, CryptoMultiAccounts, QRHardwareCallVersion,
+    CryptoHDKey, CryptoAccount, CryptoOutput,
+} from '@keystonehq/bc-ur-registry';
 import { UR, UREncoder, URDecoder } from '@ngraveio/bc-ur';
 import { Actions, TransportWebUSB, Chain, type TransportConfig, logMethod } from '@keystonehq/hw-transport-webusb';
 import { throwTransportError, Status } from '@keystonehq/hw-transport-error';
-
-
-export const pathToKeypath = (path: string): CryptoKeypath => {
-    const paths = path.replace(/[m|M]\//, '').split('/')
-    const pathComponents = paths.map(path => {
-        const index = parseInt(path.replace("'", ''), 10)
-        const isHardened = path.endsWith("'")
-        return new PathComponent({ index, hardened: isHardened })
-    })
-    return new CryptoKeypath(pathComponents)
-}
 
 export default class Base {
     private transport: TransportWebUSB;
@@ -40,7 +30,7 @@ export default class Base {
             throwTransportError(Status.ERR_TRANSPORT_HAS_NOT_BEEN_SET);
         }
         if (!this.mfp) {
-            throw new Error("missing mfp for this wallet");
+            throw new Error('missing mfp for this wallet');
         }
     }
 
@@ -49,7 +39,7 @@ export default class Base {
     }
 
     async checkDeviceLockStatus(): Promise<boolean> {
-        let result = await this.sendToDevice(Actions.CMD_CHECK_LOCK_STATUS, '');
+        const result = await this.sendToDevice(Actions.CMD_CHECK_LOCK_STATUS, '');
         return result.payload;
     }
 
@@ -57,14 +47,14 @@ export default class Base {
     // which includes UR in the application logic
     // Don't use this directly if you are doing the USB integration from scratch.
     async getURAccount(path: string, curve: Curve, algo: DerivationAlgorithm): Promise<CryptoMultiAccounts> {
-        const kds = new KeyDerivationSchema(pathToKeypath(path), curve, algo, "ETH")
-        const keyDerivation = new KeyDerivation([kds])
-        const hardwareCall = new QRHardwareCall(QRHardwareCallType.KeyDerivation, keyDerivation, "Keystone USB SDK", QRHardwareCallVersion.V1);
-        let ur = hardwareCall.toUR();
+        const kds = new KeyDerivationSchema(pathToKeypath(path), curve, algo, 'ETH');
+        const keyDerivation = new KeyDerivation([kds]);
+        const hardwareCall = new QRHardwareCall(QRHardwareCallType.KeyDerivation, keyDerivation, 'Keystone USB SDK', QRHardwareCallVersion.V1);
+        const ur = hardwareCall.toUR();
         const encodedUR = new UREncoder(ur, Infinity).nextPart().toUpperCase();
 
         const response = await this.sendToDevice(Actions.CMD_RESOLVE_UR, encodedUR);
-        let resultUR = parseResponoseUR(response.payload);
+        const resultUR = parseResponoseUR(response.payload);
 
         return CryptoMultiAccounts.fromCBOR(resultUR.cbor);
     }
@@ -78,11 +68,15 @@ export default class Base {
         return parseResponoseUR(response.payload);
     }
 
-    async getPubkey(path: string, curve: Curve, algo: DerivationAlgorithm): Promise<{ publicKey: string, mfp: string, chainCode: Buffer }> {
+    async getPubkey(
+        path: string,
+        curve: Curve,
+        algo: DerivationAlgorithm
+    ): Promise<{ publicKey: string, mfp: string, chainCode: Buffer }> {
 
         // Send a request to the device to get the address at the specified path
         const account = await this.getURAccount(path, curve, algo);
-        let key = account.getKeys()[0];
+        const key = account.getKeys()[0];
         // reset the mfp when getting the address.
         this.mfp = account.getMasterFingerprint().toString('hex');
         // the compressed public key from 
@@ -91,8 +85,8 @@ export default class Base {
         return {
             publicKey: pubkey.toString('hex'),
             mfp: this.mfp,
-            chainCode: key.getChainCode()
-        }
+            chainCode: key.getChainCode(),
+        };
     }
 
 
@@ -108,14 +102,29 @@ export default class Base {
     * @throws Will throw an error if the device communication fails or if the response cannot be parsed
     */
     async getAppConfig(): Promise<any> {
-        let response = await this.sendToDevice(Actions.CMD_GET_DEVICE_VERSION, '');
+        const response = await this.sendToDevice(Actions.CMD_GET_DEVICE_VERSION, '');
         return {
             version: response['firmwareVersion'],
-            mfp: response['walletMFP']
-        }
+            mfp: response['walletMFP'],
+        };
     }
 }
 
+export const pathToKeypath = (path: string, index?: number): CryptoKeypath => {
+    const paths = path.replace(/[m|M]\//, '').split('/');
+    const pathComponents = paths.map(path => {
+        const isHardened = path.endsWith('\'');
+        const _index = path.replace('\'', '');
+        if (_index === 'x' || _index === 'X') {
+            if (index != undefined) {
+                return new PathComponent({ index: index, hardened: isHardened });
+            }
+            return new PathComponent({ hardened: isHardened });
+        }
+        return new PathComponent({ index: parseInt(_index, 10), hardened: isHardened });
+    });
+    return new CryptoKeypath(pathComponents);
+};
 
 export const parseResponoseUR = (urPlayload: string): UR => {
     const decoder = new URDecoder();
@@ -125,5 +134,40 @@ export const parseResponoseUR = (urPlayload: string): UR => {
     }
     const resultUR = decoder.resultUR();
     return resultUR;
-}
+};
 
+export const buildCryptoAccount = (args: BuildCryptoAccountArgs): CryptoAccount => {
+    const { startIndex, endIndex, publicKey, chainCode, mfp, origin, note } = args;
+    const arr = Array.from({ length: endIndex - startIndex + 1 }, (v, k) => k + startIndex);
+    return new CryptoAccount(
+        Buffer.from(mfp, 'hex'),
+        arr.map((index) => {
+            return new CryptoOutput(
+                [],
+                buildCryptoHDKey({
+                    publicKey: publicKey,
+                    chainCode: chainCode,
+                    mfp: mfp,
+                    origin: origin,
+                    originIndex: index,
+                    note: note,
+                })
+            );
+        })
+    );
+};
+
+export const buildCryptoHDKey = (args: BuildCryptoHDKeyArgs): CryptoHDKey => {
+    const { publicKey, chainCode, mfp, origin, children, originIndex, childIndex, note } = args;
+    return new CryptoHDKey({
+        isMaster: false,
+        isPrivateKey: false,
+        key: Buffer.from(publicKey, 'hex'),
+        chainCode: Buffer.from(chainCode, 'hex'),
+        origin: pathToKeypath(origin, originIndex),
+        children: children ? pathToKeypath(children, childIndex) : undefined,
+        parentFingerprint: Buffer.from(mfp, 'hex'),
+        name: 'Keystone',
+        note: note,
+    });
+};
