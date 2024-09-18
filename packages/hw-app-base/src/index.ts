@@ -59,7 +59,6 @@ export default class Base {
         return CryptoMultiAccounts.fromCBOR(resultUR.cbor);
     }
 
-
     // Caution: this function is designed for the existing QR based intergartion 
     // which includes UR in the application logic
     // Don't use this directly if you are doing the USB integration from scratch
@@ -88,7 +87,6 @@ export default class Base {
             chainCode: key.getChainCode(),
         };
     }
-
 
     /**
     * Retrieves the configuration information of the connected hardware device.
