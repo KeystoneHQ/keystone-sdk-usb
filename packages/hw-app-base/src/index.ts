@@ -6,6 +6,7 @@ import {
 import { UR, UREncoder, URDecoder } from '@ngraveio/bc-ur';
 import { Actions, TransportWebUSB, Chain, type TransportConfig, logMethod } from '@keystonehq/hw-transport-webusb';
 import { throwTransportError, Status } from '@keystonehq/hw-transport-error';
+export * from './util';
 
 export default class Base {
     private transport: TransportWebUSB;

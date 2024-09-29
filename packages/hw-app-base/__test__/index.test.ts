@@ -1,4 +1,6 @@
-import { pathToKeypath, parseResponoseUR, buildCryptoAccount, buildCryptoHDKey } from '../src/index';
+import { URDecoder } from '@ngraveio/bc-ur';
+import { pathToKeypath, parseResponoseUR, buildCryptoAccount, buildCryptoHDKey, convertMulitAccountToCryptoAccount } from '../src/index';
+import { CryptoHDKey, CryptoMultiAccounts } from '@keystonehq/bc-ur-registry';
 
 describe('pathToKeypath', () => {
   it('should convert path to keypath', () => {
@@ -60,4 +62,64 @@ describe('buildCryptoHDKey', () => {
     expect(key.getUseInfo()).toBe(undefined);
     expect(key.getOrigin().getPath()).toBe('44\'/60\'/0\'/0');
   });
-});
+
+  describe('util', () => {
+    it('should convert multi account to crypto account', () => {
+      const UR1 = "UR:CRYPTO-MULTI-ACCOUNTS/OXADCYBGGDRPRFAOLYTAADDLOXAXHDCLAXVTUYJZOSSTCKJPOXAEMEBBCWNTSSHKIMQDPTCFDRSSCKWMVYWZPFFDSWGHFWFMSBAAHDCXOSHDAHRONSGDKKRDJYWLAEDWFMHDLBKEMSWDLACSPYCAGMFEIALEFEUEFNLRHYBDAMTAADDYOYADLNCSHFYKAEYKAEYKAYCYAALRAEGTAXJTGRIHKKJKJYJLJTIHCXEOCXGDJPJLAHIHEHDMEHDMDYHTYLLGAH";
+      const UR2 = "UR:CRYPTO-MULTI-ACCOUNTS/OXADCYBGGDRPRFAOLYTAADDLOXAXHDCLAOIDRDFWGHGESFFWCNSTFEBYQDKGPLGHUECPHFHEDAYAAXGWHTYAPKBENBGSENCLRHAAHDCXUEFLUTCHIOMTAHROGERSFXNDURGHKTSWSBMWZMHTGHCAFNPAJKGEZERSOTTEZCRHAMTAADDYOYADLNCSGHYKAEYKAEYKAYCYNEJEKBGRAXJTGRIHKKJKJYJLJTIHCXEOCXGDJPJLAHIHEHDMEHDMDYMNTNFYUE";
+
+      let URs = [UR1, UR2].map(eachUR => {
+        const decoder = new URDecoder();
+        decoder.receivePart(eachUR);
+        if (!decoder.isComplete()) {
+          throw new Error('UR is incomplete');
+        }
+        const resultUR = decoder.resultUR();
+        return CryptoMultiAccounts.fromCBOR(resultUR.cbor);
+      });
+
+      let ca = convertMulitAccountToCryptoAccount(URs)
+
+      expect(ca.getRegistryType().getType()).toBe('crypto-account')
+      expect(ca.getOutputDescriptors().length).toBe(2)
+      expect(ca.getMasterFingerprint().toString('hex')).toBe('1250b6bc')
+
+      let outputDescriptors = ca.getOutputDescriptors()
+      let key1 = outputDescriptors[0].getCryptoKey() as CryptoHDKey
+      let key2 = outputDescriptors[1].getCryptoKey() as CryptoHDKey
+      expect(key1.getBip32Key()).toBe('xpub6BghCcrqiqZKVhbMggpicCo9cziXGGyde4uW2adRcH6aLNYYPGL6vQRYS64pAp1cgCidiZ7zwGTHN2NmF4aJWijenLYmSeTVsyrauhWJDjA')
+      expect(key2.getBip32Key()).toBe('xpub6CpjN9cV2eSSHvzA5113pRqD5qaWRhUXS7ABs5AqGiau3BbAnW2fx1JwEEwn9ugVAgx6vbpXAKEjQbKjYHHPCjaxHEwyfLcUvwxjbaBEPRe')
+
+
+      let one = convertMulitAccountToCryptoAccount([URs[0]])
+
+      expect(one.getRegistryType().getType()).toBe('crypto-account')
+      expect(one.getOutputDescriptors().length).toBe(1)
+      expect(one.getMasterFingerprint().toString('hex')).toBe('1250b6bc')
+      let keyOne = outputDescriptors[0].getCryptoKey() as CryptoHDKey
+      expect(keyOne.getBip32Key()).toBe('xpub6BghCcrqiqZKVhbMggpicCo9cziXGGyde4uW2adRcH6aLNYYPGL6vQRYS64pAp1cgCidiZ7zwGTHN2NmF4aJWijenLYmSeTVsyrauhWJDjA')
+
+    });
+
+    it('should throw error when mfp is not the same', () => {
+      const UR1 = "ur:crypto-multi-accounts/onadcywlcscewfaolytaaddloeaxhdclaowdverokopdinhseeroisyalksaykctjshedprnuyjyfgrovawewftyghceglrpkgamtaaddyoyadlocsdwykcfadykykaeykaeykaxisjeihkkjkjyjljtihaaksdeeyeteeemeciaetieetdyiyeniadyenidhsiyidiheeenhsemieehemecdyiyeoiyiaiyeyeceneciyemahihehdmdydmeyksrlzmdi"
+      const UR2 = "UR:CRYPTO-MULTI-ACCOUNTS/OXADCYBGGDRPRFAOLYTAADDLOXAXHDCLAOIDRDFWGHGESFFWCNSTFEBYQDKGPLGHUECPHFHEDAYAAXGWHTYAPKBENBGSENCLRHAAHDCXUEFLUTCHIOMTAHROGERSFXNDURGHKTSWSBMWZMHTGHCAFNPAJKGEZERSOTTEZCRHAMTAADDYOYADLNCSGHYKAEYKAEYKAYCYNEJEKBGRAXJTGRIHKKJKJYJLJTIHCXEOCXGDJPJLAHIHEHDMEHDMDYMNTNFYUE";
+
+      let URs = [UR1, UR2].map(eachUR => {
+        const decoder = new URDecoder();
+        decoder.receivePart(eachUR);
+        if (!decoder.isComplete()) {
+          throw new Error('UR is incomplete');
+        }
+        const resultUR = decoder.resultUR();
+        return CryptoMultiAccounts.fromCBOR(resultUR.cbor);
+      });
+
+      expect(() => convertMulitAccountToCryptoAccount(URs)).toThrow('All accounts must have the same Master Fingerprint');
+    })
+
+    it('should error when ur list is empty', () => {
+      expect(() => convertMulitAccountToCryptoAccount([])).toThrow('input list is empty');
+    })
+  })
+})  
