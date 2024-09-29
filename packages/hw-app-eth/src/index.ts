@@ -1,4 +1,4 @@
-import { Actions, TransportWebUSB, Chain, type TransportConfig, logMethod } from '@keystonehq/hw-transport-webusb';
+import { Actions, Chain, type TransportConfig, logMethod, TransportUsbDriver } from '@keystonehq/hw-transport-usb';
 import {
   Transaction,
   FeeMarketEIP1559Transaction,
@@ -32,19 +32,19 @@ import Eth from './new';
 export {Eth};
 
 export default class EthLegacy {
-  private transport: Nullable<TransportWebUSB>;
+  private transport: Nullable<TransportUsbDriver>;
 
-  constructor(transport: TransportWebUSB) {
+  constructor(transport: TransportUsbDriver) {
     this.transport = transport;
   }
 
-  static async createWithUSBTransport(
-    config?: TransportConfig,
-  ): Promise<EthLegacy> {
-    const transport = await TransportWebUSB.connect(config);
-    await transport.close();
-    return new EthLegacy(transport);
-  }
+//   static async createWithUSBTransport(
+//     config?: TransportConfig,
+//   ): Promise<EthLegacy> {
+//     const transport = await TransportWebUSB.connect(config);
+//     await transport.close();
+//     return new EthLegacy(transport);
+//   }
 
   #send = async <T>(action: Actions, data: unknown) => {
     if (!this.transport) {

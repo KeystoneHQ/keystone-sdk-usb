@@ -1,11 +1,11 @@
 import * as uuid from 'uuid';
-import Base, { parseResponoseUR } from "@keystonehq/hw-app-base";
-import { Actions, TransportWebUSB, type TransportConfig } from '@keystonehq/hw-transport-webusb';
-import { Curve, DerivationAlgorithm } from "@keystonehq/bc-ur-registry";
-import { CosmosSignRequest, CosmosSignature, SignDataType as DataType } from '@keystonehq/bc-ur-registry-cosmos'
-import { sha256 } from "@noble/hashes/sha256";
-import { ripemd160 } from "@noble/hashes/ripemd160";
-import { bech32 } from "bech32";
+import Base, { parseResponoseUR } from '@keystonehq/hw-app-base';
+import { Actions, TransportUsbDriver } from '@keystonehq/hw-transport-usb';
+import { Curve, DerivationAlgorithm } from '@keystonehq/bc-ur-registry';
+import { CosmosSignRequest, CosmosSignature, SignDataType as DataType } from '@keystonehq/bc-ur-registry-cosmos';
+import { sha256 } from '@noble/hashes/sha256';
+import { ripemd160 } from '@noble/hashes/ripemd160';
+import { bech32 } from 'bech32';
 import { UREncoder, UR } from '@ngraveio/bc-ur';
 
 export interface ResponseAddress {
@@ -15,8 +15,8 @@ export interface ResponseAddress {
 }
 
 export enum TxDataType {
-    amino = "amino",
-    json = "json",
+    amino = 'amino',
+    json = 'json',
 }
 
 export default class Cosmos extends Base {
@@ -26,7 +26,7 @@ export default class Cosmos extends Base {
      * @param transport - An object of type TransportWebUSB
      * @param mfp - Optional parameter of type string, default is undefined, but the mfp should exist in the signing process.
      */
-    constructor(transport: TransportWebUSB, mfp?: string) {
+    constructor(transport: TransportUsbDriver, mfp?: string) {
         // Initialize Solana connection
         super(transport, mfp);
     }
@@ -54,11 +54,11 @@ export default class Cosmos extends Base {
             mfp: string
         }> {
         this.precheck();
-        let path = `M/44'/118'/${account}'/${change}/${addressIndex}`
-        const { publicKey, mfp } = await this.getPubkey(path, Curve.secp256k1, DerivationAlgorithm.slip10)
+        const path = `M/44'/118'/${account}'/${change}/${addressIndex}`;
+        const { publicKey, mfp } = await this.getPubkey(path, Curve.secp256k1, DerivationAlgorithm.slip10);
         return {
             publicKey,
-            mfp
+            mfp,
         };
     }
 
@@ -80,10 +80,10 @@ export default class Cosmos extends Base {
         publicKey: string,
         mfp: string;
     }> {
-        const { publicKey, mfp } = await this.getPubkey(path, Curve.secp256k1, DerivationAlgorithm.slip10)
+        const { publicKey, mfp } = await this.getPubkey(path, Curve.secp256k1, DerivationAlgorithm.slip10);
         return {
             publicKey,
-            mfp
+            mfp,
         };
     }
 
@@ -101,13 +101,13 @@ export default class Cosmos extends Base {
      * @throws Will throw an error if the device communication fails or if the derivation is unsuccessful
      */
     async getAddressAndPubKey(hrp: string, path: string): Promise<ResponseAddress> {
-        const { publicKey, mfp } = await this.getPubkey(path, Curve.secp256k1, DerivationAlgorithm.slip10)
-        const bech32_address = getBech32AddressFromPublicKey(hrp, publicKey)
+        const { publicKey, mfp } = await this.getPubkey(path, Curve.secp256k1, DerivationAlgorithm.slip10);
+        const bech32_address = getBech32AddressFromPublicKey(hrp, publicKey);
         return {
             bech32_address,
             compressed_pk: publicKey,
-            mfp
-        }
+            mfp,
+        };
     }
 
 
@@ -115,32 +115,32 @@ export default class Cosmos extends Base {
         signature: string;
     }> {
         this.precheck();
-        let encodedUR = "";
+        let encodedUR = '';
         if (txType == TxDataType.amino) {
             encodedUR = constructURRequest(data, path, this.mfp!, DataType.amino);
         } else {
             encodedUR = constructURRequest(data, path, this.mfp!, DataType.direct);
         }
         const response = await this.sendToDevice(Actions.CMD_RESOLVE_UR, encodedUR);
-        let resultUR = parseResponoseUR(response.payload);
+        const resultUR = parseResponoseUR(response.payload);
         return {
-            signature: parseSignatureUR(resultUR)
-        }
+            signature: parseSignatureUR(resultUR),
+        };
     }
 }
 
 
 function constructURRequest(txBuffer: Buffer, path: string, mfp: string, type: DataType): string {
     const requestId = uuid.v4();
-    let xfps = [mfp]
-    let paths = [path]
-    let cosmosUR = CosmosSignRequest.constructCosmosRequest(
+    const xfps = [mfp];
+    const paths = [path];
+    const cosmosUR = CosmosSignRequest.constructCosmosRequest(
         requestId,
         xfps,
         txBuffer,
         type,
         paths
-    )
+    );
 
     const ur = cosmosUR.toUR();
     const encodedUR = new UREncoder(ur, Infinity).nextPart().toUpperCase();
@@ -149,10 +149,10 @@ function constructURRequest(txBuffer: Buffer, path: string, mfp: string, type: D
 
 
 const parseSignatureUR = (ur: UR) => {
-    let signature = CosmosSignature.fromCBOR(ur.cbor)
-    let signatureBuffer = signature.getSignature();
+    const signature = CosmosSignature.fromCBOR(ur.cbor);
+    const signatureBuffer = signature.getSignature();
     return signatureBuffer.toString('hex');
-}
+};
 
 
 function getBech32AddressFromPublicKey(hrp: string, publicKey: string): string {

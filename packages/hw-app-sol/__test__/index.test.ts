@@ -29,6 +29,23 @@ import HDKey from 'hdkey';
 
       console.log('k1 bip32 key:', childkey.publicKey.toString('hex'));
     });
+
+
+    it('test-sign-sol-msg', async () => {
+        const solMsg = 'ff736f6c616e61206f6666636861696e00001c004c6f6e67204f66662d436861696e2054657374204d6573736167652e';
+        const path = 'm/44\'/501\'/0\'';
+        const msg = Buffer.from(solMsg, 'hex');
+    
+        // const transport = await TransportNodeUSB.connect({
+        //     timeout: 100000,
+        // });
+
+        // const solana = new Solana(transport);
+
+        // const signature = await solana.signOffchainMessage(path, msg);
+
+        // console.log('signature', signature);
+      });
 });
   
   
