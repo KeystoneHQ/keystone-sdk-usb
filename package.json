@@ -1,31 +1,31 @@
 {
-  "name": "keystone-suite",
-  "private": true,
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "cleanup": "rimraf packages/*/lib",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "build": "pnpm -r --filter \"./packages/**\" build",
-    "dev": "pnpm -r --filter \"./example\" run start:dev & pnpm -r --parallel --filter \"./packages/**\" run watch",
-    "test": "jest",
-    "publish": "pnpm run build && pnpm -r --filter \"./packages/**\" publish --no-git-checks --access public --report-summary"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@types/jest": "^27.5.2",
-    "documentation": "^14.0.3",
-    "eslint": "^8.49.0",
-    "jest": "^27.4.3",
-    "rimraf": "^5.0.5",
-    "ts-jest": "^29.1.1",
-    "typescript": "^5.2.2"
-  },
-  "dependencies": {
-    "@keystonehq/bc-ur-registry": "0.7.0"
-  }
+    "name": "keystone-suite",
+    "private": true,
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "cleanup": "rimraf packages/*/lib",
+        "lint": "eslint .",
+        "lint:fix": "eslint . --fix",
+        "build": "pnpm -r --filter \"./packages/**\" build",
+        "dev": "pnpm -r --filter \"./example\" run start:dev & pnpm -r --parallel --filter \"./packages/**\" run watch",
+        "test": "jest",
+        "publish": "pnpm run build && pnpm -r --filter \"./packages/**\" publish --no-git-checks --access public --report-summary"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/jest": "^27.5.2",
+        "documentation": "^14.0.3",
+        "eslint": "^8.49.0",
+        "jest": "^27.4.3",
+        "rimraf": "^5.0.5",
+        "ts-jest": "^29.1.1",
+        "typescript": "^5.2.2"
+    },
+    "dependencies": {
+        "@keystonehq/bc-ur-registry": "0.7.0"
+    }
 }
