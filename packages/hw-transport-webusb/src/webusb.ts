@@ -1,5 +1,5 @@
 
-import { Actions, decode, encode, logMethod, TransportConfig, TransportUsbDriver } from '@keystonehq/hw-transport-usb';
+import { Actions, decode, encode, logMethod, TransportConfig, TransportHID } from '@keystonehq/hw-transport-usb';
 import { USBInterfaceNumber, USBConfigurationValue, USBTimeout, MAXUSBPackets, USBPackageSize, OFFSET_INS, OFFSET_LC, OFFSET_P1, keystoneUSBVendorId } from '@keystonehq/hw-transport-usb';
 import { generateRequestID, isEmpty, isString, isUint8Array, safeJSONparse, safeJSONStringify } from '@keystonehq/hw-transport-usb';
 import { throwTransportError, Status, TransportError, ErrorInfo } from '@keystonehq/hw-transport-error';
@@ -13,7 +13,7 @@ const keystoneDevices = [
 ];
 
 
-export class TransportWebUSB implements TransportUsbDriver {
+export class TransportWebUSB implements TransportHID {
     private device: Nullable<USBDevice>;
     private endpoint = 3;
     private requestTimeout = USBTimeout;

@@ -1,11 +1,11 @@
 import { throwTransportError, Status, TransportError, ErrorInfo } from '@keystonehq/hw-transport-error';
 import { webusb,WebUSBDevice,getDeviceList } from 'usb';
-import { Actions, generateRequestID, isEmpty, isString, isUint8Array, logMethod, safeJSONparse, safeJSONStringify, TransportConfig, TransportUsbDriver } from '@keystonehq/hw-transport-usb';
+import { Actions, generateRequestID, isEmpty, isString, isUint8Array, logMethod, safeJSONparse, safeJSONStringify, TransportConfig, TransportHID } from '@keystonehq/hw-transport-usb';
 import { keystoneUSBProductId, keystoneUSBVendorId, MAXUSBPackets, OFFSET_INS, OFFSET_LC, OFFSET_P1, USBConfigurationValue, USBInterfaceNumber, USBPackageSize, USBTimeout } from '@keystonehq/hw-transport-usb';
 import { decode, encode } from '@keystonehq/hw-transport-usb';
 
 
-export class TransportNodeUSB  implements TransportUsbDriver{
+export class TransportNodeUSB  implements TransportHID{
     /// Wrapper to make a node-usb device look like a webusb device
     private device: Nullable<WebUSBDevice>;
     private endpoint = 3;

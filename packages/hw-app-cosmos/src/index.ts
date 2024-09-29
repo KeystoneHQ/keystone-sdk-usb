@@ -1,6 +1,6 @@
 import * as uuid from 'uuid';
 import Base, { parseResponoseUR } from '@keystonehq/hw-app-base';
-import { Actions, TransportUsbDriver } from '@keystonehq/hw-transport-usb';
+import { Actions, TransportHID } from '@keystonehq/hw-transport-usb';
 import { Curve, DerivationAlgorithm } from '@keystonehq/bc-ur-registry';
 import { CosmosSignRequest, CosmosSignature, SignDataType as DataType } from '@keystonehq/bc-ur-registry-cosmos';
 import { sha256 } from '@noble/hashes/sha256';
@@ -26,7 +26,7 @@ export default class Cosmos extends Base {
      * @param transport - An object of type TransportWebUSB
      * @param mfp - Optional parameter of type string, default is undefined, but the mfp should exist in the signing process.
      */
-    constructor(transport: TransportUsbDriver, mfp?: string) {
+    constructor(transport: TransportHID, mfp?: string) {
         // Initialize Solana connection
         super(transport, mfp);
     }

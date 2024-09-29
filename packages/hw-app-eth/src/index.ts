@@ -1,4 +1,4 @@
-import { Actions, Chain, type TransportConfig, logMethod, TransportUsbDriver } from '@keystonehq/hw-transport-usb';
+import { Actions, Chain, logMethod,TransportHID } from '@keystonehq/hw-transport-usb';
 import {
   Transaction,
   FeeMarketEIP1559Transaction,
@@ -32,9 +32,9 @@ import Eth from './new';
 export {Eth};
 
 export default class EthLegacy {
-  private transport: Nullable<TransportUsbDriver>;
+  private transport: Nullable<TransportHID>;
 
-  constructor(transport: TransportUsbDriver) {
+  constructor(transport: TransportHID) {
     this.transport = transport;
   }
 

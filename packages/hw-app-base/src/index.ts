@@ -4,11 +4,11 @@ import {
     CryptoHDKey, CryptoAccount, CryptoOutput,
 } from '@keystonehq/bc-ur-registry';
 import { UR, UREncoder, URDecoder } from '@ngraveio/bc-ur';
-import { Actions,  TransportUsbDriver } from '@keystonehq/hw-transport-usb';
+import { Actions,  TransportHID } from '@keystonehq/hw-transport-usb';
 import { throwTransportError, Status } from '@keystonehq/hw-transport-error';
 
 export default class Base {
-    private transport: TransportUsbDriver;
+    private transport: TransportHID;
     public mfp: string | undefined;
 
     /**
@@ -17,7 +17,7 @@ export default class Base {
      * @param transport - An object of type TransportWebUSB
      * @param mfp - Optional parameter of type string, default is undefined, but the mfp should exist in the signing process.
      */
-    constructor(transport: TransportUsbDriver, mfp?: string) {
+    constructor(transport: TransportHID, mfp?: string) {
         // Initialize Solana connection
         this.transport = transport;
         if (mfp) {

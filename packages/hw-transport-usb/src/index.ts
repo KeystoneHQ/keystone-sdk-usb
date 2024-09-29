@@ -1,4 +1,3 @@
-import { Actions } from './actions';
 import { USBInterfaceNumber } from './constants';
 export { Actions } from './actions';
 export { Status as StatusCode } from '@keystonehq/hw-transport-error';
@@ -7,19 +6,13 @@ export * from './decorators';
 export * from './helper';
 export * from './frame';
 export * from './constants';
-
+export * from './interface';
 export interface TransportConfig {
   endpoint?: number;
   timeout?: number;
   maxPacketSize?: number;
   disconnectListener?: (device: USBDevice) => void;
 }
-export interface TransportUsbDriver {
-    send<T>(action: Actions, data: unknown): Promise<T>;
-    receive(action: Actions, requestID: number): Promise<any>;
-    open(): Promise<void>;
-    close(): Promise<void>;
-  }
 
 
 async function clearUSBState(device) {
