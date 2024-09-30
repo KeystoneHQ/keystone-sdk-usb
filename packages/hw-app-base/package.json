@@ -1,6 +1,6 @@
 {
     "name": "@keystonehq/hw-app-base",
-    "version": "0.1.4",
+    "version": "0.1.6",
     "description": "The base library of Keystone hardware wallet usb support",
     "main": "lib/index.js",
     "private": false,
