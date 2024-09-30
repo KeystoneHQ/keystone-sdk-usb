@@ -1,6 +1,6 @@
 import { URDecoder } from '@ngraveio/bc-ur';
-import { pathToKeypath, parseResponoseUR, buildCryptoAccount, buildCryptoHDKey, convertMulitAccountToCryptoAccount } from '../src/index';
-import { CryptoHDKey, CryptoMultiAccounts } from '@keystonehq/bc-ur-registry';
+import { pathToKeypath, parseResponoseUR, buildCryptoAccount, buildCryptoHDKey, convertMulitAccountToCryptoAccount, CryptoMultiAccounts } from '../src/index';
+import { CryptoHDKey } from '@keystonehq/bc-ur-registry';
 
 describe('pathToKeypath', () => {
   it('should convert path to keypath', () => {
