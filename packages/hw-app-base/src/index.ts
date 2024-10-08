@@ -177,5 +177,6 @@ export {
     CryptoMultiAccounts,
     Curve,
     DerivationAlgorithm,
-    CryptoAccount
+    CryptoAccount,
+    UR, UREncoder, URDecoder
 };

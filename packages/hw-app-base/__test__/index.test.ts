@@ -1,5 +1,5 @@
 import { URDecoder } from '@ngraveio/bc-ur';
-import { pathToKeypath, parseResponoseUR, buildCryptoAccount, buildCryptoHDKey, convertMulitAccountToCryptoAccount, CryptoMultiAccounts } from '../src/index';
+import { pathToKeypath, parseResponoseUR, buildCryptoAccount, buildCryptoHDKey, convertMulitAccountToCryptoAccount, CryptoMultiAccounts, generateURString } from '../src/index';
 import { CryptoHDKey } from '@keystonehq/bc-ur-registry';
 
 describe('pathToKeypath', () => {
@@ -120,6 +120,14 @@ describe('buildCryptoHDKey', () => {
 
     it('should error when ur list is empty', () => {
       expect(() => convertMulitAccountToCryptoAccount([])).toThrow('input list is empty');
+    })
+    
+    it('generateURString - should generate ur string', () => {
+      const cbor = 'a4011a1250b6bc0281d9012fa403582103e0db6ca7c71e72a40091141b9dc4596ab3a9192ac41eebe1f2b048c654423ecb045820a75805b89c5079ba74e9002c3e587f7c97ea8018ab1d5245638a45de3c845e0b06d90130a101861856f500f500f5081a0484004d036e4b657973746f6e6520332050726f0565312e312e30';
+      const type = 'crypto-multi-accounts';
+      const UR1 = "UR:CRYPTO-MULTI-ACCOUNTS/OXADCYBGGDRPRFAOLYTAADDLOXAXHDCLAXVTUYJZOSSTCKJPOXAEMEBBCWNTSSHKIMQDPTCFDRSSCKWMVYWZPFFDSWGHFWFMSBAAHDCXOSHDAHRONSGDKKRDJYWLAEDWFMHDLBKEMSWDLACSPYCAGMFEIALEFEUEFNLRHYBDAMTAADDYOYADLNCSHFYKAEYKAEYKAYCYAALRAEGTAXJTGRIHKKJKJYJLJTIHCXEOCXGDJPJLAHIHEHDMEHDMDYHTYLLGAH";
+      const ur = generateURString(cbor, type);
+      expect(ur).toBe(UR1);
     })
   })
 })  

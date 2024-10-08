@@ -1,8 +1,7 @@
 
 // This is module for some helper functions for keystone app.
-
 import { CryptoAccount, CryptoMultiAccounts, ScriptExpressions, CryptoOutput } from "@keystonehq/bc-ur-registry";
-
+import { UREncoder, UR } from "@ngraveio/bc-ur";
 
 export const convertMulitAccountToCryptoAccount = (accounts: CryptoMultiAccounts[]): CryptoAccount => {
     
@@ -27,4 +26,10 @@ export const convertMulitAccountToCryptoAccount = (accounts: CryptoMultiAccounts
             )
         })
     )
+}
+
+export const generateURString = (cbor: string, type: string) => {
+    const ur = new UR(Buffer.from(cbor, 'hex'), type);
+    const encodedUR = new UREncoder(ur, Infinity).nextPart().toUpperCase();
+    return encodedUR;
 }
