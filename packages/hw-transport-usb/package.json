@@ -1,5 +1,5 @@
 {
-    "name": "@keystonehq/hw-transport-webusb",
+    "name": "@keystonehq/hw-transport-usb",
     "version": "1.0.0",
     "description": "Hardware Wallet Interface for USB support WebUSB and NodeUSB",
     "main": "lib/index.js",
@@ -20,7 +20,6 @@
     "license": "ISC",
     "dependencies": {
         "@keystonehq/hw-transport-error": "workspace:^",
-        "buffer": "^6.0.3",
-        "@keystonehq/hw-transport-usb": "workspace:^"
+        "buffer": "^6.0.3"
     }
 }

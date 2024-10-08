@@ -1,36 +1,36 @@
 {
-  "name": "@keystonehq/hw-app-eth",
-  "version": "0.4.4",
-  "description": "",
-  "main": "lib/index.js",
-  "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "devDependencies": {
-    "@types/elliptic": "^6.4.18",
-    "@types/node": "^16.18.52",
-    "@types/w3c-web-usb": "^1.0.6",
-    "eslint": "^8.49.0",
-    "typescript": "^5.2.2"
-  },
-  "license": "ISC",
-  "dependencies": {
-    "@ethereumjs/tx": "^3.3.2",
-    "@ethereumjs/util": "^9.0.3",
-    "@keystonehq/bc-ur-registry": "0.7.0",
-    "@keystonehq/bc-ur-registry-eth": "0.21.0",
-    "@keystonehq/hw-transport-error": "workspace:^",
-    "@keystonehq/hw-transport-webusb": "workspace:^",
-    "@ngraveio/bc-ur": "^1.1.6",
-    "buffer": "^6.0.3",
-    "elliptic": "^6.5.7",
-    "rlp": "^2.2.6",
-    "uuid": "^8.3.2"
-  }
+    "name": "@keystonehq/hw-app-eth",
+    "version": "0.4.4",
+    "description": "",
+    "main": "lib/index.js",
+    "scripts": {
+        "build": "tsc",
+        "watch": "tsc -w",
+        "lint": "eslint .",
+        "lint:fix": "eslint . --fix",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "devDependencies": {
+        "@types/elliptic": "^6.4.18",
+        "@types/node": "^16.18.52",
+        "@types/w3c-web-usb": "^1.0.6",
+        "eslint": "^8.49.0",
+        "typescript": "^5.2.2"
+    },
+    "license": "ISC",
+    "dependencies": {
+        "@ethereumjs/tx": "^3.3.2",
+        "@ethereumjs/util": "^9.0.3",
+        "@keystonehq/bc-ur-registry": "0.7.0",
+        "@keystonehq/bc-ur-registry-eth": "0.21.0",
+        "@keystonehq/hw-transport-error": "workspace:^",
+        "@keystonehq/hw-transport-usb": "workspace:^",
+        "@ngraveio/bc-ur": "^1.1.6",
+        "buffer": "^6.0.3",
+        "elliptic": "^6.5.7",
+        "rlp": "^2.2.6",
+        "uuid": "^8.3.2"
+    }
 }

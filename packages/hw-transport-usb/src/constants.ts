@@ -12,3 +12,7 @@ export const OFFSET_P1 = 3;
 export const OFFSET_P2 = 5;
 export const OFFSET_LC = 7;
 export const OFFSET_CDATA = 9;
+
+// keystone 3 pro coldwallet device identifier
+export const keystoneUSBVendorId = 4617;
+export const keystoneUSBProductId = 12289;

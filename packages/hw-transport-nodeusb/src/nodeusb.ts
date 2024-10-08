@@ -1,20 +1,13 @@
-
-import { Actions, decode, encode, logMethod, TransportConfig, TransportHID } from '@keystonehq/hw-transport-usb';
-import { USBInterfaceNumber, USBConfigurationValue, USBTimeout, MAXUSBPackets, USBPackageSize, OFFSET_INS, OFFSET_LC, OFFSET_P1, keystoneUSBVendorId } from '@keystonehq/hw-transport-usb';
-import { generateRequestID, isEmpty, isString, isUint8Array, safeJSONparse, safeJSONStringify } from '@keystonehq/hw-transport-usb';
 import { throwTransportError, Status, TransportError, ErrorInfo } from '@keystonehq/hw-transport-error';
-import { Buffer } from 'buffer';
+import { webusb,WebUSBDevice,getDeviceList } from 'usb';
+import { Actions, generateRequestID, isEmpty, isString, isUint8Array, logMethod, safeJSONparse, safeJSONStringify, TransportConfig, TransportHID } from '@keystonehq/hw-transport-usb';
+import { keystoneUSBProductId, keystoneUSBVendorId, MAXUSBPackets, OFFSET_INS, OFFSET_LC, OFFSET_P1, USBConfigurationValue, USBInterfaceNumber, USBPackageSize, USBTimeout } from '@keystonehq/hw-transport-usb';
+import { decode, encode } from '@keystonehq/hw-transport-usb';
 
 
-const keystoneDevices = [
-  {
-    vendorId: keystoneUSBVendorId,
-  },
-];
-
-
-export class TransportWebUSB implements TransportHID {
-    private device: Nullable<USBDevice>;
+export class TransportNodeUSB  implements TransportHID{
+    /// Wrapper to make a node-usb device look like a webusb device
+    private device: Nullable<WebUSBDevice>;
     private endpoint = 3;
     private requestTimeout = USBTimeout;
     private maxPacketSize = MAXUSBPackets;
@@ -38,35 +31,47 @@ export class TransportWebUSB implements TransportHID {
     static connect = async (config?: TransportConfig) => {
       await this.isSupported();
       const devices = await this.getKeystoneDevices();
-      let device: Nullable<USBDevice> = null;
+      let device: Nullable<WebUSBDevice> = null;
       if (devices.length > 1) {
         device = await requestKeystoneDevice();
       } else {
         device = devices[0];
       }
       initializeDisconnectListener(device, config?.disconnectListener);
-      return new TransportWebUSB(device, config);
+      return new TransportNodeUSB(device, config);
     };
  
-    static async getKeystoneDevices(): Promise<USBDevice[]> {
-        const devices = await navigator.usb.getDevices();
-        return devices.filter((d: USBDevice) => d.vendorId === keystoneUSBVendorId);
-    }
 
-    static async getFirstKeystoneDevice(): Promise<USBDevice> {
+    static getKeystoneDevices = async (): Promise<WebUSBDevice[]> => {
+        const devices = getDeviceList();
+        const webusbDevices: WebUSBDevice[] = [];
+        for (const device of devices) {
+            const webusbDevice = await WebUSBDevice.createInstance(device);
+            if (webusbDevice.vendorId === keystoneUSBVendorId) {
+                webusbDevices.push(webusbDevice);
+            }
+        }
+        if (webusbDevices.length === 0) {
+            throw new Error('Device not found');
+        } 
+      return webusbDevices; 
+    };
+
+    static async getFirstKeystoneDevice(): Promise<WebUSBDevice> {
         const existingDevices = await this.getKeystoneDevices();
         if (existingDevices.length > 0) return existingDevices[0];
         return requestKeystoneDevice();
-    }
+      }
+      
 
-    static async isSupported(): Promise<boolean> {
-        if (!navigator?.usb || typeof navigator.usb.getDevices !== 'function') throwTransportError(Status.ERR_NOT_SUPPORTED);
+
+    static  isSupported = async (): Promise<boolean> => {
+        if (!webusb || typeof webusb.getDevices !== 'function') throwTransportError(Status.ERR_NOT_SUPPORTED);
         if (isEmpty(await this.getKeystoneDevices())) throwTransportError(Status.ERR_DEVICE_NOT_FOUND);
         return true;
-    }
-      
-   
-    constructor(device: USBDevice, config?: TransportConfig) {
+      };    
+
+    constructor(device: WebUSBDevice, config?: TransportConfig) {
       this.endpoint = config?.endpoint ?? this.endpoint;
       this.requestTimeout = config?.timeout ?? this.requestTimeout;
       this.maxPacketSize = config?.maxPacketSize ?? this.maxPacketSize;
@@ -171,34 +176,40 @@ export class TransportWebUSB implements TransportHID {
   
 
 const initializeDisconnectListener = (
-  device: USBDevice,
-  disconnectListener?: (device: USBDevice) => void
+  device: WebUSBDevice,
+  disconnectListener?: (device: WebUSBDevice) => void
 ): void => {
-  const onDisconnect = (e: Event) => {
+  const onDisconnect = (e: USBConnectionEvent) => {
     if (device === (e as USBConnectionEvent).device) {
       disconnectListener && disconnectListener(device);
       close(device);
-      navigator.usb.removeEventListener('disconnect', onDisconnect);
+      webusb.removeEventListener('disconnect', onDisconnect);
     }
   };
 
-  navigator.usb.addEventListener('disconnect', onDisconnect);
+  webusb.addEventListener('disconnect', onDisconnect);
 };
 
-async function selectDefaultConfiguration(device: USBDevice): Promise<void> {
+async function selectDefaultConfiguration(device: WebUSBDevice): Promise<void> {
   if (device.configuration === null) {
     await device.selectConfiguration(USBConfigurationValue);
   }
 }
 
-async function requestKeystoneDevice(): Promise<USBDevice> {
-  const device = await navigator.usb.requestDevice({
-    filters: keystoneDevices,
-  });
-  return device;
+async function requestKeystoneDevice(): Promise<WebUSBDevice> {
+  const devices = getDeviceList();
+  let webusbDevice: WebUSBDevice;
+  for (const device of devices) {
+    webusbDevice = await WebUSBDevice.createInstance(device);
+    console.log(webusbDevice.vendorId, webusbDevice.productId);
+    if (webusbDevice.vendorId === keystoneUSBVendorId && webusbDevice.productId === keystoneUSBProductId) {
+      return webusbDevice;
+    }
+  }
+  throw new Error('Sorry, Keystone device not found');
 }
 
-const open = async (device: USBDevice): Promise<USBDevice> => {
+const open = async (device: WebUSBDevice): Promise<WebUSBDevice> => {
   await device.open();
   await selectDefaultConfiguration(device);
   await gracefullyResetDevice(device);
@@ -212,10 +223,7 @@ const open = async (device: USBDevice): Promise<USBDevice> => {
   return device;
 };
 
-
-
-
-async function gracefullyResetDevice(device: USBDevice): Promise<void> {
+async function gracefullyResetDevice(device: WebUSBDevice): Promise<void> {
   try {
     await device.reset();
   } catch (err) {
@@ -223,17 +231,18 @@ async function gracefullyResetDevice(device: USBDevice): Promise<void> {
   }
 }
 
-const request = async (): Promise<USBDevice> => {
+const request = async (): Promise<WebUSBDevice> => {
   const device = await requestKeystoneDevice();
   return await open(device);
 };
 
-const close = async (device: USBDevice): Promise<void> => {
-  try {
-    await device.releaseInterface(USBInterfaceNumber);
-    await gracefullyResetDevice(device);
-    await device.close();
-  } catch (err) {
-    console.warn(err);
-  }
-};
+const close = async (device: WebUSBDevice): Promise<void> => {
+    try {
+      await device.releaseInterface(USBInterfaceNumber);
+      await gracefullyResetDevice(device);
+      await device.close();
+    } catch (err) {
+      console.warn(err);
+    }
+  };
+  
