@@ -6,7 +6,7 @@ import {
     DerivationAlgorithm, QRHardwareCallType, CryptoMultiAccounts, QRHardwareCallVersion,
 } from '@keystonehq/bc-ur-registry';
 import { UR, UREncoder, URDecoder } from '@ngraveio/bc-ur';
-import { Actions, TransportWebUSB, Chain, type TransportConfig, logMethod } from '@keystonehq/hw-transport-webusb';
+import { Actions, TransportHID } from '@keystonehq/hw-transport-usb';
 import { throwTransportError, Status } from '@keystonehq/hw-transport-error';
 import { ETHSignature, EthSignRequest, DataType } from '@keystonehq/bc-ur-registry-eth';
 import { Address } from '@ethereumjs/util';
@@ -24,7 +24,7 @@ const pathToKeypath = (path: string): CryptoKeypath => {
 };
 
 export default class Eth {
-    private transport: TransportWebUSB;
+    private transport: TransportHID;
     private mfp: string | undefined;
 
     /**
@@ -33,7 +33,7 @@ export default class Eth {
      * @param transport - An object of type TransportWebUSB
      * @param mfp - Optional parameter of type string, default is undefined, but the mfp should exist in the signing process.
      */
-    constructor(transport: TransportWebUSB, mfp?: string) {
+    constructor(transport: TransportHID, mfp?: string) {
         // Initialize Solana connection
         this.transport = transport;
         if (mfp) {
