@@ -48,9 +48,6 @@ importers:
       '@keystonehq/hw-app-sol':
         specifier: workspace:^
         version: link:../packages/hw-app-sol
-      '@keystonehq/hw-transport-usb':
-        specifier: workspace:*
-        version: link:../packages/hw-transport-usb
       '@keystonehq/hw-transport-webusb':
         specifier: workspace:*
         version: link:../packages/hw-transport-webusb
@@ -58,7 +55,7 @@ importers:
         specifier: ^0.5.3
         version: 0.5.11(react-refresh@0.11.0)(type-fest@2.19.0)(webpack-dev-server@4.15.1(bufferutil@4.0.8)(utf-8-validate@5.0.10)(webpack@5.88.2))(webpack@5.88.2)
       '@solana/web3.js':
-        specifier: ^1.95.3
+        specifier: ^1.95.2
         version: 1.95.3(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@svgr/webpack':
         specifier: ^5.5.0
@@ -262,43 +259,6 @@ importers:
       '@testing-library/jest-dom':
         specifier: ^5.17.0
         version: 5.17.0
-
-  packages/hw-app-ada:
-    dependencies:
-      '@keystonehq/bc-ur-registry':
-        specifier: 0.7.0
-        version: 0.7.0
-      '@keystonehq/hw-transport-error':
-        specifier: workspace:^
-        version: link:../hw-transport-error
-      '@keystonehq/hw-transport-usb':
-        specifier: workspace:^
-        version: link:../hw-transport-usb
-      '@keystonehq/keystone-sdk':
-        specifier: ^0.8.0
-        version: 0.8.0
-      '@ngraveio/bc-ur':
-        specifier: ^1.1.6
-        version: 1.1.6
-      uuid:
-        specifier: ^8.3.2
-        version: 8.3.2
-    devDependencies:
-      '@types/node':
-        specifier: ^16.18.52
-        version: 16.18.52
-      bip39:
-        specifier: ^3.1.0
-        version: 3.1.0
-      ed25519-hd-key:
-        specifier: ^1.3.0
-        version: 1.3.0
-      hdkey:
-        specifier: ^2.1.0
-        version: 2.1.0
-      tweetnacl:
-        specifier: ^1.0.3
-        version: 1.0.3
 
   packages/hw-app-base:
     dependencies:
@@ -1331,9 +1291,6 @@ packages:
   '@bcoe/v8-coverage@0.2.3':
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
 
-  '@bufbuild/protobuf@1.10.0':
-    resolution: {integrity: sha512-QDdVFLoN93Zjg36NoQPZfsVH9tZew7wKDKyV5qRdj8ntT4wQCOradQjRaTdwMhWUYsgKsvCINKKm87FdEk96Ag==}
-
   '@csstools/normalize.css@12.0.0':
     resolution: {integrity: sha512-M0qqxAcwCsIVfpFQSlGN5XjXWu8l5JDZN+fPt1LeW5SZexQTgnaEvgXAY+CeygRw0EeppWHi12JxESWiWrB0Sg==}
 
@@ -1595,50 +1552,14 @@ packages:
   '@jridgewell/trace-mapping@0.3.19':
     resolution: {integrity: sha512-kf37QtfW+Hwx/buWGMPcR60iF9ziHa6r/CZJIHbmcm4+0qrXiVdxegAH0F6yddEVQ7zdkjcGCgCzUu+BcbhQxw==}
 
-  '@keystonehq/bc-ur-registry-aptos@0.6.3':
-    resolution: {integrity: sha512-NJipiLJpu/pxocCUz8yiQUwmjHtu5XEDhhZHoNFE4M5B9WoZTae+wDCt6dTZD42XlePkPIgLAotBKIKmSHMGRQ==}
-
-  '@keystonehq/bc-ur-registry-arweave@0.5.3':
-    resolution: {integrity: sha512-b5OAzhW7HLaOX7OEyWA+Bz+4EJIzCT7c+JXU0TElzpBD5rGo4ylf+StuyV6WnuKx5NV11fv9k2XDyHit26CCLA==}
-
-  '@keystonehq/bc-ur-registry-btc@0.1.1':
-    resolution: {integrity: sha512-LdYqItY1Y/M6fWJNE6L0HYZbKL8CGVP6OigG7T/gJ+SWnOGgYXj3at02aV7b9qZ7iNwJPkNrqsIDN5eajQcZjQ==}
-
-  '@keystonehq/bc-ur-registry-cardano@0.3.9':
-    resolution: {integrity: sha512-moQtGVjRpzJmHBGxITjljKVE8b2wIC72/9UtuqIfeWWUz/gHWZ4zB0jrz+YgnNwhIizEKmydjtOHLSFrbUQ9VQ==}
-
   '@keystonehq/bc-ur-registry-cosmos@0.1.0':
     resolution: {integrity: sha512-vkJqFfTx0j6W8hMKTF1P3d82AQuAjmZV7RHlLVfHCsTU+3/chvBr0b0FiK8X+f3QgHBPdjAY5h3mcvjfFLHpeA==}
-
-  '@keystonehq/bc-ur-registry-cosmos@0.5.3':
-    resolution: {integrity: sha512-bCmm2LMM4EHiLrjhfkbzfnwTXi4ez56MfwKYke8Z0roeaJbHmr2KkCg6/MePLjeK9PRbY0jKXBmCowMe2DhfhA==}
-
-  '@keystonehq/bc-ur-registry-eth@0.20.1':
-    resolution: {integrity: sha512-vQpqhj2DeDI1/xwY3eqj1PWgqqTdg53RgMVBUZUV3O8CSc0nbnH4SaP3cx85KEOO+4Loq6SXHbFJr1egalM2ng==}
 
   '@keystonehq/bc-ur-registry-eth@0.21.0':
     resolution: {integrity: sha512-zINEpmaH+oPwqY6E0qKUvm13AhdOb+BIJ9OVWTGUDhUNltFH4dehicJv6bCg8gTSnBGc9ghWzpGRw5+PflGtMg==}
 
-  '@keystonehq/bc-ur-registry-evm@0.5.3':
-    resolution: {integrity: sha512-K3tmY1Y2SDImtSnCPFoASMBNernbN/ZRIIkp8iKegDeyHtaPbzfNIdaEL/wUHVoieTgTOUTwyWZspBvvbgrivw==}
-
-  '@keystonehq/bc-ur-registry-keystone@0.4.3':
-    resolution: {integrity: sha512-YTf0p9TYYq9+bfF/wMEE2gbhNiV1S0m31hMwnl+4kn3q1avwlrXZ6h30nANZXD31NQ8hMuLO8x7Ny+0AldmAOA==}
-
-  '@keystonehq/bc-ur-registry-near@0.9.3':
-    resolution: {integrity: sha512-+JHxlxwa4pbZXODSZYcIHN42XZZYblNQFp6ogP0yyqct1ayVbAgz/RoYdLrfdNJ4TDvPRClOPDIvZSiUFYCpaw==}
-
   '@keystonehq/bc-ur-registry-sol@0.9.3':
     resolution: {integrity: sha512-ZjTeInzS4y10tIZlgEN4NGW9W6vTBxzZrM9CaNNeVqTgtyiOB2JvPIW8buxlZUKYj2M5Mu5jPHuAjVRCK6Jm9Q==}
-
-  '@keystonehq/bc-ur-registry-stellar@0.0.4':
-    resolution: {integrity: sha512-L/naB3+/386htOrePisgQsTUOIKgIWpXS6FF24TTkyWWr/SHQV3PNOYXOnMto+WKABv6+BbG6AAnsw/7UuONLg==}
-
-  '@keystonehq/bc-ur-registry-sui@0.3.1':
-    resolution: {integrity: sha512-cbxu5AF5xFg9J3p0AXIkp1IMGSSNsaXWRgn22bcnkIlzwMEwmgJR5J/Lg45MIyIpW2p17fKyYqc9yuP0iMALEQ==}
-
-  '@keystonehq/bc-ur-registry-ton@0.1.2':
-    resolution: {integrity: sha512-m36/QODXTbkQQacM8vIopt5RvE/uc/f9f4Jc9VFxsxKWmld3aGwrMsLB1SBSva31kawikOVSMEWXhXlQ07UJhA==}
 
   '@keystonehq/bc-ur-registry@0.5.4':
     resolution: {integrity: sha512-z7bZe10I5k0zz9znmDTXh+o3Rzb5XsRVpwAzexubOaLxVdZ0F7aMbe2LoEsw766Hpox/7zARi7UGmLz5C8BAzA==}
@@ -1648,9 +1569,6 @@ packages:
 
   '@keystonehq/bc-ur-registry@0.7.0':
     resolution: {integrity: sha512-E6NUd6Y+YYM+IcYGOEXfO9+MU1s63Qjm8brtHftvNhxbdXhGtTYIsa4FQmqZ6q34q91bMkMqUQFsQYPmIxcxfg==}
-
-  '@keystonehq/keystone-sdk@0.8.0':
-    resolution: {integrity: sha512-9lzjwwWLrJEVOraIZdwD8HIVNnIxWVJMd8H/JoL9288Ist2gLcV7KstGfS0HyxARwc8pmWEXFXR52GP2gSOR0g==}
 
   '@leichtgewicht/ip-codec@2.0.4':
     resolution: {integrity: sha512-Hcv+nVC0kZnQ3tD9GVu5xSMR4VVYOteQIr/hwFPVEvPdlXqgGEuRjiheChHgdM+JyqdgNcmzZOX/tnl0JOiI7A==}
@@ -2555,9 +2473,6 @@ packages:
   base-x@3.0.9:
     resolution: {integrity: sha512-H7JU6iBHTal1gp56aKoaa//YUxEaAOUiydvrV/pILqIHXTtqxSkATOnDA2u+jZ/61sD+L/412+7kzXRtWukhpQ==}
 
-  base-x@4.0.0:
-    resolution: {integrity: sha512-FuwxlW4H5kh37X/oW59pwTzzTKRzfrrQwhmyspRM7swOEZcHtDZSCt45U6oKgtuFE+WYPblePMVIPR4RZrh/hw==}
-
   base64-js@1.5.1:
     resolution: {integrity: sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==}
 
@@ -2570,10 +2485,6 @@ packages:
   bfj@7.1.0:
     resolution: {integrity: sha512-I6MMLkn+anzNdCUp9hMRyui1HaNEUCco50lxbvNS4+EyXg8lN3nJ48PjPWtbH8UVS9CuMoaKE9U2V3l29DaRQw==}
     engines: {node: '>= 8.0.0'}
-
-  big-integer@1.6.52:
-    resolution: {integrity: sha512-QxD8cf2eVqJOOz63z6JIN9BzvVs/dlySa5HGSBH5xtR8dPteIRQnBxxKqkNTiT6jbDTF6jAfrd4oMcND9RGbQg==}
-    engines: {node: '>=0.6'}
 
   big.js@5.2.2:
     resolution: {integrity: sha512-vyL2OymJxmarO8gxMr0mhChsO9QGwhynfuu4+MHTAW6czfq9humCB7rKpUjDd9YUiDPU4mzpyupFSvOClAwbmQ==}
@@ -2678,14 +2589,8 @@ packages:
   bs58@4.0.1:
     resolution: {integrity: sha512-Ok3Wdf5vOIlBrgCvTq96gBkJw+JUEzdBgyaza5HLtPm7yTHkjRy8+JzNyHF7BHa0bNWOQIp3m5YF0nnFcOIKLw==}
 
-  bs58@5.0.0:
-    resolution: {integrity: sha512-r+ihvQJvahgYT50JD05dyJNKlmmSlMoOGwn1lCcEzanPglg7TxYjioQUYehQ9mAR/+hOSd2jRc/Z2y5UxBymvQ==}
-
   bs58check@2.1.2:
     resolution: {integrity: sha512-0TS1jicxdU09dwJMNZtVAfzPi6Q6QeN0pM1Fkzrjn+XYHvzMKPU3pHVpva+769iNVSfIYWf7LJ6WR+BuuMf8cA==}
-
-  bs58check@3.0.1:
-    resolution: {integrity: sha512-hjuuJvoWEybo7Hn/0xOrczQKKEKD63WguEjlhLExYs2wUBcebDC1jDNK17eEAD2lYfw82d5ASC1d7K3SWszjaQ==}
 
   bser@2.1.1:
     resolution: {integrity: sha512-gQxTNE/GAfIIrmHLUE3oJyp5FO6HRBfhjnw4/wMmA63ZGDJnWBmgY/lyQBpnDUkGmAhbSe39tx2d/iTOAfglwQ==}
@@ -5306,9 +5211,6 @@ packages:
   pako@1.0.11:
     resolution: {integrity: sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw==}
 
-  pako@2.1.0:
-    resolution: {integrity: sha512-w+eufiZ1WuJYgPXbV/PO3NCMEc3xqylkKHzp8bxp1uW4qaSNQUkwmLLEc3kKsfz8lpV1F8Ht3U1Cm+9Srog2ug==}
-
   param-case@3.0.4:
     resolution: {integrity: sha512-RXlj7zCYokReqWpOPH9oYivUzLYZ5vAPIfEmCTNViosC78F8F0H9y7T7gG2M39ymgutxF5gcFEsyZQSph9Bp3A==}
 
@@ -6411,14 +6313,6 @@ packages:
   ripemd160@2.0.2:
     resolution: {integrity: sha512-ii4iagi25WusVoiC4B4lq7pbXfAp3D9v5CwfkY33vffw2+pkDjY1D8GaN7spsxvCSx8dkPqOZCEZyfxcmJG2IA==}
 
-  ripple-address-codec@4.3.1:
-    resolution: {integrity: sha512-Qa3+9wKVvpL/xYtT6+wANsn0A1QcC5CT6IMZbRJZ/1lGt7gmwIfsrCuz1X0+LCEO7zgb+3UT1I1dc0k/5dwKQQ==}
-    engines: {node: '>= 10'}
-
-  ripple-binary-codec@1.11.0:
-    resolution: {integrity: sha512-g7+gs3T+NfoeW6vIq5dcN0CkIT4t/zwRzFxz8X2RzfbrWRnewPUKqQbmBgs05tXLX5NuWPaneiaAVpFpYBcdfw==}
-    engines: {node: '>= 10'}
-
   rlp@2.2.6:
     resolution: {integrity: sha512-HAfAmL6SDYNWPUOJNrM500x4Thn4PZsEy5pijPh40U9WfNk0z15hUYzO9xVIMAdIHdFtD8CBDHd75Td1g36Mjg==}
     hasBin: true
@@ -7225,10 +7119,6 @@ packages:
 
   uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
-    hasBin: true
-
-  uuid@9.0.1:
-    resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
     hasBin: true
 
   uvu@0.5.6:
@@ -8502,8 +8392,6 @@ snapshots:
 
   '@bcoe/v8-coverage@0.2.3': {}
 
-  '@bufbuild/protobuf@1.10.0': {}
-
   '@csstools/normalize.css@12.0.0': {}
 
   '@csstools/postcss-cascade-layers@1.1.1(postcss@8.4.30)':
@@ -8876,44 +8764,10 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.1
       '@jridgewell/sourcemap-codec': 1.4.15
 
-  '@keystonehq/bc-ur-registry-aptos@0.6.3':
-    dependencies:
-      '@keystonehq/bc-ur-registry': 0.6.4
-      bs58check: 2.1.2
-      uuid: 8.3.2
-
-  '@keystonehq/bc-ur-registry-arweave@0.5.3':
-    dependencies:
-      '@keystonehq/bc-ur-registry': 0.6.4
-      uuid: 8.3.2
-
-  '@keystonehq/bc-ur-registry-btc@0.1.1':
-    dependencies:
-      '@keystonehq/bc-ur-registry': 0.6.4
-      uuid: 8.3.2
-
-  '@keystonehq/bc-ur-registry-cardano@0.3.9':
-    dependencies:
-      '@keystonehq/bc-ur-registry': 0.6.4
-      uuid: 8.3.2
-
   '@keystonehq/bc-ur-registry-cosmos@0.1.0':
     dependencies:
       '@keystonehq/bc-ur-registry': 0.5.4
       bs58check: 2.1.2
-      uuid: 8.3.2
-
-  '@keystonehq/bc-ur-registry-cosmos@0.5.3':
-    dependencies:
-      '@keystonehq/bc-ur-registry': 0.6.4
-      bs58check: 2.1.2
-      uuid: 8.3.2
-
-  '@keystonehq/bc-ur-registry-eth@0.20.1':
-    dependencies:
-      '@ethereumjs/util': 9.1.0
-      '@keystonehq/bc-ur-registry': 0.6.4
-      hdkey: 2.1.0
       uuid: 8.3.2
 
   '@keystonehq/bc-ur-registry-eth@0.21.0':
@@ -8923,43 +8777,11 @@ snapshots:
       hdkey: 2.1.0
       uuid: 8.3.2
 
-  '@keystonehq/bc-ur-registry-evm@0.5.3':
-    dependencies:
-      '@keystonehq/bc-ur-registry': 0.6.4
-      bs58check: 2.1.2
-      uuid: 9.0.1
-
-  '@keystonehq/bc-ur-registry-keystone@0.4.3':
-    dependencies:
-      '@keystonehq/bc-ur-registry': 0.6.4
-
-  '@keystonehq/bc-ur-registry-near@0.9.3':
-    dependencies:
-      '@keystonehq/bc-ur-registry': 0.6.4
-      bs58check: 2.1.2
-      uuid: 8.3.2
-
   '@keystonehq/bc-ur-registry-sol@0.9.3':
     dependencies:
       '@keystonehq/bc-ur-registry': 0.6.4
       bs58check: 2.1.2
       uuid: 8.3.2
-
-  '@keystonehq/bc-ur-registry-stellar@0.0.4':
-    dependencies:
-      '@keystonehq/bc-ur-registry': 0.6.4
-      bs58check: 2.1.2
-      uuid: 8.3.2
-
-  '@keystonehq/bc-ur-registry-sui@0.3.1':
-    dependencies:
-      '@keystonehq/bc-ur-registry': 0.6.4
-      uuid: 9.0.1
-
-  '@keystonehq/bc-ur-registry-ton@0.1.2':
-    dependencies:
-      '@keystonehq/bc-ur-registry': 0.6.4
-      uuid: 9.0.1
 
   '@keystonehq/bc-ur-registry@0.5.4':
     dependencies:
@@ -8978,29 +8800,6 @@ snapshots:
       '@ngraveio/bc-ur': 1.1.6
       bs58check: 2.1.2
       tslib: 2.6.2
-
-  '@keystonehq/keystone-sdk@0.8.0':
-    dependencies:
-      '@bufbuild/protobuf': 1.10.0
-      '@keystonehq/bc-ur-registry': 0.7.0
-      '@keystonehq/bc-ur-registry-aptos': 0.6.3
-      '@keystonehq/bc-ur-registry-arweave': 0.5.3
-      '@keystonehq/bc-ur-registry-btc': 0.1.1
-      '@keystonehq/bc-ur-registry-cardano': 0.3.9
-      '@keystonehq/bc-ur-registry-cosmos': 0.5.3
-      '@keystonehq/bc-ur-registry-eth': 0.20.1
-      '@keystonehq/bc-ur-registry-evm': 0.5.3
-      '@keystonehq/bc-ur-registry-keystone': 0.4.3
-      '@keystonehq/bc-ur-registry-near': 0.9.3
-      '@keystonehq/bc-ur-registry-sol': 0.9.3
-      '@keystonehq/bc-ur-registry-stellar': 0.0.4
-      '@keystonehq/bc-ur-registry-sui': 0.3.1
-      '@keystonehq/bc-ur-registry-ton': 0.1.2
-      '@ngraveio/bc-ur': 1.1.6
-      bs58check: 3.0.1
-      pako: 2.1.0
-      ripple-binary-codec: 1.11.0
-      uuid: 9.0.1
 
   '@leichtgewicht/ip-codec@2.0.4': {}
 
@@ -10206,8 +10005,6 @@ snapshots:
     dependencies:
       safe-buffer: 5.2.1
 
-  base-x@4.0.0: {}
-
   base64-js@1.5.1: {}
 
   batch@0.6.1: {}
@@ -10221,8 +10018,6 @@ snapshots:
       hoopy: 0.1.4
       jsonpath: 1.1.1
       tryer: 1.0.1
-
-  big-integer@1.6.52: {}
 
   big.js@5.2.2: {}
 
@@ -10421,20 +10216,11 @@ snapshots:
     dependencies:
       base-x: 3.0.9
 
-  bs58@5.0.0:
-    dependencies:
-      base-x: 4.0.0
-
   bs58check@2.1.2:
     dependencies:
       bs58: 4.0.1
       create-hash: 1.2.0
       safe-buffer: 5.2.1
-
-  bs58check@3.0.1:
-    dependencies:
-      '@noble/hashes': 1.5.0
-      bs58: 5.0.0
 
   bser@2.1.1:
     dependencies:
@@ -13818,8 +13604,6 @@ snapshots:
 
   pako@1.0.11: {}
 
-  pako@2.1.0: {}
-
   param-case@3.0.4:
     dependencies:
       dot-case: 3.0.4
@@ -15076,20 +14860,6 @@ snapshots:
       hash-base: 3.1.0
       inherits: 2.0.4
 
-  ripple-address-codec@4.3.1:
-    dependencies:
-      base-x: 3.0.9
-      create-hash: 1.2.0
-
-  ripple-binary-codec@1.11.0:
-    dependencies:
-      assert: 2.1.0
-      big-integer: 1.6.52
-      buffer: 6.0.3
-      create-hash: 1.2.0
-      decimal.js: 10.4.3
-      ripple-address-codec: 4.3.1
-
   rlp@2.2.6:
     dependencies:
       bn.js: 4.12.0
@@ -15978,8 +15748,6 @@ snapshots:
   utils-merge@1.0.1: {}
 
   uuid@8.3.2: {}
-
-  uuid@9.0.1: {}
 
   uvu@0.5.6:
     dependencies:
