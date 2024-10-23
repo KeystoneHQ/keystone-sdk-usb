@@ -1,6 +1,6 @@
 # QR and USB 
 
-_This document serves as a comprehensive guide for software wallets that have already integrated with Keystone via QR Codes and are now looking to add USB support. It assumes that readers have a basic understanding of Keystone, QR Codes, and UR encoding. If you are unfamiliar with these concepts, please refer to the [integration guide](https://dev.keyst.one). 
+_This document serves as a comprehensive guide for software wallets that have already integrated with Keystone via QR Codes and are now looking to add USB support. It assumes that readers have a basic understanding of Keystone, QR Codes, and UR encoding. If you are unfamiliar with these concepts, please refer to the [integration guide](https://dev.keyst.one)._ 
 _**If you are new and seeking USB integration with Keystone, please check the [README file](https://github.com/KeystoneHQ/keystone-sdk-usb) in this repository for more information.**_
 
 
