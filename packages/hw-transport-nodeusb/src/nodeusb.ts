@@ -239,7 +239,6 @@ const request = async (): Promise<WebUSBDevice> => {
 const close = async (device: WebUSBDevice): Promise<void> => {
     try {
       await device.releaseInterface(USBInterfaceNumber);
-      await gracefullyResetDevice(device);
       await device.close();
     } catch (err) {
       console.warn(err);
