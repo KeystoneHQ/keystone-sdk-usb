@@ -1,4 +1,3 @@
-
 import { Actions, decode, encode, logMethod, TransportConfig, TransportHID } from '@keystonehq/hw-transport-usb';
 import { USBInterfaceNumber, USBConfigurationValue, USBTimeout, MAXUSBPackets, USBPackageSize, OFFSET_INS, OFFSET_LC, OFFSET_P1, keystoneUSBVendorId } from '@keystonehq/hw-transport-usb';
 import { generateRequestID, isEmpty, isString, isUint8Array, safeJSONparse, safeJSONStringify } from '@keystonehq/hw-transport-usb';
@@ -185,7 +184,7 @@ const initializeDisconnectListener = (
   navigator.usb.addEventListener('disconnect', onDisconnect);
 };
 
-export async function createKeystoneTransport() {
+export async function createKeystoneTransport(timeout = 100000) {
   if ((await TransportWebUSB.getKeystoneDevices()).length <= 0) {
     try {
       await TransportWebUSB.requestPermission();
@@ -194,17 +193,11 @@ export async function createKeystoneTransport() {
     }
   }
   const transport = await TransportWebUSB.connect({
-    timeout: 100000,
+    timeout,
   });
   await transport.close();
   return transport;
 }
-
-export const isSupported = async (): Promise<boolean> => {
-  if (!navigator?.usb || typeof navigator.usb.getDevices !== 'function') throwTransportError(Status.ERR_NOT_SUPPORTED);
-  if (isEmpty(await TransportWebUSB.getKeystoneDevices())) throwTransportError(Status.ERR_DEVICE_NOT_FOUND);
-  return true;
-};
 
 async function selectDefaultConfiguration(device: USBDevice): Promise<void> {
   if (device.configuration === null) {
