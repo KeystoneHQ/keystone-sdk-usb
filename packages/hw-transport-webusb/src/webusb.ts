@@ -185,6 +185,27 @@ const initializeDisconnectListener = (
   navigator.usb.addEventListener('disconnect', onDisconnect);
 };
 
+export async function createKeystoneTransport() {
+  if ((await TransportWebUSB.getKeystoneDevices()).length <= 0) {
+    try {
+      await TransportWebUSB.requestPermission();
+    } catch (e) {
+      throw new Error('USB_PERMISSION_NOT_AVAILABLE');
+    }
+  }
+  const transport = await TransportWebUSB.connect({
+    timeout: 100000,
+  });
+  await transport.close();
+  return transport;
+}
+
+export const isSupported = async (): Promise<boolean> => {
+  if (!navigator?.usb || typeof navigator.usb.getDevices !== 'function') throwTransportError(Status.ERR_NOT_SUPPORTED);
+  if (isEmpty(await TransportWebUSB.getKeystoneDevices())) throwTransportError(Status.ERR_DEVICE_NOT_FOUND);
+  return true;
+};
+
 async function selectDefaultConfiguration(device: USBDevice): Promise<void> {
   if (device.configuration === null) {
     await device.selectConfiguration(USBConfigurationValue);
