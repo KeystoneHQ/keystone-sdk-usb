@@ -1,4 +1,3 @@
-
 import { Actions, decode, encode, logMethod, TransportConfig, TransportHID } from '@keystonehq/hw-transport-usb';
 import { USBInterfaceNumber, USBConfigurationValue, USBTimeout, MAXUSBPackets, USBPackageSize, OFFSET_INS, OFFSET_LC, OFFSET_P1, keystoneUSBVendorId } from '@keystonehq/hw-transport-usb';
 import { generateRequestID, isEmpty, isString, isUint8Array, safeJSONparse, safeJSONStringify } from '@keystonehq/hw-transport-usb';
@@ -184,6 +183,21 @@ const initializeDisconnectListener = (
 
   navigator.usb.addEventListener('disconnect', onDisconnect);
 };
+
+export async function createKeystoneTransport(timeout = 100000) {
+  if ((await TransportWebUSB.getKeystoneDevices()).length <= 0) {
+    try {
+      await TransportWebUSB.requestPermission();
+    } catch (e) {
+      throw new Error('USB_PERMISSION_NOT_AVAILABLE');
+    }
+  }
+  const transport = await TransportWebUSB.connect({
+    timeout,
+  });
+  await transport.close();
+  return transport;
+}
 
 async function selectDefaultConfiguration(device: USBDevice): Promise<void> {
   if (device.configuration === null) {

@@ -1,0 +1,40 @@
+{
+  "name": "@keystonehq/hw-app-bitcoin",
+  "version": "0.1.0",
+  "description": "Keystone hardware wallet support for Cosmos blockchain",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test": "jest"
+  },
+  "keywords": [
+    "bitcoin",
+    "blockchain",
+    "keystone",
+    "hardware wallet"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@keystonehq/bc-ur-registry": "0.7.0",
+    "@keystonehq/bc-ur-registry-btc": "0.1.1",
+    "@keystonehq/hw-app-base": "workspace:^",
+    "@keystonehq/hw-transport-error": "workspace:^",
+    "@keystonehq/hw-transport-webusb": "workspace:^",
+    "@ngraveio/bc-ur": "^1.1.6",
+    "@scure/bip32": "^1.5.0",
+    "bech32": "^2.0.0",
+    "bitcoinjs-lib": "7.0.0-rc.0",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.5.2",
+    "@types/node": "^16.18.52",
+    "eslint": "^8.49.0",
+    "jest": "^27.4.3",
+    "typescript": "^5.2.2"
+  }
+}
