@@ -8,7 +8,9 @@
     "@keystonehq/hw-app-eth": "workspace:*",
     "@keystonehq/hw-app-sol": "workspace:^",
     "@keystonehq/hw-transport-webusb": "workspace:*",
+    "@keystonehq/hw-app-bitcoin": "workspace:*",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
+    "@solana/web3.js": "^1.95.2",
     "@svgr/webpack": "^5.5.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -74,8 +76,7 @@
     "webpack": "^5.64.4",
     "webpack-dev-server": "^4.6.0",
     "webpack-manifest-plugin": "^4.0.2",
-    "workbox-webpack-plugin": "^6.4.1",
-    "@solana/web3.js": "^1.95.2"
+    "workbox-webpack-plugin": "^6.4.1"
   },
   "scripts": {
     "start:dev": "KEYSTONE_USB_ENV=development node scripts/start.js",

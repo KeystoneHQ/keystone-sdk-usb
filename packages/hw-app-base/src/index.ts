@@ -111,7 +111,7 @@ export default class Base {
 export const pathToKeypath = (path: string, index?: number): CryptoKeypath => {
     const paths = path.replace(/[m|M]\//, '').split('/');
     const pathComponents = paths.map(path => {
-        const isHardened = path.endsWith('\''); 
+        const isHardened = path.endsWith('\'');
         const _index = path.replace('\'', '');
         if (_index === 'x' || _index === 'X') {
             if (index != undefined) {

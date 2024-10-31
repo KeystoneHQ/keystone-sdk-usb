@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
-import { Button, Space, Spin, message, Select } from 'antd';
+import { Button, Space, Spin, message, Select, Tabs } from 'antd';
 import { ApiOutlined, EditOutlined, LockOutlined, DatabaseOutlined } from '@ant-design/icons';
 import { TransportWebUSB, getKeystoneDevices } from '@keystonehq/hw-transport-webusb';
 import EthLeagcy, { HDPathType, Eth } from '@keystonehq/hw-app-eth';
 import Solana from '@keystonehq/hw-app-sol';
 import { PublicKey } from "@solana/web3.js";
 import './App.css';
+import BtcPage from './coins/Btc';
 
 const mockTxUR = 'UR:ETH-SIGN-REQUEST/ONADTPDAGDGEJKFXCSVANTFDPLMTCWEYVYWDKOWZZMAOHDIYYAIEGYLALFOEASMWROSTJYLFVEHECTFYUECHFEYKDWJYFWJZIACWUTGMLAROFYPTAHNSRKAEAEAEAEAEAEAEAEAEAEAEAEHDCXTTKSWKLADAFHOYCFSBZEVLGASORPNDYAWMRHAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAXLGKBOXSWLAAEADLALAAXADAAADAHTAADDYOEADLECSDWYKCSFNYKAEYKAEWKAEWKAOCYGMJYFLAXPAUEFEIS';
 
@@ -201,7 +202,7 @@ function App() {
     setLoading(true);
 
     const path = "44'/60'/0'/0/0"
-    
+
     try {
       const result = await eth.getAddress(path, true, true, "17000")
       console.log(result)
@@ -215,38 +216,51 @@ function App() {
 
   return (
     <div className='App'>
-      <Spin spinning={loading}>
-        <Space direction='vertical' style={{
-          gap: '20px',
-        }}>
-          <Button icon={<ApiOutlined />} onClick={handleLink2Device}>Link to Keystone3 Device</Button>
-          <Button icon={<EditOutlined />} onClick={handleSignTx}>Sign ETH tx</Button>
-          <Button icon={<LockOutlined />} onClick={handleCheckDeviceLockStatus}>Check Device Lock Status</Button>
-          <Button icon={<LockOutlined />} onClick={handleGetSolanaAddress}>Get SOL Address</Button>
-          <Button icon={<LockOutlined />} onClick={handleSolTx}>Sign SOL Tx</Button>
-          <Button icon={<LockOutlined />} onClick={handleSolMsg}>Sign SOL Msg</Button>
-          <Button icon={<LockOutlined />} onClick={handleEthAddressNew}>Get ETH Address New</Button>
-          <Button icon={<LockOutlined />} onClick={handleSignTxNew}>Sign ETH tx New</Button>
-          <div>{solAddress}</div>
-          <Space>
-            <Select value={accountType} onChange={setAccountType} style={{ width: 200 }} options={[
-              {
-                value: HDPathType.Bip44Standard,
-                label: 'Bip44Standard',
-              },
-              {
-                value: HDPathType.LedgerLegacy,
-                label: 'LedgerLegacy',
-              },
-              {
-                value: HDPathType.LedgerLive,
-                label: 'LedgerLive',
-              },
-            ]} />
-            <Button icon={<DatabaseOutlined />} onClick={handleExportAddress}>Export Address</Button>
-          </Space>
-        </Space>
-      </Spin>
+      <Tabs items={[
+        {
+          key: 'home',
+          label: 'Home',
+          children: <Spin spinning={loading}>
+            <Space direction='vertical' style={{
+              gap: '20px',
+            }}>
+              <Button icon={<ApiOutlined />} onClick={handleLink2Device}>Link to Keystone3 Device</Button>
+              <Button icon={<EditOutlined />} onClick={handleSignTx}>Sign ETH tx</Button>
+              <Button icon={<LockOutlined />} onClick={handleCheckDeviceLockStatus}>Check Device Lock Status</Button>
+              <Button icon={<LockOutlined />} onClick={handleGetSolanaAddress}>Get SOL Address</Button>
+              <Button icon={<LockOutlined />} onClick={handleSolTx}>Sign SOL Tx</Button>
+              <Button icon={<LockOutlined />} onClick={handleSolMsg}>Sign SOL Msg</Button>
+              <Button icon={<LockOutlined />} onClick={handleEthAddressNew}>Get ETH Address New</Button>
+              <Button icon={<LockOutlined />} onClick={handleSignTxNew}>Sign ETH tx New</Button>
+              <div>{solAddress}</div>
+              <Space>
+                <Select value={accountType} onChange={setAccountType} style={{ width: 200 }} options={[
+                  {
+                    value: HDPathType.Bip44Standard,
+                    label: 'Bip44Standard',
+                  },
+                  {
+                    value: HDPathType.LedgerLegacy,
+                    label: 'LedgerLegacy',
+                  },
+                  {
+                    value: HDPathType.LedgerLive,
+                    label: 'LedgerLive',
+                  },
+                ]} />
+                <Button icon={<DatabaseOutlined />} onClick={handleExportAddress}>Export Address</Button>
+              </Space>
+            </Space>
+          </Spin>
+        },
+        {
+          key: 'bitcoin',
+          label: 'Bitcoin',
+          children: <BtcPage />
+        }
+      ]}>
+      </Tabs>
+
       {contextHolder}
     </div>
   );
