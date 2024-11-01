@@ -1,13 +1,14 @@
 import * as uuid from 'uuid';
 import Base, { parseResponoseUR } from '@keystonehq/hw-app-base';
-import { Actions, TransportWebUSB, type TransportConfig } from '@keystonehq/hw-transport-webusb';
+import { TransportWebUSB } from '@keystonehq/hw-transport-webusb';
 import { Curve, CryptoPSBT, DerivationAlgorithm, CryptoMultiAccounts } from '@keystonehq/bc-ur-registry';
 import { BtcSignature, BtcSignRequest, DataType } from '@keystonehq/bc-ur-registry-btc';
 import { HDKey } from '@scure/bip32';
 import * as bitcoin from 'bitcoinjs-lib';
 import { PartialSignature } from './psbt';
-import { UREncoder, UR, URDecoder } from '@ngraveio/bc-ur';
+import { UREncoder, URDecoder } from '@ngraveio/bc-ur';
 import { Status, throwTransportError } from '@keystonehq/hw-transport-error';
+import { TransportConfig, Actions } from '@keystonehq/hw-transport-usb';
 
 
 const decodePath = (path: string) => {
