@@ -1,7 +1,7 @@
 {
   "name": "@keystonehq/hw-app-bitcoin",
   "version": "0.1.0",
-  "description": "Keystone hardware wallet support for Cosmos blockchain",
+  "description": "Keystone hardware wallet support for Bitcoin blockchain",
   "main": "lib/index.js",
   "scripts": {
     "build": "tsc",
