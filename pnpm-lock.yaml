@@ -311,6 +311,9 @@ importers:
       '@keystonehq/hw-transport-error':
         specifier: workspace:^
         version: link:../hw-transport-error
+      '@keystonehq/hw-transport-usb':
+        specifier: workspace:^
+        version: link:../hw-transport-usb
       '@keystonehq/hw-transport-webusb':
         specifier: workspace:^
         version: link:../hw-transport-webusb

@@ -1,6 +1,6 @@
 {
     "name": "@keystonehq/hw-transport-nodeusb",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Hardware Wallet Interface for USB support WebUSB and NodeUSB",
     "main": "lib/index.js",
     "scripts": {
