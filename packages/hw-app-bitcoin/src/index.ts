@@ -156,18 +156,12 @@ class Bitcoin extends Base {
      * it should not be the rotation psbt which will have mutiple signature for one input
      * the cordorator should send the same psbt to each signer and collect the result
      */
-    async signPsbt(psbt: string | Buffer, path?: string): Promise<[number, PartialSignature][]> {
-        const signedPsbtB64 = await this.signPsbtRaw(psbt, path);
+    async signPsbt(psbt: string | Buffer): Promise<[number, PartialSignature][]> {
+        const signedPsbtB64 = await this.signPsbtRaw(psbt);
         const psbtObj = bitcoin.Psbt.fromBase64(signedPsbtB64);
 
         return psbtObj.data.inputs.map((input, index) => {
             const inputIndex = index;
-
-            const hasPath = [input.tapBip32Derivation, input.bip32Derivation]
-                .filter(it => it)
-                .some(d => d?.[0]?.path.startsWith(`m/${path}`));
-
-            if (!hasPath) return null;
 
             // caution: the partialSig will just using the first one for each input
             // this is for single signing case, for multisig,
@@ -215,23 +209,11 @@ class Bitcoin extends Base {
      * @throws Will throw an error if the PSBT is invalid or if the signing process fails.
      * @caution This function provide much more flexiblity for caller to handle the signed psbt
      */
-    async signPsbtRaw(psbt: string | Buffer, path?: string): Promise<string> {
+    async signPsbtRaw(psbt: string | Buffer): Promise<string> {
         if (typeof psbt === 'string') {
             psbt = Buffer.from(psbt, 'base64');
         }
         const psbtObj = bitcoin.Psbt.fromBuffer(psbt);
-        const clearInputs = psbtObj.data.inputs.map((it, index) => {
-            const hasPath = [it.tapBip32Derivation, it.bip32Derivation]
-                .filter(it => it)
-                .some(d => d?.[0]?.path.startsWith(`m/${path}`));
-            if (hasPath) {
-                return null;
-            }
-            return index;
-        }).filter(it => it);
-        for (const index of Object.values(clearInputs)) {
-            psbtObj.data.inputs[index!].partialSig = [];
-        }
         const psbtUR = new CryptoPSBT(Buffer.from(psbtObj.toBuffer())).toUR();
         const encodedUR = new UREncoder(psbtUR, Infinity).nextPart().toUpperCase();
         const response = await this.sendToDevice(Actions.CMD_RESOLVE_UR, encodedUR);
