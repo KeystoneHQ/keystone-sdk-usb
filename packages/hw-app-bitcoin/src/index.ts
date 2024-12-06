@@ -156,7 +156,7 @@ class Bitcoin extends Base {
      * it should not be the rotation psbt which will have mutiple signature for one input
      * the cordorator should send the same psbt to each signer and collect the result
      */
-    async signPsbt(psbt: string | Buffer): Promise<[number, PartialSignature][]> {
+    async signPsbt(psbt: string | Buffer): Promise<[number, PartialSignature | undefined][]> {
         const signedPsbtB64 = await this.signPsbtRaw(psbt);
         const psbtObj = bitcoin.Psbt.fromBase64(signedPsbtB64);
 
@@ -191,14 +191,18 @@ class Bitcoin extends Base {
                 const pubkey = input.tapInternalKey;
                 const signature = input.tapKeySig;
 
+                if (!pubkey) {
+                    throw new Error(`Missing tapInternalKey for input ${inputIndex}`);
+                }
+
                 return [inputIndex, new PartialSignature(
                     Buffer.from(pubkey!),
                     Buffer.from(signature)
                 )];
             }
 
-            throw new Error('No signature found for input ' + inputIndex);
-        }).filter(it => it) as [number, PartialSignature][];
+            return [inputIndex, undefined];
+        });
 
     }
 
