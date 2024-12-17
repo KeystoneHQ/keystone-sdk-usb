@@ -1,5 +1,5 @@
-import {MAX_LOVELACE_SUPPLY_STR} from '../parsing/constants';
-import {InvalidData, InvalidDataReason} from '../errors/index';
+import { MAX_LOVELACE_SUPPLY_STR } from '../parsing/constants';
+import { InvalidData, InvalidDataReason } from '../errors/index';
 import type {
   _Int64_bigint,
   _Int64_num,
@@ -24,9 +24,13 @@ import {
   CredentialType,
   MAX_URL_LENGTH,
 } from '../types/internal';
-import type {AnchorParams, bigint_like, CredentialParams} from '../types/public';
-import {CredentialParamsType} from '../types/public';
-import {unreachable} from './assert';
+import type {
+  AnchorParams,
+  bigint_like,
+  CredentialParams,
+} from '../types/public';
+import { CredentialParamsType } from '../types/public';
+import { unreachable } from './assert';
 
 export const MAX_UINT_64_STR = '18446744073709551615';
 export const MIN_INT_64_STR = '-9223372036854775808';
@@ -41,7 +45,8 @@ export const isInteger = (data: unknown): data is number =>
 export const isArray = (data: unknown): data is Array<unknown> =>
   Array.isArray(data);
 
-export const isBuffer = (data: unknown): data is Buffer => Buffer.isBuffer(data);
+export const isBuffer = (data: unknown): data is Buffer =>
+  Buffer.isBuffer(data);
 
 export const isUint32 = (data: unknown): data is Uint32_t =>
   isInteger(data) && data >= 0 && data <= 4294967295;
@@ -57,7 +62,7 @@ export const isHexString = (data: unknown): data is HexString =>
 
 export const isHexStringOfLength = <L extends number>(
   data: unknown,
-  expectedByteLength: L,
+  expectedByteLength: L
 ): data is FixLenHexString<L> =>
   isHexString(data) && data.length === expectedByteLength * 2;
 
@@ -66,7 +71,7 @@ export const isValidPath = (data: unknown): data is ValidBIP32Path =>
 
 export const isUintStr = (
   data: unknown,
-  constraints: {min?: string; max?: string},
+  constraints: { min?: string; max?: string }
 ): data is string => {
   const min = constraints.min ?? '0';
   const max = constraints.max ?? MAX_UINT_64_STR;
@@ -100,7 +105,7 @@ export const isUint64Bigint = (data: unknown): data is _Uint64_bigint =>
 
 export const isIntStr = (
   data: unknown,
-  constraints: {min?: string; max?: string},
+  constraints: { min?: string; max?: string }
 ): data is string => {
   const min = constraints.min ?? MIN_INT_64_STR;
   const max = constraints.max ?? MAX_INT_64_STR;
@@ -143,26 +148,26 @@ export const isInt64Bigint = (data: unknown): data is _Int64_bigint =>
 
 export function validate(
   cond: boolean,
-  errMsg: InvalidDataReason,
+  errMsg: InvalidDataReason
 ): asserts cond {
   if (!cond) throw new InvalidData(errMsg);
 }
 
 export function parseAscii(
   str: unknown,
-  errMsg: InvalidDataReason,
+  errMsg: InvalidDataReason
 ): VarLenAsciiString {
   validate(isString(str), errMsg);
   validate(
     str.split('').every((c) => c.charCodeAt(0) >= 32 && c.charCodeAt(0) <= 126),
-    errMsg,
+    errMsg
   );
   return str as VarLenAsciiString;
 }
 
 export function parseHexString(
   str: unknown,
-  errMsg: InvalidDataReason,
+  errMsg: InvalidDataReason
 ): HexString {
   validate(isHexString(str), errMsg);
   return str;
@@ -171,7 +176,7 @@ export function parseHexString(
 export function parseHexStringOfLength<L extends number>(
   str: unknown,
   length: L,
-  errMsg: InvalidDataReason,
+  errMsg: InvalidDataReason
 ): FixLenHexString<L> {
   validate(isHexStringOfLength(str, length), errMsg);
   return str;
@@ -179,8 +184,8 @@ export function parseHexStringOfLength<L extends number>(
 
 export function parseInt64_str(
   val: unknown,
-  constraints: {min?: string; max?: string},
-  errMsg: InvalidDataReason,
+  constraints: { min?: string; max?: string },
+  errMsg: InvalidDataReason
 ): Int64_str {
   switch (typeof val) {
     case 'string':
@@ -189,13 +194,13 @@ export function parseInt64_str(
     case 'number':
       validate(
         isInt64Number(val) && isIntStr(val.toString(), constraints),
-        errMsg,
+        errMsg
       );
       return val.toString() as Int64_str;
     case 'bigint':
       validate(
         isInt64Bigint(val) && isIntStr(val.toString(), constraints),
-        errMsg,
+        errMsg
       );
       return val.toString() as Int64_str;
     default:
@@ -205,8 +210,8 @@ export function parseInt64_str(
 
 export function parseUint64_str(
   val: unknown,
-  constraints: {min?: string; max?: string},
-  errMsg: InvalidDataReason,
+  constraints: { min?: string; max?: string },
+  errMsg: InvalidDataReason
 ): Uint64_str {
   switch (typeof val) {
     case 'string':
@@ -215,13 +220,13 @@ export function parseUint64_str(
     case 'number':
       validate(
         isUint64Number(val) && isUintStr(val.toString(), constraints),
-        errMsg,
+        errMsg
       );
       return val.toString() as Uint64_str;
     case 'bigint':
       validate(
         isUint64Bigint(val) && isUintStr(val.toString(), constraints),
-        errMsg,
+        errMsg
       );
       return val.toString() as Uint64_str;
     default:
@@ -231,7 +236,7 @@ export function parseUint64_str(
 
 export function parseUint32_t(
   value: unknown,
-  errMsg: InvalidDataReason,
+  errMsg: InvalidDataReason
 ): Uint32_t {
   validate(isUint32(value), errMsg);
   return value;
@@ -239,7 +244,7 @@ export function parseUint32_t(
 
 export function parseUint16_t(
   value: unknown,
-  errMsg: InvalidDataReason,
+  errMsg: InvalidDataReason
 ): Uint16_t {
   validate(isUint16(value), errMsg);
   return value;
@@ -247,7 +252,7 @@ export function parseUint16_t(
 
 export function parseUint8_t(
   value: number,
-  errMsg: InvalidDataReason,
+  errMsg: InvalidDataReason
 ): Uint8_t {
   validate(isUint8(value), errMsg);
   return value;
@@ -255,7 +260,7 @@ export function parseUint8_t(
 
 export function parseBIP32Path(
   value: unknown,
-  errMsg: InvalidDataReason,
+  errMsg: InvalidDataReason
 ): ValidBIP32Path {
   validate(isValidPath(value), errMsg);
   return value;
@@ -263,7 +268,7 @@ export function parseBIP32Path(
 
 export function parseIntFromStr(
   str: string,
-  errMsg: InvalidDataReason,
+  errMsg: InvalidDataReason
 ): number {
   validate(isString(str), errMsg);
   const i = parseInt(str, 10);
@@ -278,14 +283,14 @@ export function parseIntFromStr(
 
 export function parseCoin(
   coin: bigint_like,
-  errMsg: InvalidDataReason,
+  errMsg: InvalidDataReason
 ): Uint64_str {
-  return parseUint64_str(coin, {max: MAX_LOVELACE_SUPPLY_STR}, errMsg);
+  return parseUint64_str(coin, { max: MAX_LOVELACE_SUPPLY_STR }, errMsg);
 }
 
 export function parseCredential(
   credential: CredentialParams,
-  errMsg: InvalidDataReason,
+  errMsg: InvalidDataReason
 ): ParsedCredential {
   switch (credential.type) {
     case CredentialParamsType.KEY_PATH:
@@ -299,7 +304,7 @@ export function parseCredential(
         keyHashHex: parseHexStringOfLength(
           credential.keyHashHex,
           KEY_HASH_LENGTH,
-          errMsg,
+          errMsg
         ),
       };
     case CredentialParamsType.SCRIPT_HASH:
@@ -308,7 +313,7 @@ export function parseCredential(
         scriptHashHex: parseHexStringOfLength(
           credential.scriptHashHex,
           SCRIPT_HASH_LENGTH,
-          errMsg,
+          errMsg
         ),
       };
     default:
@@ -324,7 +329,7 @@ export function parseAnchor(params: AnchorParams): ParsedAnchor | null {
   const hashHex = parseHexStringOfLength(
     params.hashHex,
     ANCHOR_HASH_LENGTH,
-    InvalidDataReason.ANCHOR_INVALID_HASH,
+    InvalidDataReason.ANCHOR_INVALID_HASH
   );
 
   return {

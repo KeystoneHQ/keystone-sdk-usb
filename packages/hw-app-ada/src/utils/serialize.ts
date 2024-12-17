@@ -1,4 +1,4 @@
-import {Int64BE, Uint64BE} from 'int64-buffer';
+import { Int64BE, Uint64BE } from 'int64-buffer';
 
 import type {
   FixLenHexString,
@@ -11,8 +11,8 @@ import type {
   Uint64_str,
   ParsedAnchor,
 } from '../types/internal';
-import {CredentialType} from '../types/internal';
-import {assert, unreachable} from './assert';
+import { CredentialType } from '../types/internal';
+import { assert, unreachable } from './assert';
 import {
   isHexString,
   isInt64str,
@@ -86,11 +86,9 @@ export function buf_to_hex(data: Buffer): string {
   return data.toString('hex');
 }
 
-
-  export function bech32_to_hex(str: string): string {
-    return buf_to_hex(bech32_decodeAddress(str));
-  }
-  
+export function bech32_to_hex(str: string): string {
+  return buf_to_hex(bech32_decodeAddress(str));
+}
 
 // no buf_to_uint8
 

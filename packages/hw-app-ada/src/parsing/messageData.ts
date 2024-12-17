@@ -1,10 +1,10 @@
-import {unreachable} from '../utils/assert';
-import {InvalidDataReason} from '../errors/invalidDataReason';
-import type {ParsedMessageData} from '../types/internal';
-import type {MessageData} from '../types/public';
-import {MessageAddressFieldType} from '../types/public';
-import {parseBIP32Path, parseHexString} from '../utils/parse';
-import {parseAddress} from './address';
+import { unreachable } from '../utils/assert';
+import { InvalidDataReason } from '../errors/invalidDataReason';
+import type { ParsedMessageData } from '../types/internal';
+import type { MessageData } from '../types/public';
+import { MessageAddressFieldType } from '../types/public';
+import { parseBIP32Path, parseHexString } from '../utils/parse';
+import { parseAddress } from './address';
 
 // check if a non-null-terminated buffer contains printable ASCII between 32 and 126 (inclusive)
 // copied from Ledger app
@@ -49,13 +49,13 @@ export function parseMessageData(data: MessageData): ParsedMessageData {
   const common = {
     signingPath: parseBIP32Path(
       data.signingPath,
-      InvalidDataReason.MESSAGE_DATA_INVALID_WITNESS_PATH,
+      InvalidDataReason.MESSAGE_DATA_INVALID_WITNESS_PATH
     ),
     isAscii: isAscii(data.messageHex) && !preferHexDisplay,
     hashPayload: data.hashPayload,
     messageHex: parseHexString(
       data.messageHex,
-      InvalidDataReason.MESSAGE_DATA_INVALID_MESSAGE_HEX,
+      InvalidDataReason.MESSAGE_DATA_INVALID_MESSAGE_HEX
     ),
   };
 

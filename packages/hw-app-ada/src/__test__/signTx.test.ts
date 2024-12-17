@@ -1,12 +1,29 @@
-import Ada, { AddressType, CertificateType, CredentialParamsType, DatumType, DRepParamsType, Networks, TransactionSigningMode, TxInput, TxOutput, TxOutputDestination, TxOutputDestinationType, TxOutputFormat } from '..';
+import Ada, {
+  AddressType,
+  CertificateType,
+  CredentialParamsType,
+  DatumType,
+  DRepParamsType,
+  Networks,
+  TransactionSigningMode,
+  TxInput,
+  TxOutput,
+  TxOutputDestination,
+  TxOutputDestinationType,
+  TxOutputFormat,
+} from '..';
 import { TransportNodeUSB } from '@keystonehq/hw-transport-nodeusb';
-import { base58_decode, bech32_decodeAddress, str_to_path } from '../utils/address';
+import {
+  base58_decode,
+  bech32_decodeAddress,
+  str_to_path,
+} from '../utils/address';
 import { buf_to_hex } from '../utils/serialize';
 
 jest.setTimeout(100000);
 
 export function bech32_to_hex(str: string): string {
-    return buf_to_hex(bech32_decodeAddress(str));
+  return buf_to_hex(bech32_decodeAddress(str));
 }
 const base58_to_hex = (str: string): string => buf_to_hex(base58_decode(str));
 
@@ -33,7 +50,7 @@ export const destinations: Record<
     type: TxOutputDestinationType.THIRD_PARTY,
     params: {
       addressHex: base58_to_hex(
-        'Ae2tdPwUPEZCanmBz5g2GEwFqKTKpNJcGYPKfDxoNeKZ8bRHr8366kseiK2',
+        'Ae2tdPwUPEZCanmBz5g2GEwFqKTKpNJcGYPKfDxoNeKZ8bRHr8366kseiK2'
       ),
     },
   },
@@ -41,7 +58,7 @@ export const destinations: Record<
     type: TxOutputDestinationType.THIRD_PARTY,
     params: {
       addressHex: base58_to_hex(
-        'DdzFFzCqrht7HGoJ87gznLktJGywK1LbAJT2sbd4txmgS7FcYLMQFhawb18ojS9Hx55mrbsHPr7PTraKh14TSQbGBPJHbDZ9QVh6Z6Di',
+        'DdzFFzCqrht7HGoJ87gznLktJGywK1LbAJT2sbd4txmgS7FcYLMQFhawb18ojS9Hx55mrbsHPr7PTraKh14TSQbGBPJHbDZ9QVh6Z6Di'
       ),
     },
   },
@@ -49,7 +66,7 @@ export const destinations: Record<
     type: TxOutputDestinationType.THIRD_PARTY,
     params: {
       addressHex: base58_to_hex(
-        '2657WMsDfac6Cmfg4Varph2qyLKGi2K9E8jrtvjHVzfSjmbTMGy5sY3HpxCKsmtDA',
+        '2657WMsDfac6Cmfg4Varph2qyLKGi2K9E8jrtvjHVzfSjmbTMGy5sY3HpxCKsmtDA'
       ),
     },
   },
@@ -58,7 +75,7 @@ export const destinations: Record<
     params: {
       // 017cb05fce110fb999f01abb4f62bc455e217d4a51fde909fa9aea545443ac53c046cf6a42095e3c60310fa802771d0672f8fe2d1861138b09
       addressHex: bech32_to_hex(
-        'addr1q97tqh7wzy8mnx0sr2a57c4ug40zzl222877jz06nt49g4zr43fuq3k0dfpqjh3uvqcsl2qzwuwsvuhclck3scgn3vys6wkj5d',
+        'addr1q97tqh7wzy8mnx0sr2a57c4ug40zzl222877jz06nt49g4zr43fuq3k0dfpqjh3uvqcsl2qzwuwsvuhclck3scgn3vys6wkj5d'
       ),
     },
   },
@@ -67,7 +84,7 @@ export const destinations: Record<
     params: {
       // 105e2f080eb93bad86d401545e0ce5f2221096d6477e11e6643922fa8d2ed495234dc0d667c1316ff84e572310e265edb31330448b36b7179e
       addressHex: bech32_to_hex(
-        'addr_test1zp0z7zqwhya6mpk5q929ur897g3pp9kkgalpreny8y304rfw6j2jxnwq6enuzvt0lp89wgcsufj7mvcnxpzgkd4hz70qe8ugl4',
+        'addr_test1zp0z7zqwhya6mpk5q929ur897g3pp9kkgalpreny8y304rfw6j2jxnwq6enuzvt0lp89wgcsufj7mvcnxpzgkd4hz70qe8ugl4'
       ),
     },
   },
@@ -76,7 +93,7 @@ export const destinations: Record<
     params: {
       // 2113d58234512f7f616ef62308c40170c110b2f8d810f230402c5e74177004b5785308380e2dac2955d234b60aa4b786057dd5a93984439d32
       addressHex: bech32_to_hex(
-        'addr1yyfatq352yhh7ctw7c3s33qpwrq3pvhcmqg0yvzq9308g9msqj6hs5cg8q8zmtpf2hfrfds25jmcvpta6k5nnpzrn5eqy6fknd',
+        'addr1yyfatq352yhh7ctw7c3s33qpwrq3pvhcmqg0yvzq9308g9msqj6hs5cg8q8zmtpf2hfrfds25jmcvpta6k5nnpzrn5eqy6fknd'
       ),
     },
   },
@@ -158,7 +175,7 @@ export const destinations: Record<
     type: TxOutputDestinationType.THIRD_PARTY,
     params: {
       addressHex: bech32_to_hex(
-        'addr1q84sh2j72ux0l03fxndjnhctdg7hcppsaejafsa84vh7lwgmcs5wgus8qt4atk45lvt4xfxpjtwfhdmvchdf2m3u3hlsd5tq5r',
+        'addr1q84sh2j72ux0l03fxndjnhctdg7hcppsaejafsa84vh7lwgmcs5wgus8qt4atk45lvt4xfxpjtwfhdmvchdf2m3u3hlsd5tq5r'
       ),
     },
   },
@@ -212,7 +229,6 @@ export const inputs: Record<
     path: null,
   },
 };
-
 
 export const outputs: Record<
   | 'externalByronMainnet'
@@ -656,7 +672,7 @@ export const outputs: Record<
       type: TxOutputDestinationType.THIRD_PARTY,
       params: {
         addressHex: bech32_to_hex(
-          'addr1w9rhu54nz94k9l5v6d9rzfs47h7dv7xffcwkekuxcx3evnqpvuxu0',
+          'addr1w9rhu54nz94k9l5v6d9rzfs47h7dv7xffcwkekuxcx3evnqpvuxu0'
         ),
       },
     },
@@ -670,7 +686,7 @@ export const outputs: Record<
       type: TxOutputDestinationType.THIRD_PARTY,
       params: {
         addressHex: bech32_to_hex(
-          'addr1w9rhu54nz94k9l5v6d9rzfs47h7dv7xffcwkekuxcx3evnqpvuxu0',
+          'addr1w9rhu54nz94k9l5v6d9rzfs47h7dv7xffcwkekuxcx3evnqpvuxu0'
         ),
       },
     },
@@ -684,7 +700,7 @@ export const outputs: Record<
       type: TxOutputDestinationType.THIRD_PARTY,
       params: {
         addressHex: bech32_to_hex(
-          'addr1w9rhu54nz94k9l5v6d9rzfs47h7dv7xffcwkekuxcx3evnqpvuxu0',
+          'addr1w9rhu54nz94k9l5v6d9rzfs47h7dv7xffcwkekuxcx3evnqpvuxu0'
         ),
       },
     },
@@ -917,192 +933,191 @@ export const outputs: Record<
     },
   },
 };
- 
-  export const shelleyBase = {
-    network: Networks.Mainnet,
-    inputs: [inputs.utxoShelley],
-    outputs: [outputs.externalByronMainnet],
-    fee: 42,
-    ttl: 10,
-  };
-  
-  export const mainnetFeeTtl = {
-    network: Networks.Mainnet,
-    fee: 42,
-    ttl: 10,
-  };
-  
-  export const testnetFeeTtl = {
-    network: Networks.Testnet,
-    fee: 42,
-    ttl: 10,
-  };
-  
+
+export const shelleyBase = {
+  network: Networks.Mainnet,
+  inputs: [inputs.utxoShelley],
+  outputs: [outputs.externalByronMainnet],
+  fee: 42,
+  ttl: 10,
+};
+
+export const mainnetFeeTtl = {
+  network: Networks.Mainnet,
+  fee: 42,
+  ttl: 10,
+};
+
+export const testnetFeeTtl = {
+  network: Networks.Testnet,
+  fee: 42,
+  ttl: 10,
+};
+
 describe('Keystone sign transaction', () => {
   let app: Ada;
-  
+
   beforeAll(async () => {
     app = new Ada(
       await TransportNodeUSB.connect({
         timeout: 100000,
-      }),
+      })
     );
   });
 
-
-  
   describe('Should successfully sign shelley transaction', () => {
     it('Sign tx with vote delegation certificates', async () => {
       const response = await app.signTransaction({
-        tx:  {
-            ...shelleyBase,
-            certificates: [
-              {
-                type: CertificateType.VOTE_DELEGATION,
-                params: {
-                  stakeCredential: {
-                    type: CredentialParamsType.KEY_PATH,
-                    keyPath: str_to_path('1852\'/1815\'/0\'/2/0'),
-                  },
-                  dRep: {
-                    type: DRepParamsType.KEY_PATH,
-                    keyPath: str_to_path('1852\'/1815\'/0\'/3/0'),
-                  },
+        tx: {
+          ...shelleyBase,
+          certificates: [
+            {
+              type: CertificateType.VOTE_DELEGATION,
+              params: {
+                stakeCredential: {
+                  type: CredentialParamsType.KEY_PATH,
+                  keyPath: str_to_path('1852\'/1815\'/0\'/2/0'),
+                },
+                dRep: {
+                  type: DRepParamsType.KEY_PATH,
+                  keyPath: str_to_path('1852\'/1815\'/0\'/3/0'),
                 },
               },
-              {
-                type: CertificateType.VOTE_DELEGATION,
-                params: {
-                  stakeCredential: {
-                    type: CredentialParamsType.KEY_PATH,
-                    keyPath: str_to_path('1852\'/1815\'/0\'/2/0'),
-                  },
-                  dRep: {
-                    type: DRepParamsType.KEY_HASH,
-                    keyHashHex:
-                      '7afd028b504c3668102b129b37a86c09a2872f76741dc7a68e2149c8',
-                  },
+            },
+            {
+              type: CertificateType.VOTE_DELEGATION,
+              params: {
+                stakeCredential: {
+                  type: CredentialParamsType.KEY_PATH,
+                  keyPath: str_to_path('1852\'/1815\'/0\'/2/0'),
+                },
+                dRep: {
+                  type: DRepParamsType.KEY_HASH,
+                  keyHashHex:
+                    '7afd028b504c3668102b129b37a86c09a2872f76741dc7a68e2149c8',
                 },
               },
-              {
-                type: CertificateType.VOTE_DELEGATION,
-                params: {
-                  stakeCredential: {
-                    type: CredentialParamsType.KEY_PATH,
-                    keyPath: str_to_path('1852\'/1815\'/0\'/2/0'),
-                  },
-                  dRep: {
-                    type: DRepParamsType.SCRIPT_HASH,
-                    scriptHashHex:
-                      '1afd028b504c3668102b129b37a86c09a2872f76741dc7a68e2149c8',
-                  },
+            },
+            {
+              type: CertificateType.VOTE_DELEGATION,
+              params: {
+                stakeCredential: {
+                  type: CredentialParamsType.KEY_PATH,
+                  keyPath: str_to_path('1852\'/1815\'/0\'/2/0'),
+                },
+                dRep: {
+                  type: DRepParamsType.SCRIPT_HASH,
+                  scriptHashHex:
+                    '1afd028b504c3668102b129b37a86c09a2872f76741dc7a68e2149c8',
                 },
               },
-              {
-                type: CertificateType.VOTE_DELEGATION,
-                params: {
-                  stakeCredential: {
-                    type: CredentialParamsType.KEY_PATH,
-                    keyPath: str_to_path('1852\'/1815\'/0\'/2/0'),
-                  },
-                  dRep: {
-                    type: DRepParamsType.ABSTAIN,
-                  },
+            },
+            {
+              type: CertificateType.VOTE_DELEGATION,
+              params: {
+                stakeCredential: {
+                  type: CredentialParamsType.KEY_PATH,
+                  keyPath: str_to_path('1852\'/1815\'/0\'/2/0'),
+                },
+                dRep: {
+                  type: DRepParamsType.ABSTAIN,
                 },
               },
-              {
-                type: CertificateType.VOTE_DELEGATION,
-                params: {
-                  stakeCredential: {
-                    type: CredentialParamsType.KEY_PATH,
-                    keyPath: str_to_path('1852\'/1815\'/0\'/2/0'),
-                  },
-                  dRep: {
-                    type: DRepParamsType.NO_CONFIDENCE,
-                  },
+            },
+            {
+              type: CertificateType.VOTE_DELEGATION,
+              params: {
+                stakeCredential: {
+                  type: CredentialParamsType.KEY_PATH,
+                  keyPath: str_to_path('1852\'/1815\'/0\'/2/0'),
+                },
+                dRep: {
+                  type: DRepParamsType.NO_CONFIDENCE,
                 },
               },
-            ],
-          },
-          signingMode: TransactionSigningMode.ORDINARY_TRANSACTION,
+            },
+          ],
+        },
+        signingMode: TransactionSigningMode.ORDINARY_TRANSACTION,
       });
       expect(response).toBeNull();
     });
 
-
     it('Should successfully sign transaction', async () => {
       const response = await app.signTransaction({
         tx: {
-            network: Networks.Mainnet,
-            fee: 0,
-            ttl: 0,
-            validityIntervalStart: 0,
-            inputs: [{
-                txHashHex:
-                  '3b40265111d8bb3c3c608d95b3a0bf83461ace32d79336579a1939b3aad1c0b7',
-                outputIndex: 0,
-                path: str_to_path('1852\'/1815\'/0\'/0/0'),
-              }],
-            outputs: [ {
-                destination: {
-                    type: TxOutputDestinationType.THIRD_PARTY,
-                    params: {
-                        addressHex: bech32_to_hex(
-                          'addr1w9rhu54nz94k9l5v6d9rzfs47h7dv7xffcwkekuxcx3evnqpvuxu0',
-                        ),
-                      },
-                  },
-                amount: 7120787,
-              }],
-          },
+          network: Networks.Mainnet,
+          fee: 0,
+          ttl: 0,
+          validityIntervalStart: 0,
+          inputs: [
+            {
+              txHashHex:
+                '3b40265111d8bb3c3c608d95b3a0bf83461ace32d79336579a1939b3aad1c0b7',
+              outputIndex: 0,
+              path: str_to_path('1852\'/1815\'/0\'/0/0'),
+            },
+          ],
+          outputs: [
+            {
+              destination: {
+                type: TxOutputDestinationType.THIRD_PARTY,
+                params: {
+                  addressHex: bech32_to_hex(
+                    'addr1w9rhu54nz94k9l5v6d9rzfs47h7dv7xffcwkekuxcx3evnqpvuxu0'
+                  ),
+                },
+              },
+              amount: 7120787,
+            },
+          ],
+        },
         signingMode: TransactionSigningMode.ORDINARY_TRANSACTION,
       });
       expect(response).toBeNull();
     });
 
     it('should success fully sign shelley tx with certificate', async () => {
-        const response = await app.signTransaction({
-          tx:{
-            ...shelleyBase,
-            certificates: [
-              {
-                type: CertificateType.STAKE_REGISTRATION,
-                params: {
-                  stakeCredential: {
-                    type: CredentialParamsType.KEY_PATH,
-                    keyPath: str_to_path('1852\'/1815\'/0\'/2/0'),
-                  },
+      const response = await app.signTransaction({
+        tx: {
+          ...shelleyBase,
+          certificates: [
+            {
+              type: CertificateType.STAKE_REGISTRATION,
+              params: {
+                stakeCredential: {
+                  type: CredentialParamsType.KEY_PATH,
+                  keyPath: str_to_path('1852\'/1815\'/0\'/2/0'),
                 },
               },
-            ],
-          },
+            },
+          ],
+        },
         signingMode: TransactionSigningMode.ORDINARY_TRANSACTION,
       });
       expect(response).toBeNull();
     });
 
-
     it('Sign tx with a stake deregistration path certificate --- Conway', async () => {
       const response = await app.signTransaction({
         tx: {
-            ...shelleyBase,
-            certificates: [
-              {
-                type: CertificateType.STAKE_DEREGISTRATION_CONWAY,
-                params: {
-                  stakeCredential: {
-                    type: CredentialParamsType.KEY_PATH,
-                    keyPath: str_to_path('1852\'/1815\'/0\'/2/0'),
-                  },
-                  deposit: '17',
+          ...shelleyBase,
+          certificates: [
+            {
+              type: CertificateType.STAKE_DEREGISTRATION_CONWAY,
+              params: {
+                stakeCredential: {
+                  type: CredentialParamsType.KEY_PATH,
+                  keyPath: str_to_path('1852\'/1815\'/0\'/2/0'),
                 },
+                deposit: '17',
               },
-            ],
-          },
-          signingMode: TransactionSigningMode.ORDINARY_TRANSACTION,
+            },
+          ],
+        },
+        signingMode: TransactionSigningMode.ORDINARY_TRANSACTION,
       });
       expect(response).toBeNull();
     });
   });
-  
 });

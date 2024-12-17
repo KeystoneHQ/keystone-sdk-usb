@@ -1,5 +1,5 @@
-import {ErrorBase} from './errorBase'
-import type {InvalidDataReason} from './invalidDataReason'
+import { ErrorBase } from './errorBase';
+import type { InvalidDataReason } from './invalidDataReason';
 
 /**
  * Request data is invalid, caller should check what is feeding to us
@@ -7,6 +7,6 @@ import type {InvalidDataReason} from './invalidDataReason'
  */
 export class InvalidData extends ErrorBase {
   public constructor(reason: InvalidDataReason) {
-    super(reason as string)
+    super(reason as string);
   }
 }

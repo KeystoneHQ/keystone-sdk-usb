@@ -1,5 +1,5 @@
-import {InvalidData} from '../errors';
-import {InvalidDataReason} from '../errors/invalidDataReason';
+import { InvalidData } from '../errors';
+import { InvalidDataReason } from '../errors/invalidDataReason';
 import type {
   ParsedAddressParams,
   SpendingDataSource,
@@ -24,36 +24,36 @@ import {
   parseUint32_t,
   validate,
 } from '../utils/parse';
-import {parseNetwork} from './network';
+import { parseNetwork } from './network';
 
 function extractSpendingDataSource(
   spendingPath?: BIP32Path,
-  spendingScriptHash?: string,
+  spendingScriptHash?: string
 ): SpendingDataSource {
   if (null != spendingPath) {
     validate(
       spendingScriptHash == null,
-      InvalidDataReason.ADDRESS_INVALID_SPENDING_SCRIPT_HASH,
+      InvalidDataReason.ADDRESS_INVALID_SPENDING_SCRIPT_HASH
     );
     return {
       type: SpendingDataSourceType.PATH,
       path: parseBIP32Path(
         spendingPath,
-        InvalidDataReason.ADDRESS_INVALID_SPENDING_KEY_PATH,
+        InvalidDataReason.ADDRESS_INVALID_SPENDING_KEY_PATH
       ),
     };
   }
   if (null != spendingScriptHash) {
     validate(
       spendingPath == null,
-      InvalidDataReason.ADDRESS_INVALID_SPENDING_KEY_PATH,
+      InvalidDataReason.ADDRESS_INVALID_SPENDING_KEY_PATH
     );
     return {
       type: SpendingDataSourceType.SCRIPT_HASH,
       scriptHashHex: parseHexStringOfLength(
         spendingScriptHash,
         SCRIPT_HASH_LENGTH,
-        InvalidDataReason.ADDRESS_INVALID_SPENDING_SCRIPT_HASH,
+        InvalidDataReason.ADDRESS_INVALID_SPENDING_SCRIPT_HASH
       ),
     };
   }
@@ -66,24 +66,24 @@ function extractStakingDataSource(
   stakingPath?: BIP32Path,
   stakingKeyHashHex?: string,
   stakingBlockchainPointer?: BlockchainPointer,
-  stakingScriptHashHex?: string,
+  stakingScriptHashHex?: string
 ): StakingDataSource {
   if (null != stakingPath) {
     validate(
       stakingKeyHashHex == null,
-      InvalidDataReason.ADDRESS_INVALID_STAKING_INFO,
+      InvalidDataReason.ADDRESS_INVALID_STAKING_INFO
     );
     validate(
       stakingBlockchainPointer == null,
-      InvalidDataReason.ADDRESS_INVALID_STAKING_INFO,
+      InvalidDataReason.ADDRESS_INVALID_STAKING_INFO
     );
     validate(
       stakingScriptHashHex == null,
-      InvalidDataReason.ADDRESS_INVALID_STAKING_INFO,
+      InvalidDataReason.ADDRESS_INVALID_STAKING_INFO
     );
     const codedStakingPath = parseBIP32Path(
       stakingPath,
-      InvalidDataReason.ADDRESS_INVALID_SPENDING_KEY_PATH,
+      InvalidDataReason.ADDRESS_INVALID_SPENDING_KEY_PATH
     );
     return {
       type: StakingDataSourceType.KEY_PATH,
@@ -93,20 +93,20 @@ function extractStakingDataSource(
   if (null != stakingKeyHashHex) {
     validate(
       stakingPath == null,
-      InvalidDataReason.ADDRESS_INVALID_STAKING_INFO,
+      InvalidDataReason.ADDRESS_INVALID_STAKING_INFO
     );
     validate(
       stakingBlockchainPointer == null,
-      InvalidDataReason.ADDRESS_INVALID_STAKING_INFO,
+      InvalidDataReason.ADDRESS_INVALID_STAKING_INFO
     );
     validate(
       stakingScriptHashHex == null,
-      InvalidDataReason.ADDRESS_INVALID_STAKING_INFO,
+      InvalidDataReason.ADDRESS_INVALID_STAKING_INFO
     );
     const hashHex = parseHexStringOfLength(
       stakingKeyHashHex,
       KEY_HASH_LENGTH,
-      InvalidDataReason.ADDRESS_INVALID_STAKING_KEY_HASH,
+      InvalidDataReason.ADDRESS_INVALID_STAKING_KEY_HASH
     );
     return {
       type: StakingDataSourceType.KEY_HASH,
@@ -116,15 +116,15 @@ function extractStakingDataSource(
   if (null != stakingBlockchainPointer) {
     validate(
       stakingPath == null,
-      InvalidDataReason.ADDRESS_INVALID_STAKING_INFO,
+      InvalidDataReason.ADDRESS_INVALID_STAKING_INFO
     );
     validate(
       stakingKeyHashHex == null,
-      InvalidDataReason.ADDRESS_INVALID_STAKING_INFO,
+      InvalidDataReason.ADDRESS_INVALID_STAKING_INFO
     );
     validate(
       stakingScriptHashHex == null,
-      InvalidDataReason.ADDRESS_INVALID_STAKING_INFO,
+      InvalidDataReason.ADDRESS_INVALID_STAKING_INFO
     );
     const pointer = stakingBlockchainPointer;
     return {
@@ -132,15 +132,15 @@ function extractStakingDataSource(
       pointer: {
         blockIndex: parseUint32_t(
           pointer.blockIndex,
-          InvalidDataReason.ADDRESS_INVALID_BLOCKCHAIN_POINTER,
+          InvalidDataReason.ADDRESS_INVALID_BLOCKCHAIN_POINTER
         ),
         txIndex: parseUint32_t(
           pointer.txIndex,
-          InvalidDataReason.ADDRESS_INVALID_BLOCKCHAIN_POINTER,
+          InvalidDataReason.ADDRESS_INVALID_BLOCKCHAIN_POINTER
         ),
         certificateIndex: parseUint32_t(
           pointer.certificateIndex,
-          InvalidDataReason.ADDRESS_INVALID_BLOCKCHAIN_POINTER,
+          InvalidDataReason.ADDRESS_INVALID_BLOCKCHAIN_POINTER
         ),
       },
     };
@@ -148,20 +148,20 @@ function extractStakingDataSource(
   if (null != stakingScriptHashHex) {
     validate(
       stakingPath == null,
-      InvalidDataReason.ADDRESS_INVALID_STAKING_INFO,
+      InvalidDataReason.ADDRESS_INVALID_STAKING_INFO
     );
     validate(
       stakingKeyHashHex == null,
-      InvalidDataReason.ADDRESS_INVALID_STAKING_INFO,
+      InvalidDataReason.ADDRESS_INVALID_STAKING_INFO
     );
     validate(
       stakingBlockchainPointer == null,
-      InvalidDataReason.ADDRESS_INVALID_STAKING_INFO,
+      InvalidDataReason.ADDRESS_INVALID_STAKING_INFO
     );
     const stakingHash = parseHexStringOfLength(
       stakingScriptHashHex,
       SCRIPT_HASH_LENGTH,
-      InvalidDataReason.ADDRESS_INVALID_STAKING_SCRIPT_HASH,
+      InvalidDataReason.ADDRESS_INVALID_STAKING_SCRIPT_HASH
     );
     return {
       type: StakingDataSourceType.SCRIPT_HASH,
@@ -175,7 +175,7 @@ function extractStakingDataSource(
 
 function validateSpendingDataSource(
   addressType: AddressType,
-  spending: SpendingDataSource,
+  spending: SpendingDataSource
 ) {
   switch (addressType) {
     case AddressType.BASE_PAYMENT_KEY_STAKE_KEY:
@@ -185,7 +185,7 @@ function validateSpendingDataSource(
     case AddressType.BYRON:
       validate(
         spending.type === SpendingDataSourceType.PATH,
-        InvalidDataReason.ADDRESS_INVALID_SPENDING_INFO,
+        InvalidDataReason.ADDRESS_INVALID_SPENDING_INFO
       );
       break;
     case AddressType.BASE_PAYMENT_SCRIPT_STAKE_KEY:
@@ -194,14 +194,14 @@ function validateSpendingDataSource(
     case AddressType.ENTERPRISE_SCRIPT:
       validate(
         spending.type === SpendingDataSourceType.SCRIPT_HASH,
-        InvalidDataReason.ADDRESS_INVALID_SPENDING_INFO,
+        InvalidDataReason.ADDRESS_INVALID_SPENDING_INFO
       );
       break;
     case AddressType.REWARD_KEY:
     case AddressType.REWARD_SCRIPT:
       validate(
         spending.type === SpendingDataSourceType.NONE,
-        InvalidDataReason.ADDRESS_INVALID_SPENDING_INFO,
+        InvalidDataReason.ADDRESS_INVALID_SPENDING_INFO
       );
       break;
     default:
@@ -211,7 +211,7 @@ function validateSpendingDataSource(
 
 function validateStakingDataSource(
   addressType: AddressType,
-  staking: StakingDataSource,
+  staking: StakingDataSource
 ) {
   switch (addressType) {
     case AddressType.BASE_PAYMENT_KEY_STAKE_KEY:
@@ -220,7 +220,7 @@ function validateStakingDataSource(
       validate(
         staking.type === StakingDataSourceType.KEY_PATH ||
           staking.type === StakingDataSourceType.KEY_HASH,
-        InvalidDataReason.ADDRESS_INVALID_STAKING_INFO,
+        InvalidDataReason.ADDRESS_INVALID_STAKING_INFO
       );
       break;
     case AddressType.BASE_PAYMENT_SCRIPT_STAKE_SCRIPT:
@@ -228,14 +228,14 @@ function validateStakingDataSource(
     case AddressType.REWARD_SCRIPT:
       validate(
         staking.type === StakingDataSourceType.SCRIPT_HASH,
-        InvalidDataReason.ADDRESS_INVALID_STAKING_INFO,
+        InvalidDataReason.ADDRESS_INVALID_STAKING_INFO
       );
       break;
     case AddressType.POINTER_KEY:
     case AddressType.POINTER_SCRIPT:
       validate(
         staking.type === StakingDataSourceType.BLOCKCHAIN_POINTER,
-        InvalidDataReason.ADDRESS_INVALID_STAKING_INFO,
+        InvalidDataReason.ADDRESS_INVALID_STAKING_INFO
       );
       break;
     case AddressType.BYRON:
@@ -243,7 +243,7 @@ function validateStakingDataSource(
     case AddressType.ENTERPRISE_SCRIPT:
       validate(
         staking.type === StakingDataSourceType.NONE,
-        InvalidDataReason.ADDRESS_INVALID_STAKING_INFO,
+        InvalidDataReason.ADDRESS_INVALID_STAKING_INFO
       );
       break;
     default:
@@ -253,31 +253,31 @@ function validateStakingDataSource(
 
 export function parseAddress(
   network: Network,
-  address: DeviceOwnedAddress,
+  address: DeviceOwnedAddress
 ): ParsedAddressParams {
   const parsedNetwork = parseNetwork(network);
 
   // Cast to union of all param fields
   const params = address.params as {
-    spendingPath?: BIP32Path
-    spendingScriptHashHex?: string
-    stakingPath?: BIP32Path
-    stakingKeyHashHex?: string
-    stakingBlockchainPointer?: BlockchainPointer
-    stakingScriptHashHex?: string
+    spendingPath?: BIP32Path;
+    spendingScriptHashHex?: string;
+    stakingPath?: BIP32Path;
+    stakingKeyHashHex?: string;
+    stakingBlockchainPointer?: BlockchainPointer;
+    stakingScriptHashHex?: string;
   };
 
   // will be cast to 'any' since the extract functions guarantee the type match
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const spendingDataSource = extractSpendingDataSource(
     params.spendingPath,
-    params.spendingScriptHashHex,
+    params.spendingScriptHashHex
   );
   const stakingDataSource = extractStakingDataSource(
     params.stakingPath,
     params.stakingKeyHashHex,
     params.stakingBlockchainPointer,
-    params.stakingScriptHashHex,
+    params.stakingScriptHashHex
   );
   validateSpendingDataSource(address.type, spendingDataSource);
   validateStakingDataSource(address.type, stakingDataSource);

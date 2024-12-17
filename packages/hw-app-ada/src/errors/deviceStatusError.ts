@@ -1,4 +1,4 @@
-import {ErrorBase} from './errorBase';
+import { ErrorBase } from './errorBase';
 
 /**
  * Raw error codes returned by APDU protocol. Note that this is *not* an exhaustive list.

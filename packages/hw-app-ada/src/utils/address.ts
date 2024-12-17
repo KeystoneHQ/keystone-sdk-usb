@@ -1,10 +1,10 @@
 import basex from 'base-x';
 import bech32 from 'bech32';
 
-import {InvalidDataReason} from '../errors';
-import {AddressType, HARDENED} from '../types/public';
-import {assert} from './assert';
-import {isBuffer, isString, parseIntFromStr, validate} from './parse';
+import { InvalidDataReason } from '../errors';
+import { AddressType, HARDENED } from '../types/public';
+import { assert } from './assert';
+import { isBuffer, isString, parseIntFromStr, validate } from './parse';
 
 const BASE58_ALPHABET =
   '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
@@ -81,11 +81,11 @@ export function bech32_encodeAddress(data: Buffer): string {
   return bech32.encode(
     getShelleyAddressPrefix(data),
     data5bit,
-    MAX_HUMAN_ADDRESS_LENGTH,
+    MAX_HUMAN_ADDRESS_LENGTH
   );
 }
 
 export function bech32_decodeAddress(data: string): Buffer {
-  const {words} = bech32.decode(data, 1000);
+  const { words } = bech32.decode(data, 1000);
   return Buffer.from(bech32.fromWords(words));
 }

@@ -7,7 +7,7 @@
  * - `BigInt` (if platform supports it natively)
  * @category Basic types
  */
-export type bigint_like = number | bigint | string
+export type bigint_like = number | bigint | string;
 
 // Blockchain-defined constants
 
@@ -173,7 +173,7 @@ export const HARDENED = 0x80000000;
  * @see [[HARDENED]]
  * @category Basic types
  */
-export type BIP32Path = Array<number>
+export type BIP32Path = Array<number>;
 
 /**
  * Cardano network magic constants
@@ -181,10 +181,10 @@ export type BIP32Path = Array<number>
  */
 export type Network = {
   /** byron protocol id */
-  protocolMagic: number
+  protocolMagic: number;
   /** shelley network id */
-  networkId: number
-}
+  networkId: number;
+};
 
 /**
  * Describes address owned by the Ledger device.
@@ -194,29 +194,29 @@ export type Network = {
  */
 export type DeviceOwnedAddress =
   | {
-      type: AddressType.BYRON
-      params: AddressParamsByron
+      type: AddressType.BYRON;
+      params: AddressParamsByron;
     }
   | {
       type:
         | AddressType.BASE_PAYMENT_KEY_STAKE_KEY
         | AddressType.BASE_PAYMENT_SCRIPT_STAKE_KEY
         | AddressType.BASE_PAYMENT_KEY_STAKE_SCRIPT
-        | AddressType.BASE_PAYMENT_SCRIPT_STAKE_SCRIPT
-      params: AddressParamsBase
+        | AddressType.BASE_PAYMENT_SCRIPT_STAKE_SCRIPT;
+      params: AddressParamsBase;
     }
   | {
-      type: AddressType.ENTERPRISE_KEY | AddressType.ENTERPRISE_SCRIPT
-      params: AddressParamsEnterprise
+      type: AddressType.ENTERPRISE_KEY | AddressType.ENTERPRISE_SCRIPT;
+      params: AddressParamsEnterprise;
     }
   | {
-      type: AddressType.POINTER_KEY | AddressType.POINTER_SCRIPT
-      params: AddressParamsPointer
+      type: AddressType.POINTER_KEY | AddressType.POINTER_SCRIPT;
+      params: AddressParamsPointer;
     }
   | {
-      type: AddressType.REWARD_KEY | AddressType.REWARD_SCRIPT
-      params: AddressParamsReward
-    }
+      type: AddressType.REWARD_KEY | AddressType.REWARD_SCRIPT;
+      params: AddressParamsReward;
+    };
 
 /**
  * Byron address parameters
@@ -224,16 +224,16 @@ export type DeviceOwnedAddress =
  * @see [[DeviceOwnedAddress]]
  */
 export type AddressParamsByron = {
-  spendingPath: BIP32Path
-}
+  spendingPath: BIP32Path;
+};
 
 export type SpendingParams =
   | {
-      spendingPath: BIP32Path
+      spendingPath: BIP32Path;
     }
   | {
-      spendingScriptHashHex: string
-    }
+      spendingScriptHashHex: string;
+    };
 
 /**
  * Shelley *base* address parameters.
@@ -244,22 +244,22 @@ export type SpendingParams =
 export type AddressParamsBase = SpendingParams &
   (
     | {
-        stakingPath: BIP32Path
+        stakingPath: BIP32Path;
       }
     | {
-        stakingKeyHashHex: string
+        stakingKeyHashHex: string;
       }
     | {
-        stakingScriptHashHex: string
+        stakingScriptHashHex: string;
       }
-  )
+  );
 
 /**
  * Shelley *enterprise* address parameters
  * @category Addresses
  * @see [[DeviceOwnedAddress]]
  * */
-export type AddressParamsEnterprise = SpendingParams
+export type AddressParamsEnterprise = SpendingParams;
 
 /**
  * Shelley *pointer* address parameters
@@ -267,8 +267,8 @@ export type AddressParamsEnterprise = SpendingParams
  * @see [[DeviceOwnedAddress]]
  * */
 export type AddressParamsPointer = SpendingParams & {
-  stakingBlockchainPointer: BlockchainPointer
-}
+  stakingBlockchainPointer: BlockchainPointer;
+};
 
 /** Shelley *reward* address parameters.
  *
@@ -277,22 +277,22 @@ export type AddressParamsPointer = SpendingParams & {
  */
 export type AddressParamsReward =
   | {
-      stakingPath: BIP32Path
+      stakingPath: BIP32Path;
     }
   | {
-      stakingScriptHashHex: string
-    }
+      stakingScriptHashHex: string;
+    };
 
 /** Operational certificate
  *
  * @category Basic types
  */
 export type OperationalCertificate = {
-  kesPublicKeyHex: string
-  kesPeriod: bigint_like
-  issueCounter: bigint_like
-  coldKeyPath: BIP32Path
-}
+  kesPublicKeyHex: string;
+  kesPeriod: bigint_like;
+  issueCounter: bigint_like;
+  coldKeyPath: BIP32Path;
+};
 
 /**
  * CIP-8 message signing
@@ -317,27 +317,27 @@ export type MessageData = {
   // Note: If the message is too long to be displayed at once, it must be hashed.
   // MAX_CIP8_MSG_FIRST_CHUNK_ASCII_SIZE 198
   // MAX_CIP8_MSG_FIRST_CHUNK_HEX_SIZE 99
-  messageHex: string
+  messageHex: string;
 
   // the message will be signed with this key
-  signingPath: BIP32Path
+  signingPath: BIP32Path;
 
   // whether to hash the message when creating payload
-  hashPayload: boolean
+  hashPayload: boolean;
 
   // if true, message will be displayed in hex even if it is ascii
-  preferHexDisplay?: boolean
+  preferHexDisplay?: boolean;
 } & (
   | {
-      addressFieldType: MessageAddressFieldType.ADDRESS
-      address: DeviceOwnedAddress
-      network: Network
+      addressFieldType: MessageAddressFieldType.ADDRESS;
+      address: DeviceOwnedAddress;
+      network: Network;
     }
   | {
-      addressFieldType: MessageAddressFieldType.KEY_HASH
+      addressFieldType: MessageAddressFieldType.KEY_HASH;
       // the hash of key derived from witnessPath is used in the CIP-8 `address` field
     }
-)
+);
 
 /** CIP-36 vote
  *
@@ -345,11 +345,11 @@ export type MessageData = {
  */
 export type CIP36Vote = {
   // bytestring to sign in hex
-  voteCastDataHex: string
+  voteCastDataHex: string;
 
   // the witness path for which we need a signature
-  witnessPath: BIP32Path
-}
+  witnessPath: BIP32Path;
+};
 
 /**
  * Describes single transaction input (i.e. UTxO)
@@ -360,11 +360,11 @@ export type TxInput = {
   /**
    * UTxO's hash of the transaction
    */
-  txHashHex: string
+  txHashHex: string;
   /**
    * UTxO's transaction output index
    */
-  outputIndex: number
+  outputIndex: number;
   /**
    * Describes path used for witnessing this UTxO. The API will sign transaction with this path.
    *
@@ -374,8 +374,8 @@ export type TxInput = {
    *
    * Note: Device has no ability to really check whether `path` is correct witnessing path for this UTxO.
    */
-  path: BIP32Path | null
-}
+  path: BIP32Path | null;
+};
 
 /**
  * Describes a single token within a multiasset structure.
@@ -383,11 +383,11 @@ export type TxInput = {
  * @see [[AssetGroup]]
  */
 export type Token = {
-  assetNameHex: string
+  assetNameHex: string;
   /** Note: can be signed or unsigned, depending on the context.
    * device does not know the number of decimal places the token uses. */
-  amount: bigint_like
-}
+  amount: bigint_like;
+};
 
 /**
  * Describes a group of assets belonging to the same policy in a multiasset structure.
@@ -399,9 +399,9 @@ export type Token = {
  * @see [[TxOutput]]
  */
 export type AssetGroup = {
-  policyIdHex: string
-  tokens: Array<Token>
-}
+  policyIdHex: string;
+  tokens: Array<Token>;
+};
 
 export enum DatumType {
   HASH = 0,
@@ -410,13 +410,13 @@ export enum DatumType {
 
 export type Datum =
   | {
-      type: DatumType.HASH
-      datumHashHex: string
+      type: DatumType.HASH;
+      datumHashHex: string;
     }
   | {
-      type: DatumType.INLINE
-      datumHex: string
-    }
+      type: DatumType.INLINE;
+      datumHex: string;
+    };
 
 /**
  * Serialization format of transaction outputs.
@@ -434,28 +434,28 @@ export enum TxOutputFormat {
  * Serializes as an array.
  */
 export type TxOutputAlonzo = {
-  format?: TxOutputFormat.ARRAY_LEGACY
+  format?: TxOutputFormat.ARRAY_LEGACY;
   /**
    * Destination address of the output
    */
-  destination: TxOutputDestination
+  destination: TxOutputDestination;
   /**
    * Output amount.
    * Specified in Lovelace
    */
-  amount: bigint_like
+  amount: bigint_like;
   /**
    * Additional assets sent to the output.
    * If not null, the entries' keys (policyIds) must be unique and sorted to reflect a canonical CBOR as described
    * in the [CBOR RFC](https://datatracker.ietf.org/doc/html/rfc7049#section-3.9)),
    * i.e. the key with the lower value in lexical order sorts earlier.
    */
-  tokenBundle?: Array<AssetGroup> | null
+  tokenBundle?: Array<AssetGroup> | null;
   /**
    * Optional datum hash
    */
-  datumHashHex?: string | null
-}
+  datumHashHex?: string | null;
+};
 
 /**
  * Corresponds to post_alonzo_transaction_output in
@@ -463,40 +463,40 @@ export type TxOutputAlonzo = {
  * Serializes as a map.
  */
 export type TxOutputBabbage = {
-  format: TxOutputFormat.MAP_BABBAGE
+  format: TxOutputFormat.MAP_BABBAGE;
   /**
    * Destination address of the output
    */
-  destination: TxOutputDestination
+  destination: TxOutputDestination;
   /**
    * Output amount.
    * Specified in Lovelace
    */
-  amount: bigint_like
+  amount: bigint_like;
   /**
    * Additional assets sent to the output.
    * If not null, the entries' keys (policyIds) must be unique and sorted to reflect a canonical CBOR as described
    * in the [CBOR RFC](https://datatracker.ietf.org/doc/html/rfc7049#section-3.9)),
    * i.e. the key with the lower value in lexical order sorts earlier.
    */
-  tokenBundle?: Array<AssetGroup> | null
+  tokenBundle?: Array<AssetGroup> | null;
   /**
    * Optional datum hash or inline datum
    */
-  datum?: Datum | null
+  datum?: Datum | null;
   /**
    * Optional reference script
    * (without the #6.24 tag)
    */
-  referenceScriptHex?: string | null
-}
+  referenceScriptHex?: string | null;
+};
 
 /**
  * Transaction output
  * @category Basic types
  * @see [[Transaction]]
  */
-export type TxOutput = TxOutputAlonzo | TxOutputBabbage
+export type TxOutput = TxOutputAlonzo | TxOutputBabbage;
 
 /**
  * Specified type of output destination
@@ -527,8 +527,8 @@ export type ThirdPartyAddressParams = {
   /**
    * Byron or Shelley address in raw hex format (without bech32/base58 encoding)
    */
-  addressHex: string
-}
+  addressHex: string;
+};
 
 /**
  * Represents output address.
@@ -538,13 +538,13 @@ export type ThirdPartyAddressParams = {
  */
 export type TxOutputDestination =
   | {
-      type: TxOutputDestinationType.THIRD_PARTY
-      params: ThirdPartyAddressParams
+      type: TxOutputDestinationType.THIRD_PARTY;
+      params: ThirdPartyAddressParams;
     }
   | {
-      type: TxOutputDestinationType.DEVICE_OWNED
-      params: DeviceOwnedAddress
-    }
+      type: TxOutputDestinationType.DEVICE_OWNED;
+      params: DeviceOwnedAddress;
+    };
 
 /**
  * Blockchain pointer for Pointer addresses
@@ -552,10 +552,10 @@ export type TxOutputDestination =
  * @see [[AddressParamsPointer]]
  */
 export type BlockchainPointer = {
-  blockIndex: number
-  txIndex: number
-  certificateIndex: number
-}
+  blockIndex: number;
+  txIndex: number;
+  certificateIndex: number;
+};
 
 /**
  * Type of a pool key in pool registration certificate.
@@ -583,13 +583,13 @@ export enum PoolKeyType {
  */
 export type PoolKey =
   | {
-      type: PoolKeyType.THIRD_PARTY
-      params: PoolKeyThirdPartyParams
+      type: PoolKeyType.THIRD_PARTY;
+      params: PoolKeyThirdPartyParams;
     }
   | {
-      type: PoolKeyType.DEVICE_OWNED
-      params: PoolKeyDeviceOwnedParams
-    }
+      type: PoolKeyType.DEVICE_OWNED;
+      params: PoolKeyDeviceOwnedParams;
+    };
 
 /**
  * Pool key is owned by an external party
@@ -598,8 +598,8 @@ export type PoolKey =
  * @see [[PoolKeyType]]
  */
 export type PoolKeyThirdPartyParams = {
-  keyHashHex: string
-}
+  keyHashHex: string;
+};
 
 /**
  * Pool key is owned by the Ledger device
@@ -608,8 +608,8 @@ export type PoolKeyThirdPartyParams = {
  * @see [[PoolKeyType]]
  */
 export type PoolKeyDeviceOwnedParams = {
-  path: BIP32Path
-}
+  path: BIP32Path;
+};
 
 /**
  * Type of an owner in pool registration certificate.
@@ -637,13 +637,13 @@ export enum PoolOwnerType {
  */
 export type PoolOwner =
   | {
-      type: PoolOwnerType.THIRD_PARTY
-      params: PoolOwnerThirdPartyParams
+      type: PoolOwnerType.THIRD_PARTY;
+      params: PoolOwnerThirdPartyParams;
     }
   | {
-      type: PoolOwnerType.DEVICE_OWNED
-      params: PoolOwnerDeviceOwnedParams
-    }
+      type: PoolOwnerType.DEVICE_OWNED;
+      params: PoolOwnerDeviceOwnedParams;
+    };
 
 /**
  * Pool owner is an external party
@@ -652,8 +652,8 @@ export type PoolOwner =
  * @see [[PoolOwnerType]]
  */
 export type PoolOwnerThirdPartyParams = {
-  stakingKeyHashHex: string
-}
+  stakingKeyHashHex: string;
+};
 
 /**
  * Pool owner is the Ledger device. Supply staking key path which should sign the certificate
@@ -662,8 +662,8 @@ export type PoolOwnerThirdPartyParams = {
  * @see [[PoolOwnerType]]
  */
 export type PoolOwnerDeviceOwnedParams = {
-  stakingPath: BIP32Path
-}
+  stakingPath: BIP32Path;
+};
 
 /**
  * Type of a reward account in pool registration certificate.
@@ -691,13 +691,13 @@ export enum PoolRewardAccountType {
  */
 export type PoolRewardAccount =
   | {
-      type: PoolRewardAccountType.THIRD_PARTY
-      params: PoolRewardAccountThirdPartyParams
+      type: PoolRewardAccountType.THIRD_PARTY;
+      params: PoolRewardAccountThirdPartyParams;
     }
   | {
-      type: PoolRewardAccountType.DEVICE_OWNED
-      params: PoolRewardAccountDeviceOwnedParams
-    }
+      type: PoolRewardAccountType.DEVICE_OWNED;
+      params: PoolRewardAccountDeviceOwnedParams;
+    };
 
 /**
  * Pool reward account is owned by an external party
@@ -706,8 +706,8 @@ export type PoolRewardAccount =
  * @see [[PoolRewardAccountType]]
  */
 export type PoolRewardAccountThirdPartyParams = {
-  rewardAccountHex: string
-}
+  rewardAccountHex: string;
+};
 
 /**
  * Pool reward account is owned by the Ledger device. Supply staking key path for reward account
@@ -716,8 +716,8 @@ export type PoolRewardAccountThirdPartyParams = {
  * @see [[PoolRewardAccountType]]
  */
 export type PoolRewardAccountDeviceOwnedParams = {
-  path: BIP32Path
-}
+  path: BIP32Path;
+};
 
 /**
  * Represents pool relay.
@@ -730,35 +730,35 @@ export type SingleHostIpAddrRelayParams = {
    * TCP port of the relay.
    * Should be 0..65535
    */
-  portNumber?: number | null
+  portNumber?: number | null;
   /**
    * IPv4 address of the relay.
    * Should be in string format, e.g. `"192.168.0.1"`
    * */
-  ipv4?: string | null
+  ipv4?: string | null;
   /**
    * IPv6 address of the relay.
    * Should be in *fully expanded* string format, e.g. `"2001:0db8:85a3:0000:0000:8a2e:0370:7334"`
    * */
-  ipv6?: string | null
-}
+  ipv6?: string | null;
+};
 
 /**
  * @category Pool registration certificate
  * @see [[Relay]]
  */
 export type SingleHostHostnameRelayParams = {
-  portNumber?: number | null
-  dnsName: string
-}
+  portNumber?: number | null;
+  dnsName: string;
+};
 
 /**
  * @category Pool registration certificate
  * @see [[Relay]]
  */
 export type MultiHostRelayParams = {
-  dnsName: string
-}
+  dnsName: string;
+};
 
 /**
  * @category Pool registration certificate
@@ -767,17 +767,17 @@ export type MultiHostRelayParams = {
  */
 export type Relay =
   | {
-      type: RelayType.SINGLE_HOST_IP_ADDR
-      params: SingleHostIpAddrRelayParams
+      type: RelayType.SINGLE_HOST_IP_ADDR;
+      params: SingleHostIpAddrRelayParams;
     }
   | {
-      type: RelayType.SINGLE_HOST_HOSTNAME
-      params: SingleHostHostnameRelayParams
+      type: RelayType.SINGLE_HOST_HOSTNAME;
+      params: SingleHostHostnameRelayParams;
     }
   | {
-      type: RelayType.MULTI_HOST
-      params: MultiHostRelayParams
-    }
+      type: RelayType.MULTI_HOST;
+      params: MultiHostRelayParams;
+    };
 
 /**
  * Pool registration metadata
@@ -786,9 +786,9 @@ export type Relay =
  * @see [[PoolRegistrationParams]]
  */
 export type PoolMetadataParams = {
-  metadataUrl: string
-  metadataHashHex: string
-}
+  metadataUrl: string;
+  metadataHashHex: string;
+};
 
 /**
  * Pool margin represented as fraction (numerator/denominator)
@@ -801,13 +801,13 @@ export type Margin = {
    * Numerator
    * Must be <= denominator
    */
-  numerator: bigint_like
+  numerator: bigint_like;
   /**
    * Denominator.
    * Limited to maximum value of 1e18
    */
-  denominator: bigint_like
-}
+  denominator: bigint_like;
+};
 
 /**
  * Pool registration certificate
@@ -816,18 +816,18 @@ export type Margin = {
  * @see [[Certificate]]
  */
 export type PoolRegistrationParams = {
-  poolKey: PoolKey
+  poolKey: PoolKey;
   /** Pool vrf key */
-  vrfKeyHashHex: string
+  vrfKeyHashHex: string;
   /** Owner pledge */
-  pledge: bigint_like
-  cost: bigint_like
-  margin: Margin
-  rewardAccount: PoolRewardAccount
-  poolOwners: Array<PoolOwner>
-  relays: Array<Relay>
-  metadata?: PoolMetadataParams | null
-}
+  pledge: bigint_like;
+  cost: bigint_like;
+  margin: Margin;
+  rewardAccount: PoolRewardAccount;
+  poolOwners: Array<PoolOwner>;
+  relays: Array<Relay>;
+  metadata?: PoolMetadataParams | null;
+};
 
 /**
  * Pool retirement certificate parameters
@@ -838,12 +838,12 @@ export type PoolRetirementParams = {
   /**
    * Path to the pool key
    */
-  poolKeyPath: BIP32Path
+  poolKeyPath: BIP32Path;
   /**
    * Epoch after which the pool should be retired
    */
-  retirementEpoch: bigint_like
-}
+  retirementEpoch: bigint_like;
+};
 
 export enum CredentialParamsType {
   KEY_PATH,
@@ -852,24 +852,24 @@ export enum CredentialParamsType {
 }
 
 export type KeyPathCredentialParams = {
-  type: CredentialParamsType.KEY_PATH
-  keyPath: BIP32Path
-}
+  type: CredentialParamsType.KEY_PATH;
+  keyPath: BIP32Path;
+};
 
 export type KeyHashCredentialParams = {
-  type: CredentialParamsType.KEY_HASH
-  keyHashHex: string
-}
+  type: CredentialParamsType.KEY_HASH;
+  keyHashHex: string;
+};
 
 export type ScriptHashCredentialParams = {
-  type: CredentialParamsType.SCRIPT_HASH
-  scriptHashHex: string
-}
+  type: CredentialParamsType.SCRIPT_HASH;
+  scriptHashHex: string;
+};
 
 export type CredentialParams =
   | KeyPathCredentialParams
   | KeyHashCredentialParams
-  | ScriptHashCredentialParams
+  | ScriptHashCredentialParams;
 
 export enum DRepParamsType {
   KEY_PATH,
@@ -880,34 +880,34 @@ export enum DRepParamsType {
 }
 
 export type KeyPathDRepParams = {
-  type: DRepParamsType.KEY_PATH
-  keyPath: BIP32Path
-}
+  type: DRepParamsType.KEY_PATH;
+  keyPath: BIP32Path;
+};
 
 export type KeyHashDRepParams = {
-  type: DRepParamsType.KEY_HASH
-  keyHashHex: string
-}
+  type: DRepParamsType.KEY_HASH;
+  keyHashHex: string;
+};
 
 export type ScriptHashDRepParams = {
-  type: DRepParamsType.SCRIPT_HASH
-  scriptHashHex: string
-}
+  type: DRepParamsType.SCRIPT_HASH;
+  scriptHashHex: string;
+};
 
 export type AbstainDRepParams = {
-  type: DRepParamsType.ABSTAIN
-}
+  type: DRepParamsType.ABSTAIN;
+};
 
 export type NoConfidenceParams = {
-  type: DRepParamsType.NO_CONFIDENCE
-}
+  type: DRepParamsType.NO_CONFIDENCE;
+};
 
 export type DRepParams =
   | KeyPathDRepParams
   | KeyHashDRepParams
   | ScriptHashDRepParams
   | AbstainDRepParams
-  | NoConfidenceParams
+  | NoConfidenceParams;
 
 /**
  * Anchor for committee and DRep certificates
@@ -918,12 +918,12 @@ export type AnchorParams = {
   /**
    * Anchor URL
    */
-  url: string
+  url: string;
   /**
    * Anchor data hash in hex
    */
-  hashHex: string
-}
+  hashHex: string;
+};
 
 /**
  * Stake key registration certificate parameters
@@ -934,8 +934,8 @@ export type StakeRegistrationParams = {
   /**
    * Id to be registered
    */
-  stakeCredential: CredentialParams
-}
+  stakeCredential: CredentialParams;
+};
 
 /**
  * Stake key registration certificate parameters since Conway era
@@ -946,12 +946,12 @@ export type StakeRegistrationConwayParams = {
   /**
    * Id to be registered
    */
-  stakeCredential: CredentialParams
+  stakeCredential: CredentialParams;
   /**
    * Deposit (in Lovelace).
    */
-  deposit: bigint_like
-}
+  deposit: bigint_like;
+};
 
 /**
  * Stake key deregistration certificate parameters
@@ -962,8 +962,8 @@ export type StakeDeregistrationParams = {
   /**
    * Id to be deregistered
    */
-  stakeCredential: CredentialParams
-}
+  stakeCredential: CredentialParams;
+};
 
 /**
  * Stake key deregistration certificate parameters since Conway era
@@ -974,12 +974,12 @@ export type StakeDeregistrationConwayParams = {
   /**
    * Id to be deregistered
    */
-  stakeCredential: CredentialParams
+  stakeCredential: CredentialParams;
   /**
    * Deposit (in Lovelace).
    */
-  deposit: bigint_like
-}
+  deposit: bigint_like;
+};
 
 /**
  * Stake delegation certificate parameters
@@ -990,12 +990,12 @@ export type StakeDelegationParams = {
   /**
    * Id of the staking entity / reward account that wants to delegate
    */
-  stakeCredential: CredentialParams
+  stakeCredential: CredentialParams;
   /**
    * Pool ID user wants to delegate to
    */
-  poolKeyHashHex: string
-}
+  poolKeyHashHex: string;
+};
 
 /**
  * Vote delegation certificate parameters
@@ -1006,12 +1006,12 @@ export type VoteDelegationParams = {
   /**
    * Id of the staking entity that wants to delegate
    */
-  stakeCredential: CredentialParams
+  stakeCredential: CredentialParams;
   /**
    * DRep to delegate to
    */
-  dRep: DRepParams
-}
+  dRep: DRepParams;
+};
 
 /**
  * Authorize committee hot key certificate parameters
@@ -1022,12 +1022,12 @@ export type AuthorizeCommitteeParams = {
   /**
    * Credential of the committee member that wants to authorize a hot key
    */
-  coldCredential: CredentialParams
+  coldCredential: CredentialParams;
   /**
    * Credential for the hot key
    */
-  hotCredential: CredentialParams
-}
+  hotCredential: CredentialParams;
+};
 
 /**
  * Resign from committee certificate parameters
@@ -1038,12 +1038,12 @@ export type ResignCommitteeParams = {
   /**
    * Credential of the committee member that wants to resign
    */
-  coldCredential: CredentialParams
+  coldCredential: CredentialParams;
   /**
    * Anchor
    */
-  anchor?: AnchorParams | null
-}
+  anchor?: AnchorParams | null;
+};
 
 /**
  * DRep registration certificate parameters
@@ -1054,16 +1054,16 @@ export type DRepRegistrationParams = {
   /**
    * Credential of the DRep that wants to register
    */
-  dRepCredential: CredentialParams
+  dRepCredential: CredentialParams;
   /**
    * Deposit (in Lovelace).
    */
-  deposit: bigint_like
+  deposit: bigint_like;
   /**
    * Anchor
    */
-  anchor?: AnchorParams | null
-}
+  anchor?: AnchorParams | null;
+};
 
 /**
  * DRep deregistration certificate parameters
@@ -1074,12 +1074,12 @@ export type DRepDeregistrationParams = {
   /**
    * Credential of the DRep that wants to deregister
    */
-  dRepCredential: CredentialParams
+  dRepCredential: CredentialParams;
   /**
    * Deposit (in Lovelace).
    */
-  deposit: bigint_like
-}
+  deposit: bigint_like;
+};
 
 /**
  * DRep update certificate parameters
@@ -1090,12 +1090,12 @@ export type DRepUpdateParams = {
   /**
    * Credential of the DRep that wants to register
    */
-  dRepCredential: CredentialParams
+  dRepCredential: CredentialParams;
   /**
    * Anchor
    */
-  anchor?: AnchorParams | null
-}
+  anchor?: AnchorParams | null;
+};
 
 /**
  * Certificate. Can be one of multiple options.
@@ -1105,57 +1105,57 @@ export type DRepUpdateParams = {
  */
 export type Certificate =
   | {
-      type: CertificateType.STAKE_REGISTRATION
-      params: StakeRegistrationParams
+      type: CertificateType.STAKE_REGISTRATION;
+      params: StakeRegistrationParams;
     }
   | {
-      type: CertificateType.STAKE_DEREGISTRATION
-      params: StakeDeregistrationParams
+      type: CertificateType.STAKE_DEREGISTRATION;
+      params: StakeDeregistrationParams;
     }
   | {
-      type: CertificateType.STAKE_REGISTRATION_CONWAY
-      params: StakeRegistrationConwayParams
+      type: CertificateType.STAKE_REGISTRATION_CONWAY;
+      params: StakeRegistrationConwayParams;
     }
   | {
-      type: CertificateType.STAKE_DEREGISTRATION_CONWAY
-      params: StakeDeregistrationConwayParams
+      type: CertificateType.STAKE_DEREGISTRATION_CONWAY;
+      params: StakeDeregistrationConwayParams;
     }
   | {
-      type: CertificateType.STAKE_DELEGATION
-      params: StakeDelegationParams
+      type: CertificateType.STAKE_DELEGATION;
+      params: StakeDelegationParams;
     }
   | {
-      type: CertificateType.VOTE_DELEGATION
-      params: VoteDelegationParams
+      type: CertificateType.VOTE_DELEGATION;
+      params: VoteDelegationParams;
     }
   | {
-      type: CertificateType.AUTHORIZE_COMMITTEE_HOT
-      params: AuthorizeCommitteeParams
+      type: CertificateType.AUTHORIZE_COMMITTEE_HOT;
+      params: AuthorizeCommitteeParams;
     }
   | {
-      type: CertificateType.RESIGN_COMMITTEE_COLD
-      params: ResignCommitteeParams
+      type: CertificateType.RESIGN_COMMITTEE_COLD;
+      params: ResignCommitteeParams;
     }
   | {
-      type: CertificateType.DREP_REGISTRATION
-      params: DRepRegistrationParams
+      type: CertificateType.DREP_REGISTRATION;
+      params: DRepRegistrationParams;
     }
   | {
-      type: CertificateType.DREP_DEREGISTRATION
-      params: DRepDeregistrationParams
+      type: CertificateType.DREP_DEREGISTRATION;
+      params: DRepDeregistrationParams;
     }
   | {
-      type: CertificateType.DREP_UPDATE
-      params: DRepUpdateParams
+      type: CertificateType.DREP_UPDATE;
+      params: DRepUpdateParams;
     }
   | {
-      type: CertificateType.STAKE_POOL_REGISTRATION
-      params: PoolRegistrationParams
+      type: CertificateType.STAKE_POOL_REGISTRATION;
+      params: PoolRegistrationParams;
     }
   | {
-      type: CertificateType.STAKE_POOL_RETIREMENT
-      params: PoolRetirementParams
-    }
+      type: CertificateType.STAKE_POOL_RETIREMENT;
+      params: PoolRetirementParams;
+    };
 
 /**
  * Rewards account withdrawal operation
@@ -1166,13 +1166,13 @@ export type Withdrawal = {
   /**
    * Path to rewards account being withdrawn
    */
-  stakeCredential: CredentialParams
+  stakeCredential: CredentialParams;
   /**
    * Amount (in Lovelace) being withdrawn.
    * Note that Amount *must* be all accumulated rewards.
    */
-  amount: bigint_like
-}
+  amount: bigint_like;
+};
 
 /**
  * Device app flags
@@ -1180,9 +1180,9 @@ export type Withdrawal = {
  * @see [[Version]]
  */
 export type Flags = {
-  isDebug: boolean
-  isAppXS: boolean
-}
+  isDebug: boolean;
+  isAppXS: boolean;
+};
 
 /**
  * Device app version
@@ -1191,11 +1191,11 @@ export type Flags = {
  * @see [[DeviceCompatibility]]
  */
 export type Version = {
-  major: number
-  minor: number
-  patch: number
-  flags: Flags
-}
+  major: number;
+  minor: number;
+  patch: number;
+  flags: Flags;
+};
 
 /**
  * Describes compatibility of device with current SDK
@@ -1208,82 +1208,82 @@ export type DeviceCompatibility = {
    *   extent of the features supported by the firmware itself)
    * - false if SDK refuses to communicate with current device version
    */
-  isCompatible: boolean
+  isCompatible: boolean;
   /**
    * In case there are some compatibility problem, SDK recommended version.
    * Clients of SDK should check whether this is null and if not, urge users to upgrade.
    */
-  recommendedVersion: string | null
+  recommendedVersion: string | null;
   /**
    * Whether we support Byron address parameters in transaction outputs
    */
-  supportsByronAddressDerivation: boolean
+  supportsByronAddressDerivation: boolean;
   /**
    * Whether we support Mary features
    */
-  supportsMary: boolean
+  supportsMary: boolean;
   /**
    * Whether we support CIP-15 (Catalyst) registration
    */
-  supportsCatalystRegistration: boolean
+  supportsCatalystRegistration: boolean;
   /**
    * Whether we support CIP-36 registration
    */
-  supportsCIP36: boolean
+  supportsCIP36: boolean;
   /**
    * Whether we support transactions with zero TTL
    * (useful for dummy transactions to ensure invalidity)
    */
-  supportsZeroTtl: boolean
+  supportsZeroTtl: boolean;
   /**
    * Whether we support pool registration certificate signing by pool owners
    */
-  supportsPoolRegistrationAsOwner: boolean
+  supportsPoolRegistrationAsOwner: boolean;
   /**
    * Whether we support operational and pool registration certificate signing by pool operators
    */
-  supportsPoolRegistrationAsOperator: boolean
+  supportsPoolRegistrationAsOperator: boolean;
   /**
    * Whether we support pool retirement certificate
    */
-  supportsPoolRetirement: boolean
+  supportsPoolRetirement: boolean;
   /**
    * Whether we support script hash derivation
    */
-  supportsNativeScriptHashDerivation: boolean
+  supportsNativeScriptHashDerivation: boolean;
   /**
    * Whether we support multisig transaction
    */
-  supportsMultisigTransaction: boolean
+  supportsMultisigTransaction: boolean;
   /**
    * Whether we support mint
    */
-  supportsMint: boolean
+  supportsMint: boolean;
   /**
    * Whether we support Alonzo and Plutus
    */
-  supportsAlonzo: boolean
+  supportsAlonzo: boolean;
   /**
    * Whether we support required signers in ordinary and multisig transactions
    */
-  supportsReqSignersInOrdinaryTx: boolean
+  supportsReqSignersInOrdinaryTx: boolean;
   /**
    * Whether we support Babbage features
    */
-  supportsBabbage: boolean
+  supportsBabbage: boolean;
   /**
    * Whether we support CIP-36 voting (signing vote-casts by HW devices)
    */
-  supportsCIP36Vote: boolean
+  supportsCIP36Vote: boolean;
   /**
    * Whether we support Conway era transaction elements
    */
-  supportsConway: boolean
+  supportsConway: boolean;
   /**
    * Whether we support CIP-8 message signing
    */
-  supportsMessageSigning: boolean
-}
+  supportsMessageSigning: boolean;
+};
 
 /**
  * Response to [[Ada.getSerial]] call
@@ -1294,8 +1294,8 @@ export type Serial = {
    * Serial is a Ledger device identifier.
    * It is 7 bytes long, which is represented here as 14-character hex string
    */
-  serialHex: string
-}
+  serialHex: string;
+};
 
 /**
  * Response to [[Ada.deriveAddress]] call
@@ -1303,8 +1303,8 @@ export type Serial = {
  * @see [[DeriveAddressRequest]]
  */
 export type DerivedAddress = {
-  addressHex: string
-}
+  addressHex: string;
+};
 
 /**
  * Derived extended public key
@@ -1312,9 +1312,9 @@ export type DerivedAddress = {
  * @see [[Ada.getExtendedPublicKey]]
  */
 export type ExtendedPublicKey = {
-  publicKeyHex: string
-  chainCodeHex: string
-}
+  publicKeyHex: string;
+  chainCodeHex: string;
+};
 
 /**
  * Operational certificate signature
@@ -1322,8 +1322,8 @@ export type ExtendedPublicKey = {
  * @see [[Ada.signOperationalCertificate]]
  */
 export type OperationalCertificateSignature = {
-  signatureHex: string
-}
+  signatureHex: string;
+};
 
 /**
  * CIP-8 message signature
@@ -1331,10 +1331,10 @@ export type OperationalCertificateSignature = {
  * @see [[Ada.signMessage]]
  */
 export type SignedMessageData = {
-  signatureHex: string
-  signingPublicKeyHex: string
-  addressFieldHex: string
-}
+  signatureHex: string;
+  signingPublicKeyHex: string;
+  addressFieldHex: string;
+};
 
 /**
  * Result of signing a CIP-36 vote.
@@ -1345,13 +1345,13 @@ export type SignedCIP36VoteData = {
   /**
    * The hash being signed. Useful to callers to detect a mismatch.
    */
-  dataHashHex: string
+  dataHashHex: string;
   /**
    * Witness key derivation path and signature.
    */
-  witnessPath: BIP32Path
-  witnessSignatureHex: string
-}
+  witnessPath: BIP32Path;
+  witnessSignatureHex: string;
+};
 
 /**
  * Transaction witness.
@@ -1362,13 +1362,13 @@ export type Witness = {
   /**
    * Witnessed path
    */
-  path: BIP32Path
+  path: BIP32Path;
   /**
    * Note: this is *only* a signature.
    * You need to add proper extended public key to form a full witness
    */
-  witnessSignatureHex: string
-}
+  witnessSignatureHex: string;
+};
 
 /**
  * Kind of auxiliary data supplementary information
@@ -1390,12 +1390,12 @@ export enum TxAuxiliaryDataSupplementType {
  * @see [[SignedTransactionData]]
  */
 export type TxAuxiliaryDataSupplement = {
-  type: TxAuxiliaryDataSupplementType.CIP36_REGISTRATION
+  type: TxAuxiliaryDataSupplementType.CIP36_REGISTRATION;
   /** Hash of the auxiliary data containing the CIP-36 registration */
-  auxiliaryDataHashHex: string
+  auxiliaryDataHashHex: string;
   /** Signature of the CIP-36 registration payload by the staking key that was supplied */
-  cip36VoteRegistrationSignatureHex: string
-}
+  cip36VoteRegistrationSignatureHex: string;
+};
 
 /**
  * Result of signing a transaction.
@@ -1406,17 +1406,17 @@ export type SignedTransactionData = {
   /**
    * Hash of signed transaction. Callers should check that they serialize tx the same way
    */
-  txHashHex: string
+  txHashHex: string;
   /**
    * List of witnesses. Caller should assemble full transaction to be submitted to the network.
    */
-  witnesses: Array<Witness>
+  witnesses: Array<Witness>;
   /**
    * Additional information about auxiliary data serialized into the transaction, providing
    * the caller with information needed to assemble the transaction containing these auxiliary data.
    */
-  auxiliaryDataSupplement: TxAuxiliaryDataSupplement | null
-}
+  auxiliaryDataSupplement: TxAuxiliaryDataSupplement | null;
+};
 
 /**
  * Kind of transaction auxiliary data supplied to Ledger
@@ -1442,13 +1442,13 @@ export enum TxAuxiliaryDataType {
  */
 export type TxAuxiliaryData =
   | {
-      type: TxAuxiliaryDataType.ARBITRARY_HASH
-      params: TxAuxiliaryDataArbitraryHashParams
+      type: TxAuxiliaryDataType.ARBITRARY_HASH;
+      params: TxAuxiliaryDataArbitraryHashParams;
     }
   | {
-      type: TxAuxiliaryDataType.CIP36_REGISTRATION
-      params: CIP36VoteRegistrationParams
-    }
+      type: TxAuxiliaryDataType.CIP36_REGISTRATION;
+      params: CIP36VoteRegistrationParams;
+    };
 
 /**
  * Auxiliary data is supplied as raw hash. Ledger will just display this hash to the user
@@ -1456,8 +1456,8 @@ export type TxAuxiliaryData =
  */
 export type TxAuxiliaryDataArbitraryHashParams = {
   /** Hash of the transaction auxiliary data */
-  hashHex: string
-}
+  hashHex: string;
+};
 
 /**
  * Serialization format for transaction metadata for Catalyst / CIP-36 registration.
@@ -1479,46 +1479,46 @@ export type CIP36VoteRegistrationParams = {
   /**
    * Format for metadata serialization (CIP-15 or CIP-36).
    */
-  format: CIP36VoteRegistrationFormat
+  format: CIP36VoteRegistrationFormat;
 
   /**
    * Vote key to be registered given in hex,
    * for vote_pub_key in CIP-15 and legacy_key_registration in CIP-36.
    * Mutually exclusive with delegations and voteKeyPath.
    */
-  voteKeyHex?: string
+  voteKeyHex?: string;
   /**
    * Derivation path describing the vote key to be registered,
    * for legacy_key_registration in CIP-36.
    * Mutually exclusive with delegations and voteKeyHex.
    */
-  voteKeyPath?: BIP32Path
+  voteKeyPath?: BIP32Path;
   /**
    * Delegations be registered, see CIP-36.
    * Mutually exclusive with voteKeyHex and voteKeyPath.
    */
-  delegations?: Array<CIP36VoteDelegation>
+  delegations?: Array<CIP36VoteDelegation>;
 
   /**
    * Path to the staking key to which voting rights would be associated
    */
-  stakingPath: BIP32Path
+  stakingPath: BIP32Path;
 
   /**
    * Address for receiving voting rewards, Byron-era addresses not supported
    */
-  paymentDestination: TxOutputDestination
+  paymentDestination: TxOutputDestination;
 
   /**
    * Nonce value
    */
-  nonce: bigint_like
+  nonce: bigint_like;
 
   /**
    * Voting purpose
    */
-  votingPurpose?: bigint_like
-}
+  votingPurpose?: bigint_like;
+};
 
 export enum CIP36VoteDelegationType {
   PATH = 'cip36_vote_key_path',
@@ -1527,15 +1527,15 @@ export enum CIP36VoteDelegationType {
 
 export type CIP36VoteDelegation =
   | {
-      type: CIP36VoteDelegationType.PATH
-      voteKeyPath: BIP32Path
-      weight: bigint_like
+      type: CIP36VoteDelegationType.PATH;
+      voteKeyPath: BIP32Path;
+      weight: bigint_like;
     }
   | {
-      type: CIP36VoteDelegationType.KEY
-      voteKeyHex: string
-      weight: bigint_like
-    }
+      type: CIP36VoteDelegationType.KEY;
+      voteKeyHex: string;
+      weight: bigint_like;
+    };
 
 export enum TxRequiredSignerType {
   /** Required Signer is supplied as key path or hash value */
@@ -1545,13 +1545,13 @@ export enum TxRequiredSignerType {
 
 export type RequiredSigner =
   | {
-      type: TxRequiredSignerType.PATH
-      path: BIP32Path
+      type: TxRequiredSignerType.PATH;
+      path: BIP32Path;
     }
   | {
-      type: TxRequiredSignerType.HASH
-      hashHex: string
-    }
+      type: TxRequiredSignerType.HASH;
+      hashHex: string;
+    };
 
 export enum VoterType {
   COMMITTEE_KEY_HASH = 0,
@@ -1565,44 +1565,44 @@ export enum VoterType {
 }
 
 export type CommitteeKeyHashVoter = {
-  type: VoterType.COMMITTEE_KEY_HASH
-  keyHashHex: string
-}
+  type: VoterType.COMMITTEE_KEY_HASH;
+  keyHashHex: string;
+};
 
 export type CommitteeKeyPathVoter = {
-  type: VoterType.COMMITTEE_KEY_PATH
-  keyPath: BIP32Path
-}
+  type: VoterType.COMMITTEE_KEY_PATH;
+  keyPath: BIP32Path;
+};
 
 export type CommitteeScriptHashVoter = {
-  type: VoterType.COMMITTEE_SCRIPT_HASH
-  scriptHashHex: string
-}
+  type: VoterType.COMMITTEE_SCRIPT_HASH;
+  scriptHashHex: string;
+};
 
 export type DRepKeyHashVoter = {
-  type: VoterType.DREP_KEY_HASH
-  keyHashHex: string
-}
+  type: VoterType.DREP_KEY_HASH;
+  keyHashHex: string;
+};
 
 export type DRepKeyPathVoter = {
-  type: VoterType.DREP_KEY_PATH
-  keyPath: BIP32Path
-}
+  type: VoterType.DREP_KEY_PATH;
+  keyPath: BIP32Path;
+};
 
 export type DRepScriptHashVoter = {
-  type: VoterType.DREP_SCRIPT_HASH
-  scriptHashHex: string
-}
+  type: VoterType.DREP_SCRIPT_HASH;
+  scriptHashHex: string;
+};
 
 export type StakePoolKeyHashVoter = {
-  type: VoterType.STAKE_POOL_KEY_HASH
-  keyHashHex: string
-}
+  type: VoterType.STAKE_POOL_KEY_HASH;
+  keyHashHex: string;
+};
 
 export type StakePoolKeyPathVoter = {
-  type: VoterType.STAKE_POOL_KEY_PATH
-  keyPath: BIP32Path
-}
+  type: VoterType.STAKE_POOL_KEY_PATH;
+  keyPath: BIP32Path;
+};
 
 export type Voter =
   | CommitteeKeyHashVoter
@@ -1612,7 +1612,7 @@ export type Voter =
   | DRepKeyPathVoter
   | DRepScriptHashVoter
   | StakePoolKeyHashVoter
-  | StakePoolKeyPathVoter
+  | StakePoolKeyPathVoter;
 
 export enum VoteOption {
   NO = 0,
@@ -1624,39 +1624,39 @@ export type VotingProcedure = {
   /**
    * Vote
    */
-  vote: VoteOption
+  vote: VoteOption;
   /**
    * Anchor (optional)
    */
-  anchor?: AnchorParams | null
-}
+  anchor?: AnchorParams | null;
+};
 
 export type GovActionId = {
   /**
    * UTxO's hash of the transaction
    */
-  txHashHex: string
+  txHashHex: string;
   /**
    * UTxO's governance action index
    */
-  govActionIndex: number
-}
+  govActionIndex: number;
+};
 
 export type Vote = {
   /**
    * Governance action to vote about
    */
-  govActionId: GovActionId
+  govActionId: GovActionId;
   /**
    * Voting procedure
    */
-  votingProcedure: VotingProcedure
-}
+  votingProcedure: VotingProcedure;
+};
 
 export type VoterVotes = {
-  voter: Voter
-  votes: Array<Vote>
-}
+  voter: Voter;
+  votes: Array<Vote>;
+};
 
 /**
  * Represents transaction to be signed by the device.
@@ -1669,28 +1669,28 @@ export type Transaction = {
   /**
    * Cardano network the transaction is supposed to be submitted to.
    */
-  network: Network
+  network: Network;
   /**
    * Transaction inputs (UTxOs)
    */
-  inputs: Array<TxInput>
+  inputs: Array<TxInput>;
   /**
    * Transaction outputs
    */
-  outputs: Array<TxOutput>
+  outputs: Array<TxOutput>;
   /**
    * Transaction fee (in Lovelace).
    */
-  fee: bigint_like
+  fee: bigint_like;
   /**
    * "Time-to-live" (block height).
    * Transaction will become invalid at this block height.
    */
-  ttl?: bigint_like | null
+  ttl?: bigint_like | null;
   /**
    * Transaction certificates (if any).
    */
-  certificates?: Array<Certificate> | null
+  certificates?: Array<Certificate> | null;
   /**
    * Withdrawals (if any) from rewards accounts
    * If not null, the entries' keys (reward addresses derived from the given stake credentials)
@@ -1698,16 +1698,16 @@ export type Transaction = {
    * in the [CBOR RFC](https://datatracker.ietf.org/doc/html/rfc7049#section-3.9)),
    * i.e. the key with the lower value in lexical order sorts earlier.
    */
-  withdrawals?: Array<Withdrawal> | null
+  withdrawals?: Array<Withdrawal> | null;
   /**
    * Transaction auxiliary data (if any)
    */
-  auxiliaryData?: TxAuxiliaryData | null
+  auxiliaryData?: TxAuxiliaryData | null;
   /**
    * Validity start (block height) if any.
    * Transaction becomes valid only starting from this block height.
    */
-  validityIntervalStart?: bigint_like | null
+  validityIntervalStart?: bigint_like | null;
   /**
    * Mint or burn instructions (if any).
    * Assets to be minted (token amount positive) or burned (token amount negative) with the transaction.
@@ -1715,48 +1715,48 @@ export type Transaction = {
    * in the [CBOR RFC](https://datatracker.ietf.org/doc/html/rfc7049#section-3.9)),
    * i.e. the key with the lower value in lexical order sorts earlier.
    */
-  mint?: Array<AssetGroup> | null
+  mint?: Array<AssetGroup> | null;
   /**
    * Script data hash (if any)
    */
-  scriptDataHashHex?: string | null
+  scriptDataHashHex?: string | null;
   /**
    * Collateral inputs (if any)
    */
-  collateralInputs?: Array<TxInput> | null
+  collateralInputs?: Array<TxInput> | null;
   /**
    * Required signers by key (if any)
    */
-  requiredSigners?: Array<RequiredSigner> | null
+  requiredSigners?: Array<RequiredSigner> | null;
   /**
    * True if network id should be included in the transaction body; false or not given otherwise
    */
-  includeNetworkId?: boolean | null
+  includeNetworkId?: boolean | null;
   /**
    * Collateral return output
    */
-  collateralOutput?: TxOutput | null
+  collateralOutput?: TxOutput | null;
   /**
    * Total collateral (in Lovelace).
    */
-  totalCollateral?: bigint_like | null
+  totalCollateral?: bigint_like | null;
   /**
    * Reference inputs (UTxOs). Visible to Plutus scripts, but not spent.
    */
-  referenceInputs?: Array<TxInput> | null
+  referenceInputs?: Array<TxInput> | null;
   /**
    * Voting procedures.
    */
-  votingProcedures?: Array<VoterVotes> | null
+  votingProcedures?: Array<VoterVotes> | null;
   /**
    * Treasury amount (in Lovelace).
    */
-  treasury?: bigint_like | null
+  treasury?: bigint_like | null;
   /**
    * Treasury donation (in Lovelace).
    */
-  donation?: bigint_like | null
-}
+  donation?: bigint_like | null;
+};
 
 /**
  * Mode in which we want to sign the transaction.
@@ -1871,8 +1871,8 @@ export type TransactionOptions = {
    * If true, serialize transactions with 258 tags for all sets (optional since Conway).
    * If false or not given, do not use the tags.
    */
-  tagCborSets?: boolean
-}
+  tagCborSets?: boolean;
+};
 
 /**
  * Transaction signing request.
@@ -1884,23 +1884,23 @@ export type SignTransactionRequest = {
   /**
    * Transaction to be signed
    */
-  tx: Transaction
+  tx: Transaction;
   /**
    * Mode in which we want to sign the transaction.
    * Ledger has certain limitations (see [[TransactionSigningMode]] in detail) due to which
    * it cannot sign arbitrary combination of all transaction features.
    * The mode specifies which use-case the user want to use and triggers additional validation on `tx` field.
    */
-  signingMode: TransactionSigningMode
+  signingMode: TransactionSigningMode;
   /**
    * Additional witness paths that are not gathered from the transaction body, eg. mint witnesses
    */
-  additionalWitnessPaths?: BIP32Path[]
+  additionalWitnessPaths?: BIP32Path[];
   /**
    * Additional options used in transaction processing (e.g. details of serialization).
    */
-  options?: TransactionOptions
-}
+  options?: TransactionOptions;
+};
 
 /**
  * Native script type (as defined by the Cardano spec)
@@ -1957,33 +1957,33 @@ export enum NativeScriptType {
  */
 export type NativeScript =
   | {
-      type: NativeScriptType.PUBKEY_DEVICE_OWNED
-      params: NativeScriptParamsDeviceOwnedPubkey
+      type: NativeScriptType.PUBKEY_DEVICE_OWNED;
+      params: NativeScriptParamsDeviceOwnedPubkey;
     }
   | {
-      type: NativeScriptType.PUBKEY_THIRD_PARTY
-      params: NativeScriptParamsThirdPartyPubkey
+      type: NativeScriptType.PUBKEY_THIRD_PARTY;
+      params: NativeScriptParamsThirdPartyPubkey;
     }
   | {
-      type: NativeScriptType.ALL
-      params: NativeScriptParamsAll
+      type: NativeScriptType.ALL;
+      params: NativeScriptParamsAll;
     }
   | {
-      type: NativeScriptType.ANY
-      params: NativeScriptParamsAny
+      type: NativeScriptType.ANY;
+      params: NativeScriptParamsAny;
     }
   | {
-      type: NativeScriptType.N_OF_K
-      params: NativeScriptParamsNofK
+      type: NativeScriptType.N_OF_K;
+      params: NativeScriptParamsNofK;
     }
   | {
-      type: NativeScriptType.INVALID_BEFORE
-      params: NativeScriptParamsInvalidBefore
+      type: NativeScriptType.INVALID_BEFORE;
+      params: NativeScriptParamsInvalidBefore;
     }
   | {
-      type: NativeScriptType.INVALID_HEREAFTER
-      params: NativeScriptParamsInvalidHereafter
-    }
+      type: NativeScriptType.INVALID_HEREAFTER;
+      params: NativeScriptParamsInvalidHereafter;
+    };
 
 /**
  * Native script of type *pubkey* parameters.
@@ -1993,8 +1993,8 @@ export type NativeScript =
  * @see [[NativeScript]]
  */
 export type NativeScriptParamsDeviceOwnedPubkey = {
-  path: BIP32Path
-}
+  path: BIP32Path;
+};
 
 /**
  * Native script of type *pubkey* parameters.
@@ -2004,8 +2004,8 @@ export type NativeScriptParamsDeviceOwnedPubkey = {
  * @see [[NativeScript]]
  */
 export type NativeScriptParamsThirdPartyPubkey = {
-  keyHashHex: string
-}
+  keyHashHex: string;
+};
 
 /**
  * Native script of type *all* parameters.
@@ -2014,8 +2014,8 @@ export type NativeScriptParamsThirdPartyPubkey = {
  * @see [[NativeScript]]
  */
 export type NativeScriptParamsAll = {
-  scripts: NativeScript[]
-}
+  scripts: NativeScript[];
+};
 
 /**
  * Native script of type *any* parameters.
@@ -2024,8 +2024,8 @@ export type NativeScriptParamsAll = {
  * @see [[NativeScript]]
  */
 export type NativeScriptParamsAny = {
-  scripts: NativeScript[]
-}
+  scripts: NativeScript[];
+};
 
 /**
  * Native script of type *n_of_k* parameters.
@@ -2034,9 +2034,9 @@ export type NativeScriptParamsAny = {
  * @see [[NativeScript]]
  */
 export type NativeScriptParamsNofK = {
-  requiredCount: number
-  scripts: NativeScript[]
-}
+  requiredCount: number;
+  scripts: NativeScript[];
+};
 
 /**
  * Native script of type *invalid_before* parameters.
@@ -2045,8 +2045,8 @@ export type NativeScriptParamsNofK = {
  * @see [[NativeScript]]
  */
 export type NativeScriptParamsInvalidBefore = {
-  slot: bigint_like
-}
+  slot: bigint_like;
+};
 
 /**
  * Native script of type *invalid_hereafter* parameters.
@@ -2055,8 +2055,8 @@ export type NativeScriptParamsInvalidBefore = {
  * @see [[NativeScript]]
  */
 export type NativeScriptParamsInvalidHereafter = {
-  slot: bigint_like
-}
+  slot: bigint_like;
+};
 
 /**
  * Response to [[Ada.deriveNativeScriptHash]] call
@@ -2064,8 +2064,8 @@ export type NativeScriptParamsInvalidHereafter = {
  * @see [[DeriveNativeScriptHashRequest]]
  */
 export type NativeScriptHash = {
-  scriptHashHex: string
-}
+  scriptHashHex: string;
+};
 
 /**
  * Defines in what format is the resulting native script hash shown on the

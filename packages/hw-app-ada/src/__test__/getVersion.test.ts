@@ -3,14 +3,14 @@ import { TransportNodeUSB } from '@keystonehq/hw-transport-nodeusb';
 
 describe('Keystone getVersion', () => {
   let app: Ada;
-  
+
   beforeAll(async () => {
     jest.setTimeout(10000);
-    
+
     app = new Ada(
       await TransportNodeUSB.connect({
         timeout: 100000,
-      }),
+      })
     );
   });
 

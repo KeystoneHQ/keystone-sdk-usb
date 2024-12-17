@@ -1,8 +1,11 @@
-import {InvalidData, InvalidDataReason} from '../errors';
-import type {ParsedNativeScript} from '../types/internal';
-import {KEY_HASH_LENGTH} from '../types/internal';
-import type {bigint_like, BIP32Path, NativeScript} from '../types/public';
-import {NativeScriptHashDisplayFormat, NativeScriptType} from '../types/public';
+import { InvalidData, InvalidDataReason } from '../errors';
+import type { ParsedNativeScript } from '../types/internal';
+import { KEY_HASH_LENGTH } from '../types/internal';
+import type { bigint_like, BIP32Path, NativeScript } from '../types/public';
+import {
+  NativeScriptHashDisplayFormat,
+  NativeScriptType,
+} from '../types/public';
 import {
   isArray,
   parseBIP32Path,
@@ -15,30 +18,30 @@ import {
 export function parseNativeScript(script: NativeScript): ParsedNativeScript {
   // union of all param fields
   const params = script.params as {
-    path?: BIP32Path
-    keyHashHex?: string
-    requiredCount?: number
-    slot?: bigint_like
-    scripts?: NativeScript[]
+    path?: BIP32Path;
+    keyHashHex?: string;
+    requiredCount?: number;
+    slot?: bigint_like;
+    scripts?: NativeScript[];
   };
 
   switch (script.type) {
     case NativeScriptType.PUBKEY_DEVICE_OWNED: {
       validate(
         params.keyHashHex == null,
-        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA,
+        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA
       );
       validate(
         params.requiredCount == null,
-        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA,
+        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA
       );
       validate(
         params.slot == null,
-        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA,
+        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA
       );
       validate(
         params.scripts == null,
-        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA,
+        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA
       );
 
       return {
@@ -46,7 +49,7 @@ export function parseNativeScript(script: NativeScript): ParsedNativeScript {
         params: {
           path: parseBIP32Path(
             params.path,
-            InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_KEY_PATH,
+            InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_KEY_PATH
           ),
         },
       };
@@ -54,19 +57,19 @@ export function parseNativeScript(script: NativeScript): ParsedNativeScript {
     case NativeScriptType.PUBKEY_THIRD_PARTY: {
       validate(
         params.path == null,
-        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA,
+        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA
       );
       validate(
         params.requiredCount == null,
-        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA,
+        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA
       );
       validate(
         params.slot == null,
-        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA,
+        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA
       );
       validate(
         params.scripts == null,
-        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA,
+        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA
       );
 
       return {
@@ -75,7 +78,7 @@ export function parseNativeScript(script: NativeScript): ParsedNativeScript {
           keyHashHex: parseHexStringOfLength(
             params.keyHashHex,
             KEY_HASH_LENGTH,
-            InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_KEY_HASH,
+            InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_KEY_HASH
           ),
         },
       };
@@ -84,23 +87,23 @@ export function parseNativeScript(script: NativeScript): ParsedNativeScript {
     case NativeScriptType.ANY: {
       validate(
         params.path == null,
-        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA,
+        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA
       );
       validate(
         params.keyHashHex == null,
-        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA,
+        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA
       );
       validate(
         params.requiredCount == null,
-        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA,
+        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA
       );
       validate(
         params.slot == null,
-        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA,
+        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA
       );
       validate(
         isArray(params.scripts),
-        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_SCRIPTS_NOT_AN_ARRAY,
+        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_SCRIPTS_NOT_AN_ARRAY
       );
 
       return {
@@ -113,28 +116,28 @@ export function parseNativeScript(script: NativeScript): ParsedNativeScript {
     case NativeScriptType.N_OF_K: {
       validate(
         params.path == null,
-        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA,
+        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA
       );
       validate(
         params.keyHashHex == null,
-        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA,
+        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA
       );
       validate(
         params.slot == null,
-        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA,
+        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA
       );
       validate(
         isArray(params.scripts),
-        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_SCRIPTS_NOT_AN_ARRAY,
+        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_SCRIPTS_NOT_AN_ARRAY
       );
 
       const requiredCount = parseUint32_t(
         params.requiredCount,
-        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_REQUIRED_COUNT,
+        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_REQUIRED_COUNT
       );
       validate(
         requiredCount <= params.scripts.length,
-        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_REQUIRED_COUNT_HIGHER_THAN_NUMBER_OF_SCRIPTS,
+        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_REQUIRED_COUNT_HIGHER_THAN_NUMBER_OF_SCRIPTS
       );
 
       return {
@@ -149,19 +152,19 @@ export function parseNativeScript(script: NativeScript): ParsedNativeScript {
     case NativeScriptType.INVALID_HEREAFTER: {
       validate(
         params.path == null,
-        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA,
+        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA
       );
       validate(
         params.keyHashHex == null,
-        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA,
+        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA
       );
       validate(
         params.requiredCount == null,
-        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA,
+        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA
       );
       validate(
         params.scripts == null,
-        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA,
+        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DATA
       );
 
       return {
@@ -170,20 +173,20 @@ export function parseNativeScript(script: NativeScript): ParsedNativeScript {
           slot: parseUint64_str(
             params.slot,
             {},
-            InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_TOKEN_LOCKING_SLOT,
+            InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_TOKEN_LOCKING_SLOT
           ),
         },
       };
     }
     default:
       throw new InvalidData(
-        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_UNKNOWN_TYPE,
+        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_UNKNOWN_TYPE
       );
   }
 }
 
 export function parseNativeScriptHashDisplayFormat(
-  displayFormat: NativeScriptHashDisplayFormat,
+  displayFormat: NativeScriptHashDisplayFormat
 ): NativeScriptHashDisplayFormat {
   // Validate whether the passed format is present in the enum
   switch (displayFormat) {
@@ -192,7 +195,7 @@ export function parseNativeScriptHashDisplayFormat(
       break;
     default:
       throw new InvalidData(
-        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DISPLAY_FORMAT,
+        InvalidDataReason.DERIVE_NATIVE_SCRIPT_HASH_INVALID_DISPLAY_FORMAT
       );
   }
 

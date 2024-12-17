@@ -1,4 +1,4 @@
-import type {NativeScript} from '../index';
+import type { NativeScript } from '../index';
 import {
   InvalidData,
   InvalidDataReason,
@@ -7,24 +7,13 @@ import {
 } from '../index';
 
 type ValidNativeScriptTestCase = {
-  testName: string
-  script: NativeScript
-  displayFormat: NativeScriptHashDisplayFormat
-  hashHex: string
-}
+  testName: string;
+  script: NativeScript;
+  displayFormat: NativeScriptHashDisplayFormat;
+  hashHex: string;
+};
 
 export const ValidNativeScriptTestCases: ValidNativeScriptTestCase[] = [
-//   {
-//     testName: 'PUBKEY - device owned',
-//     script: {
-//       type: NativeScriptType.PUBKEY_DEVICE_OWNED,
-//       params: {
-//         path: str_to_path('1852\'/1815\'/0\'/0/0'),
-//       },
-//     },
-//     displayFormat: NativeScriptHashDisplayFormat.BECH32,
-//     hashHex: '5102a193b3d5f0c256fcc425836ffb15e7d96d3389f5e57dc6bea726',
-//   },
   {
     testName: 'PUBKEY - third party',
     script: {
@@ -355,9 +344,9 @@ export const ValidNativeScriptTestCases: ValidNativeScriptTestCase[] = [
 ];
 
 type InvalidOnLedgerScriptTestCase = {
-  testName: string
-  script: NativeScript
-}
+  testName: string;
+  script: NativeScript;
+};
 
 export const InvalidOnLedgerScriptTestCases: InvalidOnLedgerScriptTestCase[] = [
   {
@@ -400,10 +389,10 @@ export const InvalidOnLedgerScriptTestCases: InvalidOnLedgerScriptTestCase[] = [
 ];
 
 type InvalidScriptTestCase = {
-  testName: string
-  script: NativeScript
-  invalidDataReason: InvalidDataReason
-}
+  testName: string;
+  script: NativeScript;
+  invalidDataReason: InvalidDataReason;
+};
 
 export const InvalidScriptTestCases: InvalidScriptTestCase[] = [
   {
@@ -510,20 +499,18 @@ export const InvalidScriptTestCases: InvalidScriptTestCase[] = [
   },
 ];
 
-
-
-
 import Ada from '..';
 import { TransportNodeUSB } from '@keystonehq/hw-transport-nodeusb';
+import { str_to_path } from '../utils/address';
 jest.setTimeout(100000);
 describe('Keystone getExtendedPublicKeys', () => {
   let app: Ada;
-  
+
   beforeAll(async () => {
     app = new Ada(
       await TransportNodeUSB.connect({
         timeout: 100000,
-      }),
+      })
     );
   });
 
@@ -545,7 +532,7 @@ describe('Keystone getExtendedPublicKeys', () => {
   });
 
   describe('Keystone should not permit invalid scripts', () => {
-    for (const {testName, script} of InvalidOnLedgerScriptTestCases) {
+    for (const { testName, script } of InvalidOnLedgerScriptTestCases) {
       it(testName, async () => {
         const promise = app.deriveNativeScriptHash({
           script,
@@ -557,10 +544,7 @@ describe('Keystone getExtendedPublicKeys', () => {
   });
 
   describe('Keystone should not permit invalid scripts', () => {
-    for (const {
-      testName,
-      script,
-    } of InvalidOnLedgerScriptTestCases) {
+    for (const { testName, script } of InvalidOnLedgerScriptTestCases) {
       it(testName, async () => {
         const promise = app.deriveNativeScriptHash({
           script,

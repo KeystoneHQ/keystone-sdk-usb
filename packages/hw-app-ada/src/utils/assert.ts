@@ -1,4 +1,4 @@
-import {ErrorBase} from '../errors/errorBase';
+import { ErrorBase } from '../errors/errorBase';
 
 export function assert(cond: boolean, errMsg: string): asserts cond {
   const msg = errMsg ? `: ${errMsg}` : '';
