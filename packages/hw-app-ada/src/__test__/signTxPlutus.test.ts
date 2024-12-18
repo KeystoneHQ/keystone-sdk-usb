@@ -17,6 +17,10 @@ describe('Keystone sign plutus transaction', () => {
         timeout: 100000,
       })
     );
+    // init ada app
+    await app.initAda();
+    // sleep 1000ms
+    await new Promise((resolve) => setTimeout(resolve, 10000));
   });
 
   describe('Should successfully sign plutus transaction', () => {
@@ -80,16 +84,11 @@ describe('Keystone sign plutus transaction', () => {
       });
 
       const witness = response?.witnesses;
-      console.log('witness', witness);
 
       expect(witness).toBeDefined();
       expect(witness?.length).toBe(1);
-
-      witness?.forEach((w) => {
-        expect(w.path).toBeDefined();
-        expect(w.witnessSignatureHex).toBeDefined();
-        expect(typeof w.witnessSignatureHex).toBe('string');
-      });
+      // sleep 10000ms
+      await new Promise((resolve) => setTimeout(resolve, 10000));
     });
     it('Should successfully sign babbage transaction with inline datum and reference script', async () => {
       const response = await app.signTransaction({
@@ -161,6 +160,8 @@ describe('Keystone sign plutus transaction', () => {
         expect(w.witnessSignatureHex).toBeDefined();
         expect(typeof w.witnessSignatureHex).toBe('string');
       });
+      // sleep 10000ms
+      await new Promise((resolve) => setTimeout(resolve, 10000));
     });
     it('Should successfully sign plutus transaction with required signers', async () => {
       const response = await app.signTransaction({

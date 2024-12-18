@@ -5,7 +5,9 @@ import {
   NativeScriptHashDisplayFormat,
   NativeScriptType,
 } from '../index';
-
+import Ada from '..';
+import { TransportNodeUSB } from '@keystonehq/hw-transport-nodeusb';
+import { str_to_path } from '../utils/address';
 type ValidNativeScriptTestCase = {
   testName: string;
   script: NativeScript;
@@ -14,6 +16,17 @@ type ValidNativeScriptTestCase = {
 };
 
 export const ValidNativeScriptTestCases: ValidNativeScriptTestCase[] = [
+    {
+        testName: 'PUBKEY - device owned',
+        script: {
+          type: NativeScriptType.PUBKEY_DEVICE_OWNED,
+          params: {
+            path: str_to_path('1852\'/1815\'/0\'/0/0'),
+          },
+        },
+        displayFormat: NativeScriptHashDisplayFormat.BECH32,
+     hashHex: '5102a193b3d5f0c256fcc425836ffb15e7d96d3389f5e57dc6bea726',
+  },
   {
     testName: 'PUBKEY - third party',
     script: {
@@ -499,9 +512,7 @@ export const InvalidScriptTestCases: InvalidScriptTestCase[] = [
   },
 ];
 
-import Ada from '..';
-import { TransportNodeUSB } from '@keystonehq/hw-transport-nodeusb';
-import { str_to_path } from '../utils/address';
+
 jest.setTimeout(100000);
 describe('Keystone getExtendedPublicKeys', () => {
   let app: Ada;
@@ -512,6 +523,10 @@ describe('Keystone getExtendedPublicKeys', () => {
         timeout: 100000,
       })
     );
+    // init device
+    await app.initAda();    
+    // sleep 10000
+    await new Promise(resolve => setTimeout(resolve, 10000));
   });
 
   describe('Valid native scripts', () => {

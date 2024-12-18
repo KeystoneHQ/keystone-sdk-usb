@@ -319,7 +319,6 @@ export default class Ada {
     );
     const childKeyL4 = bip32PublicKeyL3.derive(path[path.length - 2]);
     const childKeyL5 = childKeyL4.derive(path[path.length - 1]);
-    // pubkey
     return childKeyL5.to_raw_key().to_hex();
   }
 
@@ -1136,13 +1135,93 @@ export default class Ada {
     parseNativeScriptHashDisplayFormat(displayFormat);
 
     const nativeScript: NativeScript = script;
-    const cardanoNativeScript = nativeScriptToCardanoNativeScript(nativeScript);
+    
+    const cardanoNativeScript = this.nativeScriptToCardanoNativeScript(nativeScript);
     const policyId = cardanoNativeScript.hash();
     const scriptHashHex = policyId.to_hex();
     return {
       scriptHashHex,
     };
   }
+
+  private nativeScriptToCardanoNativeScript = (
+    nativeScript: NativeScript
+  ): cardanoSerialization.NativeScript => {
+    switch (nativeScript.type) {
+      case NativeScriptType.PUBKEY_DEVICE_OWNED: {
+        const blake2b = blake2.createHash('blake2b', { digestLength: 28 });
+        blake2b.update(Buffer.from(this.getPublicKeyHex(parseBIP32Path(nativeScript.params.path,InvalidDataReason.INPUT_INVALID_PATH)), 'hex'));
+        const pubkeyHash = blake2b.digest();
+        const scriptPubkey = cardanoSerialization.ScriptPubkey.new(
+              // eslint-disable-next-line no-undef
+              cardanoSerialization.Ed25519KeyHash.from_bytes(
+                pubkeyHash
+              )
+          );
+          return cardanoSerialization.NativeScript.new_script_pubkey(scriptPubkey);
+      }
+      case NativeScriptType.PUBKEY_THIRD_PARTY: {
+        const scriptPubkey = cardanoSerialization.ScriptPubkey.new(
+          // eslint-disable-next-line no-undef
+          cardanoSerialization.Ed25519KeyHash.from_bytes(
+            Buffer.from(nativeScript.params.keyHashHex, 'hex')
+          )
+        );
+        return cardanoSerialization.NativeScript.new_script_pubkey(scriptPubkey);
+      }
+      case NativeScriptType.ALL: {
+        const nativeScripts = nativeScript.params.scripts.map((script) =>
+          this.nativeScriptToCardanoNativeScript(script)
+        );
+        const nativeScriptsSet = cardanoSerialization.NativeScripts.new();
+        nativeScripts.forEach((script) => nativeScriptsSet.add(script));
+        const scriptAll = cardanoSerialization.ScriptAll.new(nativeScriptsSet);
+        return cardanoSerialization.NativeScript.new_script_all(scriptAll);
+      }
+  
+      case NativeScriptType.ANY: {
+        const nativeScripts = nativeScript.params.scripts.map((script) =>
+          this.nativeScriptToCardanoNativeScript(script)
+        );
+        const nativeScriptsSet = cardanoSerialization.NativeScripts.new();
+        nativeScripts.forEach((script) => nativeScriptsSet.add(script));
+        const scriptAny = cardanoSerialization.ScriptAny.new(nativeScriptsSet);
+        return cardanoSerialization.NativeScript.new_script_any(scriptAny);
+      }
+      case NativeScriptType.N_OF_K: {
+        const nativeScripts = nativeScript.params.scripts.map((script) =>
+          this.nativeScriptToCardanoNativeScript(script)
+        );
+        const nativeScriptsSet = cardanoSerialization.NativeScripts.new();
+        nativeScripts.forEach((script) => nativeScriptsSet.add(script));
+        const scriptNOfK = cardanoSerialization.ScriptNOfK.new(
+          nativeScript.params.requiredCount,
+          nativeScriptsSet
+        );
+        return cardanoSerialization.NativeScript.new_script_n_of_k(scriptNOfK);
+      }
+      case NativeScriptType.INVALID_BEFORE: {
+        const slot = cardanoSerialization.TimelockStart.new_timelockstart(
+          cardanoSerialization.BigNum.from_str(
+            nativeScript.params.slot.toString()
+          )
+        );
+        return cardanoSerialization.NativeScript.new_timelock_start(slot);
+      }
+      case NativeScriptType.INVALID_HEREAFTER: {
+        const slot = cardanoSerialization.TimelockExpiry.new_timelockexpiry(
+          cardanoSerialization.BigNum.from_str(
+            nativeScript.params.slot.toString()
+          )
+        );
+        return cardanoSerialization.NativeScript.new_timelock_expiry(slot);
+      }
+      default:
+        throw new Error('Unsupported native script type');
+    }
+  };
+  
+
 
   async signOperationalCertificate(
     request: SignOperationalCertificateRequest
@@ -1373,15 +1452,12 @@ export default class Ada {
     path: ValidBIP32Path;
     retirementEpoch: Uint64_str;
   }): cardanoSerialization.PoolRetirement {
-    // console.log('keys',this.pathToPublicKeyMap);
-    // const extendedPublicKey = this.getExtendedPublicKey(certificate.path);
-    // console.log('extendedPublicKey',extendedPublicKey.publicKeyHex);
     const blake2b = blake2.createHash('blake2b', { digestLength: 28 });
-    blake2b.update(Buffer.from(this.getPublicKeyHex(certificate.path)));
+    blake2b.update(Buffer.from(this.getPublicKeyHex(certificate.path), 'hex'));
     const hash = blake2b.digest();
-    const addressHex = hash.toString('hex');
+    // dbfee4665e58c8f8e9b9ff02b17f32e08a42c855476a5d867c2737b7
     const poolKeyHash =
-      cardanoSerialization.Ed25519KeyHash.from_hex(addressHex);
+      cardanoSerialization.Ed25519KeyHash.from_bytes(hash);
     const poolRetirement: cardanoSerialization.PoolRetirement =
       cardanoSerialization.PoolRetirement.new(
         poolKeyHash,
@@ -2225,70 +2301,6 @@ export const pathToKeypath = (path: string): CryptoKeypath => {
     return new PathComponent({ index, hardened: isHardened });
   });
   return new CryptoKeypath(pathComponents);
-};
-const nativeScriptToCardanoNativeScript = (
-  nativeScript: NativeScript
-): cardanoSerialization.NativeScript => {
-  switch (nativeScript.type) {
-    case NativeScriptType.PUBKEY_THIRD_PARTY: {
-      const scriptPubkey = cardanoSerialization.ScriptPubkey.new(
-        // eslint-disable-next-line no-undef
-        cardanoSerialization.Ed25519KeyHash.from_bytes(
-          Buffer.from(nativeScript.params.keyHashHex, 'hex')
-        )
-      );
-      return cardanoSerialization.NativeScript.new_script_pubkey(scriptPubkey);
-    }
-    case NativeScriptType.ALL: {
-      const nativeScripts = nativeScript.params.scripts.map((script) =>
-        nativeScriptToCardanoNativeScript(script)
-      );
-      const nativeScriptsSet = cardanoSerialization.NativeScripts.new();
-      nativeScripts.forEach((script) => nativeScriptsSet.add(script));
-      const scriptAll = cardanoSerialization.ScriptAll.new(nativeScriptsSet);
-      return cardanoSerialization.NativeScript.new_script_all(scriptAll);
-    }
-
-    case NativeScriptType.ANY: {
-      const nativeScripts = nativeScript.params.scripts.map((script) =>
-        nativeScriptToCardanoNativeScript(script)
-      );
-      const nativeScriptsSet = cardanoSerialization.NativeScripts.new();
-      nativeScripts.forEach((script) => nativeScriptsSet.add(script));
-      const scriptAny = cardanoSerialization.ScriptAny.new(nativeScriptsSet);
-      return cardanoSerialization.NativeScript.new_script_any(scriptAny);
-    }
-    case NativeScriptType.N_OF_K: {
-      const nativeScripts = nativeScript.params.scripts.map((script) =>
-        nativeScriptToCardanoNativeScript(script)
-      );
-      const nativeScriptsSet = cardanoSerialization.NativeScripts.new();
-      nativeScripts.forEach((script) => nativeScriptsSet.add(script));
-      const scriptNOfK = cardanoSerialization.ScriptNOfK.new(
-        nativeScript.params.requiredCount,
-        nativeScriptsSet
-      );
-      return cardanoSerialization.NativeScript.new_script_n_of_k(scriptNOfK);
-    }
-    case NativeScriptType.INVALID_BEFORE: {
-      const slot = cardanoSerialization.TimelockStart.new_timelockstart(
-        cardanoSerialization.BigNum.from_str(
-          nativeScript.params.slot.toString()
-        )
-      );
-      return cardanoSerialization.NativeScript.new_timelock_start(slot);
-    }
-    case NativeScriptType.INVALID_HEREAFTER: {
-      const slot = cardanoSerialization.TimelockExpiry.new_timelockexpiry(
-        cardanoSerialization.BigNum.from_str(
-          nativeScript.params.slot.toString()
-        )
-      );
-      return cardanoSerialization.NativeScript.new_timelock_expiry(slot);
-    }
-    default:
-      throw new Error('Unsupported native script type');
-  }
 };
 
 const getAddressHeader = (
