@@ -644,7 +644,6 @@ export default class Ada {
         const accounts = await this.getHardwareCall(stakingPath);
         let buf = Buffer.from([]);
         const header = getAddressHeader(address.type, network);
-        console.log(header);
         buf = Buffer.concat([buf, header]);
         buf = Buffer.concat([buf, Buffer.from(spendingScriptHash, 'hex')]);
         const pubkey = accounts.getKeys()[0].getKey();
@@ -718,9 +717,10 @@ export default class Ada {
   }
 
   private async deriveAddressFromCache(
+    network: Network,
     address: DeviceOwnedAddress
   ): Promise<DeriveAddressResponse> {
-    const parsedParams = parseAddress(Networks.Mainnet, address);
+    const parsedParams = parseAddress(network, address);
     const spending = parsedParams.spendingDataSource;
     let spendingPath: ValidBIP32Path | undefined;
     let spendingScriptHash:
@@ -835,7 +835,7 @@ export default class Ada {
       if (spendingPath && stakingScriptHash) {
         const spendingPubkey = this.getPublicKeyHex(spendingPath);
         let buf = Buffer.from([]);
-        const header = getAddressHeader(address.type, Networks.Mainnet);
+        const header = getAddressHeader(address.type, network);
         buf = Buffer.concat([buf, header]);
         const spendHash = Buffer.from(blake2bjs(spendingPubkey, undefined, 28));
         buf = Buffer.concat([buf, spendHash]);
@@ -848,8 +848,7 @@ export default class Ada {
       if (spendingScriptHash && stakingPath) {
         const stakingPubkey = this.getPublicKeyHex(stakingPath);
         let buf = Buffer.from([]);
-        const header = getAddressHeader(address.type, Networks.Mainnet);
-        console.log(header);
+        const header = getAddressHeader(address.type, network);
         buf = Buffer.concat([buf, header]);
         buf = Buffer.concat([buf, Buffer.from(spendingScriptHash, 'hex')]);
         const stakeHash = Buffer.from(blake2bjs(stakingPubkey, undefined, 28));
@@ -860,7 +859,7 @@ export default class Ada {
       }
       if (spendingScriptHash && stakingScriptHash) {
         let buf = Buffer.from([]);
-        const header = getAddressHeader(address.type, Networks.Mainnet);
+        const header = getAddressHeader(address.type, network);
         buf = Buffer.concat([buf, header]);
         buf = Buffer.concat([
           buf,
@@ -883,7 +882,7 @@ export default class Ada {
         const hash = Buffer.from(
           blake2bjs(accounts.getKeys()[0].getKey(), undefined, 28)
         );
-        const header = getAddressHeader(address.type, Networks.Mainnet);
+        const header = getAddressHeader(address.type, network);
         const buf = Buffer.concat([header, hash]);
         return {
           addressHex: buf.toString('hex'),
@@ -905,7 +904,7 @@ export default class Ada {
         const hash = Buffer.from(
           blake2bjs(accounts.getKeys()[0].getKey(), undefined, 28)
         );
-        const header = getAddressHeader(address.type, Networks.Mainnet);
+        const header = getAddressHeader(address.type, network);
         const buf = Buffer.concat([header, hash]);
         return {
           addressHex: buf.toString('hex'),
@@ -980,11 +979,6 @@ export default class Ada {
       });
     }
     uniqueExtraSigners.push(...extraCertSigners);
-    const rightTx = cardanoSerialization.Transaction.from_hex(
-      '83a500818258201af8fa0b754ff99253d983894e63a2b09cbb56c833ba18c3384210163f63dcfc00018182582b82d818582183581c9e1c71de652ec8b85fec296f0685ca3988781c94a2e1a5d89d92f45fa0001a0d0c25611a002dd2e802182a030a04818304581cdbfee4665e58c8f8e9b9ff02b17f32e08a42c855476a5d867c2737b7186da0f6'
-    );
-    console.log('right tx', JSON.stringify(rightTx.to_json(), null, 2));
-    console.log('wrong tx', JSON.stringify(cslTx.to_json(), null, 2));
     const ur = constructSignTransactionURRequest(
       Buffer.from(serializedTx, 'hex'),
       utxos,
@@ -1039,12 +1033,8 @@ export default class Ada {
     // address bench32
     const addressHex =
       request.addressFieldType === MessageAddressFieldType.ADDRESS
-        ? (
-            await this.deriveAddress({
-              network: request.network,
-              address: request.address,
-            })
-          ).addressHex
+        ? (await this.deriveAddressFromCache(request.network, request.address))
+            .addressHex
         : null;
     const addressBench32 = addressHex
       ? bech32_encodeAddress(Buffer.from(addressHex, 'hex'))
@@ -2293,8 +2283,8 @@ const validBIP32PathToKeypathString = (path: ValidBIP32Path): string => {
 export const pathToKeypath = (path: string): CryptoKeypath => {
   const paths = path.replace(/[m|M]\//, '').split('/');
   const pathComponents = paths.map((path) => {
-    const index = parseInt(path.replace("'", ''), 10);
-    const isHardened = path.endsWith("'");
+    const index = parseInt(path.replace('\'', ''), 10);
+    const isHardened = path.endsWith('\'');
     return new PathComponent({ index, hardened: isHardened });
   });
   return new CryptoKeypath(pathComponents);
@@ -2329,7 +2319,6 @@ const constructSignTransactionURRequest = (
     origin
   );
   const ur = cardanoRequest.toUR();
-  console.log('ur', Buffer.from(ur.cbor).toString('hex'));
   return ur;
 };
 

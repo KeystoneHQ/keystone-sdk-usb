@@ -268,7 +268,6 @@ export default class Ada {
       [HARDENED + 1853, HARDENED + 1815, HARDENED, HARDENED],
       InvalidDataReason.INVALID_PATH
     );
-
     paths.push(path1);
     paths.push(path2);
 
@@ -622,6 +621,7 @@ export default class Ada {
           buf = Buffer.concat([buf, hash]);
         }
         this.mfp = accounts.getMasterFingerprint().toString('hex');
+        console.log('buf', buf.toString('hex'));
         return {
           addressHex: buf.toString('hex'),
         };
@@ -648,7 +648,6 @@ export default class Ada {
         const accounts = await this.getHardwareCall(stakingPath);
         let buf = Buffer.from([]);
         const header = getAddressHeader(address.type, network);
-        console.log(header);
         buf = Buffer.concat([buf, header]);
         buf = Buffer.concat([buf, Buffer.from(spendingScriptHash, 'hex')]);
         const pubkey = accounts.getKeys()[0].getKey();
@@ -724,9 +723,10 @@ export default class Ada {
   }
 
   private async deriveAddressFromCache(
+    network: Network,
     address: DeviceOwnedAddress
   ): Promise<DeriveAddressResponse> {
-    const parsedParams = parseAddress(Networks.Mainnet, address);
+    const parsedParams = parseAddress(network, address);
     const spending = parsedParams.spendingDataSource;
     let spendingPath: ValidBIP32Path | undefined;
     let spendingScriptHash:
@@ -825,7 +825,7 @@ export default class Ada {
         const stakingPubkey = this.getPublicKeyHex(stakingPath);
         const keys = [spendingPubkey, stakingPubkey];
         let buf = Buffer.from([]);
-        const header = getAddressHeader(address.type, Networks.Mainnet);
+        const header = getAddressHeader(address.type, network);
         buf = Buffer.concat([buf, header]);
         for (let i = 0; i < keys.length; i++) {
           const pubkey = keys[i];
@@ -835,6 +835,7 @@ export default class Ada {
           // must blake2b hash and then concat the hash
           buf = Buffer.concat([buf, hash]);
         }
+        console.log('buf', buf.toString('hex'));
         return {
           addressHex: buf.toString('hex'),
         };
@@ -843,7 +844,7 @@ export default class Ada {
       if (spendingPath && stakingScriptHash) {
         const spendingPubkey = this.getPublicKeyHex(spendingPath);
         let buf = Buffer.from([]);
-        const header = getAddressHeader(address.type, Networks.Mainnet);
+        const header = getAddressHeader(address.type, network);
         buf = Buffer.concat([buf, header]);
         const blake2b = blake2.createHash('blake2b', { digestLength: 28 });
         blake2b.update(Buffer.from(spendingPubkey, 'hex'));
@@ -858,7 +859,7 @@ export default class Ada {
       if (spendingScriptHash && stakingPath) {
         const stakingPubkey = this.getPublicKeyHex(stakingPath);
         let buf = Buffer.from([]);
-        const header = getAddressHeader(address.type, Networks.Mainnet);
+        const header = getAddressHeader(address.type, network);
         console.log(header);
         buf = Buffer.concat([buf, header]);
         buf = Buffer.concat([buf, Buffer.from(spendingScriptHash, 'hex')]);
@@ -872,7 +873,7 @@ export default class Ada {
       }
       if (spendingScriptHash && stakingScriptHash) {
         let buf = Buffer.from([]);
-        const header = getAddressHeader(address.type, Networks.Mainnet);
+        const header = getAddressHeader(address.type, network);
         buf = Buffer.concat([buf, header]);
         buf = Buffer.concat([
           buf,
@@ -895,7 +896,7 @@ export default class Ada {
         const blake2b = blake2.createHash('blake2b', { digestLength: 28 });
         blake2b.update(accounts.getKeys()[0].getKey());
         const hash = blake2b.digest();
-        const header = getAddressHeader(address.type, Networks.Mainnet);
+        const header = getAddressHeader(address.type, network);
         const buf = Buffer.concat([header, hash]);
         return {
           addressHex: buf.toString('hex'),
@@ -917,7 +918,7 @@ export default class Ada {
         const blake2b = blake2.createHash('blake2b', { digestLength: 28 });
         blake2b.update(accounts.getKeys()[0].getKey());
         const hash = blake2b.digest();
-        const header = getAddressHeader(address.type, Networks.Mainnet);
+        const header = getAddressHeader(address.type, network);
         const buf = Buffer.concat([header, hash]);
         return {
           addressHex: buf.toString('hex'),
@@ -1048,15 +1049,10 @@ export default class Ada {
       parsedMsgData.addressFieldType === MessageAddressFieldType.ADDRESS
         ? KeystoneMessageAddressFieldType.ADDRESS
         : KeystoneMessageAddressFieldType.KEY_HASH;
-    // address bench32
     const addressHex =
       request.addressFieldType === MessageAddressFieldType.ADDRESS
-        ? (
-            await this.deriveAddress({
-              network: request.network,
-              address: request.address,
-            })
-          ).addressHex
+        ? (await this.deriveAddressFromCache(request.network, request.address))
+            .addressHex
         : null;
     const addressBench32 = addressHex
       ? bech32_encodeAddress(Buffer.from(addressHex, 'hex'))
@@ -2306,8 +2302,8 @@ const validBIP32PathToKeypathString = (path: ValidBIP32Path): string => {
 export const pathToKeypath = (path: string): CryptoKeypath => {
   const paths = path.replace(/[m|M]\//, '').split('/');
   const pathComponents = paths.map((path) => {
-    const index = parseInt(path.replace("'", ''), 10);
-    const isHardened = path.endsWith("'");
+    const index = parseInt(path.replace('\'', ''), 10);
+    const isHardened = path.endsWith('\'');
     return new PathComponent({ index, hardened: isHardened });
   });
   return new CryptoKeypath(pathComponents);
