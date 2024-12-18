@@ -146,7 +146,7 @@ export enum InvalidDataReason {
   REFERENCE_INPUTS_NOT_ARRAY = 'reference inputs not an array',
 
   VOTING_PROCEDURES_NOT_ARRAY = 'voting procedures not an array',
-  VOTER_VOTES_NOT_ARRAY = 'voter\'s votes not an array',
+  VOTER_VOTES_NOT_ARRAY = "voter's votes not an array",
   VOTER_INVALID = 'invalid voter in voting procedures',
   GOV_ACTION_ID_INVALID_TX_HASH = 'invalid governance action id tx hash',
   GOV_ACTION_ID_INVALID_INDEX = 'invalid governance action id index',
@@ -248,7 +248,7 @@ export enum InvalidDataReason {
    * For errors that we don't want to check on the LedgerJS side,
    * typically resulting from a detailed analysis of key derivation paths
    */
-  LEDGER_POLICY = 'Action rejected by Ledger\'s security policy',
+  LEDGER_POLICY = "Action rejected by Ledger's security policy",
   // canonical ordering wrong (cannot be checked in LedgerJS for withdrawals)
   INVALID_DATA_SUPPLIED_TO_LEDGER = 'Invalid data supplied to Ledger',
 

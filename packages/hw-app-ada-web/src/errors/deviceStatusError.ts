@@ -24,7 +24,7 @@ export const DeviceStatusMessages: Record<number, string> = {
     'Invalid derivation path supplied to Ledger',
   [DeviceStatusCodes.ERR_REJECTED_BY_USER]: 'Action rejected by user',
   [DeviceStatusCodes.ERR_REJECTED_BY_POLICY]:
-    'Action rejected by Ledger\'s security policy',
+    "Action rejected by Ledger's security policy",
   [DeviceStatusCodes.ERR_DEVICE_LOCKED]: 'Device is locked',
   [DeviceStatusCodes.ERR_CLA_NOT_SUPPORTED]: 'Wrong Ledger app',
   [DeviceStatusCodes.ERR_UNSUPPORTED_ADDRESS_TYPE]: 'Unsupported address type',

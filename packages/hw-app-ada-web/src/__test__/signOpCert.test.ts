@@ -27,7 +27,7 @@ describe('Keystone sign op cert', () => {
           '3d24bc547388cf2403fd978fc3d3a93d1f39acf68a9c00e40512084dc05f2822',
         kesPeriod: '47',
         issueCounter: '42',
-        coldKeyPath: str_to_path('1853\'/1815\'/0\'/0\''),
+        coldKeyPath: str_to_path("1853'/1815'/0'/0'"),
       };
       const response = await app.signOperationalCertificate(opCert);
       expect(response.signatureHex).toEqual(

@@ -102,7 +102,7 @@ export const destinations: Record<
     params: {
       type: AddressType.BYRON,
       params: {
-        spendingPath: str_to_path('44\'/1815\'/0\'/0/0'),
+        spendingPath: str_to_path("44'/1815'/0'/0/0"),
       },
     },
   },
@@ -111,7 +111,7 @@ export const destinations: Record<
     params: {
       type: AddressType.BASE_PAYMENT_KEY_STAKE_KEY,
       params: {
-        spendingPath: str_to_path('1852\'/1815\'/0\'/0/0'),
+        spendingPath: str_to_path("1852'/1815'/0'/0/0"),
         stakingKeyHashHex:
           '122a946b9ad3d2ddf029d3a828f0468aece76895f15c9efbd69b4277',
       },
@@ -122,8 +122,8 @@ export const destinations: Record<
     params: {
       type: AddressType.BASE_PAYMENT_KEY_STAKE_KEY,
       params: {
-        spendingPath: str_to_path('1852\'/1815\'/0\'/0/0'),
-        stakingPath: str_to_path('1852\'/1815\'/0\'/2/0'),
+        spendingPath: str_to_path("1852'/1815'/0'/0/0"),
+        stakingPath: str_to_path("1852'/1815'/0'/2/0"),
       },
     },
   },
@@ -132,7 +132,7 @@ export const destinations: Record<
     params: {
       type: AddressType.BASE_PAYMENT_KEY_STAKE_SCRIPT,
       params: {
-        spendingPath: str_to_path('1852\'/1815\'/0\'/0/0'),
+        spendingPath: str_to_path("1852'/1815'/0'/0/0"),
         stakingScriptHashHex:
           '122a946b9ad3d2ddf029d3a828f0468aece76895f15c9efbd69b4277',
       },
@@ -143,8 +143,8 @@ export const destinations: Record<
     params: {
       type: AddressType.BASE_PAYMENT_KEY_STAKE_KEY,
       params: {
-        spendingPath: str_to_path('1852\'/1815\'/456\'/0/5000000'),
-        stakingPath: str_to_path('1852\'/1815\'/456\'/2/0'),
+        spendingPath: str_to_path("1852'/1815'/456'/0/5000000"),
+        stakingPath: str_to_path("1852'/1815'/456'/2/0"),
       },
     },
   },
@@ -153,7 +153,7 @@ export const destinations: Record<
     params: {
       type: AddressType.ENTERPRISE_KEY,
       params: {
-        spendingPath: str_to_path('1852\'/1815\'/0\'/0/0'),
+        spendingPath: str_to_path("1852'/1815'/0'/0/0"),
       },
     },
   },
@@ -162,7 +162,7 @@ export const destinations: Record<
     params: {
       type: AddressType.POINTER_KEY,
       params: {
-        spendingPath: str_to_path('1852\'/1815\'/0\'/0/0'),
+        spendingPath: str_to_path("1852'/1815'/0'/0/0"),
         stakingBlockchainPointer: {
           blockIndex: 1,
           txIndex: 2,
@@ -184,7 +184,7 @@ export const destinations: Record<
     params: {
       type: AddressType.REWARD_KEY,
       params: {
-        stakingPath: str_to_path('1852\'/1815\'/0\'/2/0'),
+        stakingPath: str_to_path("1852'/1815'/0'/2/0"),
       },
     },
   },
@@ -208,19 +208,19 @@ export const inputs: Record<
     txHashHex:
       '1af8fa0b754ff99253d983894e63a2b09cbb56c833ba18c3384210163f63dcfc',
     outputIndex: 0,
-    path: str_to_path('44\'/1815\'/0\'/0/0'),
+    path: str_to_path("44'/1815'/0'/0/0"),
   },
   utxoShelley: {
     txHashHex:
       '3b40265111d8bb3c3c608d95b3a0bf83461ace32d79336579a1939b3aad1c0b7',
     outputIndex: 0,
-    path: str_to_path('1852\'/1815\'/0\'/0/0'),
+    path: str_to_path("1852'/1815'/0'/0/0"),
   },
   utxoNonReasonable: {
     txHashHex:
       '3b40265111d8bb3c3c608d95b3a0bf83461ace32d79336579a1939b3aad1c0b7',
     outputIndex: 0,
-    path: str_to_path('1852\'/1815\'/456\'/0/0'),
+    path: str_to_path("1852'/1815'/456'/0/0"),
   },
   utxoMultisig: {
     txHashHex:
@@ -976,11 +976,11 @@ describe('Keystone sign transaction', () => {
               params: {
                 stakeCredential: {
                   type: CredentialParamsType.KEY_PATH,
-                  keyPath: str_to_path('1852\'/1815\'/0\'/2/0'),
+                  keyPath: str_to_path("1852'/1815'/0'/2/0"),
                 },
                 dRep: {
                   type: DRepParamsType.KEY_PATH,
-                  keyPath: str_to_path('1852\'/1815\'/0\'/3/0'),
+                  keyPath: str_to_path("1852'/1815'/0'/3/0"),
                 },
               },
             },
@@ -989,7 +989,7 @@ describe('Keystone sign transaction', () => {
               params: {
                 stakeCredential: {
                   type: CredentialParamsType.KEY_PATH,
-                  keyPath: str_to_path('1852\'/1815\'/0\'/2/0'),
+                  keyPath: str_to_path("1852'/1815'/0'/2/0"),
                 },
                 dRep: {
                   type: DRepParamsType.KEY_HASH,
@@ -1003,7 +1003,7 @@ describe('Keystone sign transaction', () => {
               params: {
                 stakeCredential: {
                   type: CredentialParamsType.KEY_PATH,
-                  keyPath: str_to_path('1852\'/1815\'/0\'/2/0'),
+                  keyPath: str_to_path("1852'/1815'/0'/2/0"),
                 },
                 dRep: {
                   type: DRepParamsType.SCRIPT_HASH,
@@ -1017,7 +1017,7 @@ describe('Keystone sign transaction', () => {
               params: {
                 stakeCredential: {
                   type: CredentialParamsType.KEY_PATH,
-                  keyPath: str_to_path('1852\'/1815\'/0\'/2/0'),
+                  keyPath: str_to_path("1852'/1815'/0'/2/0"),
                 },
                 dRep: {
                   type: DRepParamsType.ABSTAIN,
@@ -1029,7 +1029,7 @@ describe('Keystone sign transaction', () => {
               params: {
                 stakeCredential: {
                   type: CredentialParamsType.KEY_PATH,
-                  keyPath: str_to_path('1852\'/1815\'/0\'/2/0'),
+                  keyPath: str_to_path("1852'/1815'/0'/2/0"),
                 },
                 dRep: {
                   type: DRepParamsType.NO_CONFIDENCE,
@@ -1055,7 +1055,7 @@ describe('Keystone sign transaction', () => {
               txHashHex:
                 '3b40265111d8bb3c3c608d95b3a0bf83461ace32d79336579a1939b3aad1c0b7',
               outputIndex: 0,
-              path: str_to_path('1852\'/1815\'/0\'/0/0'),
+              path: str_to_path("1852'/1815'/0'/0/0"),
             },
           ],
           outputs: [
@@ -1087,7 +1087,7 @@ describe('Keystone sign transaction', () => {
               params: {
                 stakeCredential: {
                   type: CredentialParamsType.KEY_PATH,
-                  keyPath: str_to_path('1852\'/1815\'/0\'/2/0'),
+                  keyPath: str_to_path("1852'/1815'/0'/2/0"),
                 },
               },
             },
@@ -1108,7 +1108,7 @@ describe('Keystone sign transaction', () => {
               params: {
                 stakeCredential: {
                   type: CredentialParamsType.KEY_PATH,
-                  keyPath: str_to_path('1852\'/1815\'/0\'/2/0'),
+                  keyPath: str_to_path("1852'/1815'/0'/2/0"),
                 },
                 deposit: '17',
               },

@@ -1135,8 +1135,9 @@ export default class Ada {
     parseNativeScriptHashDisplayFormat(displayFormat);
 
     const nativeScript: NativeScript = script;
-    
-    const cardanoNativeScript = this.nativeScriptToCardanoNativeScript(nativeScript);
+
+    const cardanoNativeScript =
+      this.nativeScriptToCardanoNativeScript(nativeScript);
     const policyId = cardanoNativeScript.hash();
     const scriptHashHex = policyId.to_hex();
     return {
@@ -1150,15 +1151,25 @@ export default class Ada {
     switch (nativeScript.type) {
       case NativeScriptType.PUBKEY_DEVICE_OWNED: {
         const blake2b = blake2.createHash('blake2b', { digestLength: 28 });
-        blake2b.update(Buffer.from(this.getPublicKeyHex(parseBIP32Path(nativeScript.params.path,InvalidDataReason.INPUT_INVALID_PATH)), 'hex'));
+        blake2b.update(
+          Buffer.from(
+            this.getPublicKeyHex(
+              parseBIP32Path(
+                nativeScript.params.path,
+                InvalidDataReason.INPUT_INVALID_PATH
+              )
+            ),
+            'hex'
+          )
+        );
         const pubkeyHash = blake2b.digest();
         const scriptPubkey = cardanoSerialization.ScriptPubkey.new(
-              // eslint-disable-next-line no-undef
-              cardanoSerialization.Ed25519KeyHash.from_bytes(
-                pubkeyHash
-              )
-          );
-          return cardanoSerialization.NativeScript.new_script_pubkey(scriptPubkey);
+          // eslint-disable-next-line no-undef
+          cardanoSerialization.Ed25519KeyHash.from_bytes(pubkeyHash)
+        );
+        return cardanoSerialization.NativeScript.new_script_pubkey(
+          scriptPubkey
+        );
       }
       case NativeScriptType.PUBKEY_THIRD_PARTY: {
         const scriptPubkey = cardanoSerialization.ScriptPubkey.new(
@@ -1167,7 +1178,9 @@ export default class Ada {
             Buffer.from(nativeScript.params.keyHashHex, 'hex')
           )
         );
-        return cardanoSerialization.NativeScript.new_script_pubkey(scriptPubkey);
+        return cardanoSerialization.NativeScript.new_script_pubkey(
+          scriptPubkey
+        );
       }
       case NativeScriptType.ALL: {
         const nativeScripts = nativeScript.params.scripts.map((script) =>
@@ -1178,7 +1191,7 @@ export default class Ada {
         const scriptAll = cardanoSerialization.ScriptAll.new(nativeScriptsSet);
         return cardanoSerialization.NativeScript.new_script_all(scriptAll);
       }
-  
+
       case NativeScriptType.ANY: {
         const nativeScripts = nativeScript.params.scripts.map((script) =>
           this.nativeScriptToCardanoNativeScript(script)
@@ -1220,8 +1233,6 @@ export default class Ada {
         throw new Error('Unsupported native script type');
     }
   };
-  
-
 
   async signOperationalCertificate(
     request: SignOperationalCertificateRequest
@@ -1456,8 +1467,7 @@ export default class Ada {
     blake2b.update(Buffer.from(this.getPublicKeyHex(certificate.path), 'hex'));
     const hash = blake2b.digest();
     // dbfee4665e58c8f8e9b9ff02b17f32e08a42c855476a5d867c2737b7
-    const poolKeyHash =
-      cardanoSerialization.Ed25519KeyHash.from_bytes(hash);
+    const poolKeyHash = cardanoSerialization.Ed25519KeyHash.from_bytes(hash);
     const poolRetirement: cardanoSerialization.PoolRetirement =
       cardanoSerialization.PoolRetirement.new(
         poolKeyHash,
@@ -2296,8 +2306,8 @@ const validBIP32PathToKeypathString = (path: ValidBIP32Path): string => {
 export const pathToKeypath = (path: string): CryptoKeypath => {
   const paths = path.replace(/[m|M]\//, '').split('/');
   const pathComponents = paths.map((path) => {
-    const index = parseInt(path.replace('\'', ''), 10);
-    const isHardened = path.endsWith('\'');
+    const index = parseInt(path.replace("'", ''), 10);
+    const isHardened = path.endsWith("'");
     return new PathComponent({ index, hardened: isHardened });
   });
   return new CryptoKeypath(pathComponents);

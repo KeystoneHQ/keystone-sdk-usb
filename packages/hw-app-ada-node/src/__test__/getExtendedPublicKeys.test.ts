@@ -15,7 +15,7 @@ describe('Keystone getExtendedPublicKeys', () => {
   });
 
   test('Should get extended public keys', async () => {
-    const path = str_to_path('1852\'/1815\'/0\'');
+    const path = str_to_path("1852'/1815'/0'");
     const extendedPublicKeys = await app.getExtendedPublicKeys({
       paths: [path],
     });
@@ -29,7 +29,10 @@ describe('Keystone getExtendedPublicKeys', () => {
     );
     // derive 1852'/1815'/0'/0/0
     const bip32PublicKeyL3 = Bip32PublicKey.from_bytes(
-      Buffer.from(extendedPublicKeys[0].publicKeyHex + extendedPublicKeys[0].chainCodeHex, 'hex')
+      Buffer.from(
+        extendedPublicKeys[0].publicKeyHex + extendedPublicKeys[0].chainCodeHex,
+        'hex'
+      )
     );
     const childKeyL4 = bip32PublicKeyL3.derive(0);
     // l5

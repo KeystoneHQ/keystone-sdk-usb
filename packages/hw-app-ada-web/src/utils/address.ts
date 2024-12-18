@@ -14,7 +14,7 @@ const TESTNET_NETWORK_ID = 0x00;
 
 function parseBIP32Index(str: string, errMsg: InvalidDataReason): number {
   let base = 0;
-  if (str.endsWith('\'')) {
+  if (str.endsWith("'")) {
     str = str.slice(0, -1);
     base = HARDENED;
   }
