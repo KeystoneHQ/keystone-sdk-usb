@@ -1057,8 +1057,6 @@ export default class Ada {
     const addressBench32 = addressHex
       ? bech32_encodeAddress(Buffer.from(addressHex, 'hex'))
       : '';
-    // todo : now , we need sleep 10s to close the page on the device
-    await new Promise((resolve) => setTimeout(resolve, 10000));
     const ur = CardanoSignCip8DataRequest.constructCardanoSignCip8DataRequest(
       signData,
       hePath,
