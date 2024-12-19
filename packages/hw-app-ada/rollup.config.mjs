@@ -72,7 +72,7 @@ export default [
         file: 'lib/node/index.d.ts',
         format: 'es',
       },
-      external, // 添加 external 配置
+      external, 
       plugins: [dts()],
     },
     // build browser declaration types
@@ -82,7 +82,7 @@ export default [
         file: 'lib/browser/index.d.ts',
         format: 'es',
       },
-      external, // 添加 external 配置
+      external,
       plugins: [dts()],
     },
 ];
