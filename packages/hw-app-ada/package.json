@@ -1,0 +1,101 @@
+{
+    "name": "hw-app-ada",
+    "version": "0.1.0",
+    "description": "Keystone Hardware Wallet App for Cardano",
+    "main": "lib/node/index.cjs",
+    "module": "lib/node/index.js",
+    "types": "lib/browser/index.d.ts",
+    "browser": {
+        "./lib/node/index.cjs": "./lib/browser/index.cjs",
+        "./lib/node/index.js": "./lib/browser/index.js",
+        "./lib/node/index.d.ts": "./lib/browser/index.d.ts"
+    },
+    "exports": {
+        ".": {
+            "types": "./lib/browser/index.d.ts",
+            "browser": {
+                "types": "./lib/browser/index.d.ts",
+                "import": "./lib/browser/index.js",
+                "require": "./lib/browser/index.cjs"
+            },
+            "node": {
+                "types": "./lib/node/index.d.ts",
+                "import": "./lib/node/index.js",
+                "require": "./lib/node/index.cjs"
+            },
+            "default": {
+                "types": "./lib/browser/index.d.ts",
+                "import": "./lib/browser/index.js",
+                "require": "./lib/browser/index.cjs"
+            }
+        }
+    },
+    "files": [
+        "lib"
+    ],
+    "scripts": {
+        "clean": "rimraf lib",
+        "build": "npm run clean && rollup -c rollup.config.mjs",
+        "watch": "rollup -c rollup.config.mjs -w",
+        "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx}\"",
+        "lint": "eslint .",
+        "lint:fix": "eslint . --fix",
+        "test": "jest",
+        "prepublishOnly": "npm run build"
+    },
+    "keywords": [
+        "cardano",
+        "ada",
+        "keystone",
+        "hardware-wallet"
+    ],
+    "author": "Keystone",
+    "license": "ISC",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/KeystoneHQ/hw-app-ada.git"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "dependencies": {
+        "@emurgo/cardano-serialization-lib-browser": "^13.2.0",
+        "@emurgo/cardano-serialization-lib-nodejs": "^13.1.0",
+        "@keystonehq/bc-ur-registry": "0.7.0",
+        "@keystonehq/bc-ur-registry-cardano": "^0.5.0",
+        "@keystonehq/hw-transport-error": "workspace:^",
+        "@keystonehq/hw-transport-usb": "workspace:^",
+        "@ngraveio/bc-ur": "^1.1.6",
+        "base-x": "^5.0.0",
+        "bech32": "^1.1.4",
+        "blakejs": "^1.2.1",
+        "cardano-hw-interop-lib": "^3.0.1",
+        "cbor": "^10.0.3",
+        "int64-buffer": "^1.0.1",
+        "uuid": "^8.3.2"
+    },
+    "devDependencies": {
+        "@rollup/plugin-commonjs": "^28.0.2",
+        "@rollup/plugin-node-resolve": "^16.0.0",
+        "@rollup/plugin-typescript": "^12.1.2",
+        "@types/jest": "^27.5.2",
+        "@types/node": "^18.12.0",
+        "documentation": "^14.0.3",
+        "eslint": "^8.49.0",
+        "eslint-config-prettier": "^8.8.0",
+        "eslint-plugin-prettier": "^4.2.1",
+        "jest": "^27.4.3",
+        "prettier": "^2.8.8",
+        "rimraf": "^5.0.5",
+        "rollup": "^4.28.1",
+        "rollup-plugin-dts": "^6.1.1",
+        "rollup-plugin-peer-deps-external": "^2.2.4",
+        "ts-jest": "^29.1.1",
+        "ts-node": "^10.9.1",
+        "tslib": "^2.8.1",
+        "typescript": "^5.2.2"
+    },
+    "engines": {
+        "node": ">=14.0.0"
+    }
+}
