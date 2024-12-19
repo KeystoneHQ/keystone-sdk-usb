@@ -1,5 +1,5 @@
 import { TransportNodeUSB } from '@keystonehq/hw-transport-nodeusb';
-import Ada from '..';
+import Ada from '../node';
 import { Bip32PublicKey } from '@emurgo/cardano-serialization-lib-nodejs';
 jest.setTimeout(100000);
 
@@ -17,7 +17,7 @@ describe('Keystone sign plutus transaction', () => {
     const response = await app.initAda();
     expect(response).toBeDefined();
     // get extended public key [ 2147485500, 2147485463, 2147483648, 0, 0 ]
-    const res = response.get("m/1852'/1815'/0'");
+    const res = response.get('m/1852\'/1815\'/0\'');
     if (res) {
       // derive 1852'/1815'/0'/0/0
       const bip32PublicKeyL3 = Bip32PublicKey.from_bytes(

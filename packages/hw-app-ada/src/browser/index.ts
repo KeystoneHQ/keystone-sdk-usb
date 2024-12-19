@@ -43,10 +43,35 @@ import {
   SignedCIP36VoteData,
   OperationalCertificate,
   OperationalCertificateSignature,
-} from './types/public';
-import { isArray, parseBIP32Path, validate } from './utils/parse';
-import { InvalidData, InvalidDataReason } from './errors';
-import { parseAddress } from './parsing/address';
+} from '../types/public';
+import {
+    Transaction as CSLTransaction,
+    TransactionBody as CSLTransactionBody,
+    TransactionInputs as CSLTransactionInputs,
+    TransactionInput as CSLTransactionInput,
+    TransactionHash as CSLTransactionHash,
+    TransactionOutputs as CSLTransactionOutputs,
+    TransactionOutput as CSLTransactionOutput,
+    Address as CSLAddress,
+    Value as CSLValue,
+    BigNum as CSLBigNum,
+    TransactionWitnessSet as CSLTransactionWitnessSet,
+    AuxiliaryData as CSLAuxiliaryData,
+    DataHash as CSLDataHash,
+    PlutusData as CSLPlutusData,
+    ScriptRef as CSLScriptRef,
+    Certificates as CSLCertificates,
+    Certificate as CSLCertificate,
+    Bip32PublicKey as CSLBip32PublicKey,
+    Vkeywitnesses as CSLVkeywitnesses,
+  } from '@emurgo/cardano-serialization-lib-browser';
+
+
+import * as cardanoSerialization from '@emurgo/cardano-serialization-lib-browser';
+
+import { isArray, parseBIP32Path, validate } from '../utils/parse';
+import { InvalidData, InvalidDataReason } from '../errors';
+import { parseAddress } from '../parsing/address';
 import { blake2b as blake2bjs } from 'blakejs';
 import {
   CredentialType,
@@ -68,14 +93,13 @@ import {
   StakingDataSourceType,
   Uint64_str,
   ValidBIP32Path,
-} from './types/internal';
-import { parseNetwork } from './parsing/network';
+} from '../types/internal';
+import { parseNetwork } from '../parsing/network';
 import {
   parseNativeScript,
   parseNativeScriptHashDisplayFormat,
-} from './parsing/nativeScript';
-import * as cardanoSerialization from '@emurgo/cardano-serialization-lib-browser';
-import { parseSignTransactionRequest } from './parsing/transaction';
+} from '../parsing/nativeScript';
+import { parseSignTransactionRequest } from '../parsing/transaction';
 import {
   CardanoCertKeyData,
   CardanoSignature,
@@ -89,36 +113,16 @@ import {
 } from '@keystonehq/bc-ur-registry-cardano';
 import * as bech32 from 'bech32';
 import * as uuid from 'uuid';
-import { bech32_encodeAddress } from './utils/address';
-export * from './errors';
-export * from './types/public';
-export * from './types/internal';
-import { classifyPath, PathTypes } from './keystoneUtils';
-import {
-  Transaction as CSLTransaction,
-  TransactionBody as CSLTransactionBody,
-  TransactionInputs as CSLTransactionInputs,
-  TransactionInput as CSLTransactionInput,
-  TransactionHash as CSLTransactionHash,
-  TransactionOutputs as CSLTransactionOutputs,
-  TransactionOutput as CSLTransactionOutput,
-  Address as CSLAddress,
-  Value as CSLValue,
-  BigNum as CSLBigNum,
-  TransactionWitnessSet as CSLTransactionWitnessSet,
-  AuxiliaryData as CSLAuxiliaryData,
-  DataHash as CSLDataHash,
-  PlutusData as CSLPlutusData,
-  ScriptRef as CSLScriptRef,
-  Certificates as CSLCertificates,
-  Certificate as CSLCertificate,
-  Bip32PublicKey as CSLBip32PublicKey,
-} from '@emurgo/cardano-serialization-lib-browser';
-import { parseMessageData } from './parsing/messageData';
-import { parseCVote } from './parsing/cVote';
-import { DeviceOwnedAddress } from './types/public';
-import { parseOperationalCertificate } from './parsing/operationalCertificate';
-import { uint64_to_buf } from './utils/serialize';
+import { bech32_encodeAddress } from '../utils/address';
+export * from '../errors';
+export * from '../types/public';
+export * from '../types/internal';
+import { classifyPath, PathTypes } from '../keystoneUtils';
+import { parseMessageData } from '../parsing/messageData';
+import { parseCVote } from '../parsing/cVote';
+import { DeviceOwnedAddress } from '../types/public';
+import { parseOperationalCertificate } from '../parsing/operationalCertificate';
+import { uint64_to_buf } from '../utils/serialize';
 /**
  * Default Cardano networks
  * @see [[Network]]

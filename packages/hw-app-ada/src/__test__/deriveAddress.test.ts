@@ -1,7 +1,7 @@
-import Ada, { Networks } from '..';
+import Ada, { Networks } from '../node';
 import { TransportNodeUSB } from '@keystonehq/hw-transport-nodeusb';
 import { bech32_encodeAddress, str_to_path } from '../utils/address';
-import { AddressType, DeviceOwnedAddress, Network } from '../index';
+import { AddressType, DeviceOwnedAddress, Network } from '../node';
 
 type ShelleyTestCase = {
   testName: string;
@@ -17,8 +17,8 @@ export const shelleyTestCases: ShelleyTestCase[] = [
     addressParams: {
       type: AddressType.BASE_PAYMENT_KEY_STAKE_KEY,
       params: {
-        spendingPath: str_to_path("1852'/1815'/0'/0/0"),
-        stakingPath: str_to_path("1852'/1815'/0'/2/0"),
+        spendingPath: str_to_path('1852\'/1815\'/0\'/0/0'),
+        stakingPath: str_to_path('1852\'/1815\'/0\'/2/0'),
       },
     },
     result:
@@ -30,8 +30,8 @@ export const shelleyTestCases: ShelleyTestCase[] = [
     addressParams: {
       type: AddressType.BASE_PAYMENT_KEY_STAKE_KEY,
       params: {
-        spendingPath: str_to_path("1852'/1815'/0'/0/1"),
-        stakingPath: str_to_path("1852'/1815'/0'/2/0"),
+        spendingPath: str_to_path('1852\'/1815\'/0\'/0/1'),
+        stakingPath: str_to_path('1852\'/1815\'/0\'/2/0'),
       },
     },
     result:
@@ -43,7 +43,7 @@ export const shelleyTestCases: ShelleyTestCase[] = [
     addressParams: {
       type: AddressType.ENTERPRISE_KEY,
       params: {
-        spendingPath: str_to_path("1852'/1815'/0'/0/0"),
+        spendingPath: str_to_path('1852\'/1815\'/0\'/0/0'),
       },
     },
     result: 'addr1vy2vzmtlgvjrhkq50rngh8d482zj3l20kyrc6kx4ffl3zfqcrdgvh',
@@ -54,7 +54,7 @@ export const shelleyTestCases: ShelleyTestCase[] = [
     addressParams: {
       type: AddressType.REWARD_KEY,
       params: {
-        stakingPath: str_to_path("1852'/1815'/0'/2/0"),
+        stakingPath: str_to_path('1852\'/1815\'/0\'/2/0'),
       },
     },
     result: 'stake1uywjy7h05jmhx9y3wzy94td6xz4txynuccgam0zfn800v8qq33z29',
