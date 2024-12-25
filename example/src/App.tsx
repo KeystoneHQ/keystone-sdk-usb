@@ -1,15 +1,15 @@
-import React, { useEffect } from 'react';
-import { Button, Space, Spin, message, Select, Tabs } from 'antd';
-import { ApiOutlined, EditOutlined, LockOutlined, DatabaseOutlined } from '@ant-design/icons';
-import { TransportWebUSB, getKeystoneDevices } from '@keystonehq/hw-transport-webusb';
-import EthLeagcy, { HDPathType, Eth } from '@keystonehq/hw-app-eth';
+import React from 'react';
+import { Button, Space, Spin, message, Tabs } from 'antd';
+import { ApiOutlined, LockOutlined } from '@ant-design/icons';
+import { createKeystoneTransport } from '@keystonehq/hw-transport-webusb';
+import { HDPathType, Eth } from '@keystonehq/hw-app-eth';
 import Solana from '@keystonehq/hw-app-sol';
+import Avalanche, { ChainIDAlias } from '@keystonehq/hw-app-avalanche';
 import { PublicKey } from "@solana/web3.js";
 import './App.css';
 import BtcPage from './coins/Btc';
 
 const mockTxUR = 'UR:ETH-SIGN-REQUEST/ONADTPDAGDGEJKFXCSVANTFDPLMTCWEYVYWDKOWZZMAOHDIYYAIEGYLALFOEASMWROSTJYLFVEHECTFYUECHFEYKDWJYFWJZIACWUTGMLAROFYPTAHNSRKAEAEAEAEAEAEAEAEAEAEAEAEHDCXTTKSWKLADAFHOYCFSBZEVLGASORPNDYAWMRHAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAXLGKBOXSWLAAEADLALAAXADAAADAHTAADDYOEADLECSDWYKCSFNYKAEYKAEWKAEWKAOCYGMJYFLAXPAUEFEIS';
-
 
 const solTxHex = "010001035eb9862fe23e544a2a0969cc157cb31fd72901cc2824d536a67fb8ee911e02363b9ba3a2ebaf40c1cd672a80a8e1932b982cca8264be33c39359701e113c3da20000000000000000000000000000000000000000000000000000000000000000030303030303030303030303030303030303030303030303030303030303030301020200010c020000002a00000000000000"
 
@@ -19,14 +19,13 @@ const ethTx = "02ee016d843b9aca0084ca0b23568252089449ab56b91fc982fd6ec1ec7bb87d7
 
 function App() {
   const [loading, setLoading] = React.useState(false);
-  const [ethLeagcy, setEthLeagcy] = React.useState<EthLeagcy | null>(null);
   const [eth, setEth] = React.useState<Eth | null>(null);
   const [solana, setSolana] = React.useState<Solana | null>(null);
+  const [avalanche, setAvalanche] = React.useState<Avalanche | null>(null);
   const [index, setIndex] = React.useState(0);
   const [solAddress, setSolAddress] = React.useState<string>('');
   const [mfp, setMfp] = React.useState<string>('');
   const [messageApi, contextHolder] = message.useMessage();
-  const [accountType, setAccountType] = React.useState<HDPathType>(HDPathType.LedgerLive);
 
   const success = React.useCallback((content: React.ReactNode) => {
     messageApi.open({
@@ -46,52 +45,20 @@ function App() {
     setLoading(true);
     try {
       /**
-       * 1. Request permission to access the device.
+       * 1. Request permission to access the device & Connect to the device
        */
-      if ((await getKeystoneDevices()).length <= 0) {
-        console.log('no device')
-        await TransportWebUSB.requestPermission();
-      }
-      /**
-       * 2. Connect to the device.
-       */
-      const transport = await TransportWebUSB.connect({
-        timeout: 100000,
-      });
+      const transport = await createKeystoneTransport(100000);
       await transport.close();
-      setEthLeagcy(new EthLeagcy(transport!));
       setEth(new Eth(transport!));
-      setSolana(new Solana(transport!));
+      setSolana(new Solana(transport!, mfp));
+      setAvalanche(new Avalanche(transport!));
       success('🎉 Link to Keystone3 Device Success!');
     } catch (e: any) {
       error(e?.message ?? 'Link to Keystone3 Device failed!');
     } finally {
       setLoading(false);
     }
-  }, [error, success, setEth, setLoading]);
-
-  useEffect(() => {
-    if (ethLeagcy) {
-      (window as any).keystoneEth = ethLeagcy;
-    }
-  }, [ethLeagcy]);
-
-  const handleSignTx = React.useCallback(async () => {
-    if (!ethLeagcy) {
-      error('Please link to Keystone3 Device first!');
-      return;
-    }
-    setLoading(true);
-    try {
-      const txResult = await ethLeagcy?.signTransactionFromUr(mockTxUR);
-      alert(txResult?.payload);
-    } catch (e: any) {
-      error(e?.message ?? 'Sign ETH tx failed!');
-    }
-    setLoading(false)
-  }, [eth, error, setLoading]);
-
-
+  }, [error, success, setEth, setLoading, mfp]);
 
   const handleSignTxNew = React.useCallback(async () => {
     if (!eth) {
@@ -108,32 +75,6 @@ function App() {
     }
     setLoading(false)
   }, [eth, error, setLoading]);
-
-
-  const handleCheckDeviceLockStatus = React.useCallback(async () => {
-    if (!eth) {
-      error('Please connect to Keystone3 Device first!');
-      return;
-    }
-    setLoading(true);
-    const checkResult = await ethLeagcy?.checkLockStatus().catch((err: any) => error(err?.message ?? '')).finally(() => setLoading(false));
-    console.log(checkResult?.payload);
-  }, [error, ethLeagcy, setLoading]);
-
-  const handleExportAddress = React.useCallback(async () => {
-    if (!eth) {
-      error('Please link to Keystone3 Device first!');
-      return;
-    }
-    setLoading(true);
-    const checkResult = await ethLeagcy?.exportPubKeyFromUr({
-      type: accountType,
-    }).catch((err: any) => {
-      error(err?.message ?? '');
-      console.error(err);
-    }).finally(() => setLoading(false));
-    console.log(checkResult);
-  }, [error, ethLeagcy, setLoading, accountType]);
 
   const handleGetSolanaAddress = React.useCallback(async () => {
     if (!solana) {
@@ -213,6 +154,25 @@ function App() {
 
   }, [error, eth, setLoading]);
 
+  const handleAvalanchePubkey = React.useCallback(async () => {
+    if (!avalanche) {
+      error('Please link to Keystone3 Device first!');
+      return;
+    }
+    setLoading(true);
+
+    try {
+      const result = await avalanche.getExtendedPublicKey();
+      console.log('pubkey: ', result.publicKey);
+      console.log('chainCode: ', result.chainCode.toString('hex'));
+      const result2 = await avalanche.getExtendedPublicKey(ChainIDAlias.X);
+      console.log('x-chain pubkey: ', result2.publicKey);
+      console.log('x-chain chainCode: ', result2.chainCode.toString('hex'));
+    } catch (e) {
+      console.error(e)
+    }
+    setLoading(false);
+  }, [error, avalanche, setLoading]);
 
   return (
     <div className='App'>
@@ -225,31 +185,13 @@ function App() {
               gap: '20px',
             }}>
               <Button icon={<ApiOutlined />} onClick={handleLink2Device}>Link to Keystone3 Device</Button>
-              <Button icon={<EditOutlined />} onClick={handleSignTx}>Sign ETH tx</Button>
-              <Button icon={<LockOutlined />} onClick={handleCheckDeviceLockStatus}>Check Device Lock Status</Button>
               <Button icon={<LockOutlined />} onClick={handleGetSolanaAddress}>Get SOL Address</Button>
               <Button icon={<LockOutlined />} onClick={handleSolTx}>Sign SOL Tx</Button>
               <Button icon={<LockOutlined />} onClick={handleSolMsg}>Sign SOL Msg</Button>
               <Button icon={<LockOutlined />} onClick={handleEthAddressNew}>Get ETH Address New</Button>
               <Button icon={<LockOutlined />} onClick={handleSignTxNew}>Sign ETH tx New</Button>
+              <Button icon={<LockOutlined />} onClick={handleAvalanchePubkey}>Get Avalanche Pubkey</Button>
               <div>{solAddress}</div>
-              <Space>
-                <Select value={accountType} onChange={setAccountType} style={{ width: 200 }} options={[
-                  {
-                    value: HDPathType.Bip44Standard,
-                    label: 'Bip44Standard',
-                  },
-                  {
-                    value: HDPathType.LedgerLegacy,
-                    label: 'LedgerLegacy',
-                  },
-                  {
-                    value: HDPathType.LedgerLive,
-                    label: 'LedgerLive',
-                  },
-                ]} />
-                <Button icon={<DatabaseOutlined />} onClick={handleExportAddress}>Export Address</Button>
-              </Space>
             </Space>
           </Spin>
         },

@@ -96,6 +96,7 @@ function getClientEnvironment(publicUrl) {
       env[key] = JSON.stringify(raw[key]);
       return env;
     }, {}),
+    'process.env.KEYSTONE_USB_ENV': JSON.stringify(process.env.KEYSTONE_USB_ENV),
   };
 
   return { raw, stringified };
