@@ -174,6 +174,28 @@ function App() {
     setLoading(false);
   }, [error, avalanche, setLoading]);
 
+  const handleAvalancheSignTx = React.useCallback(async () => {
+    if (!avalanche) {
+      error('Please link to Keystone3 Device first!');
+      return;
+    }
+    setLoading(true);
+
+    try {
+      const txHex = '00000000000000000001ed5f38341e436e5d46e2bb00b45d62ae97d1b050c64bc634ae10626739e35c4b0000000121e67317cbc4be2aeb00677ad6462778a8f52274b9d605df2591b23027a87dff00000007000000000089544000000000000000000000000100000001512e7191685398f00663e12197a3d8f6012d9ea300000001db720ad6707915cc4751fb7e5491a3af74e127a1d81817abe9438590c0833fe10000000021e67317cbc4be2aeb00677ad6462778a8f52274b9d605df2591b23027a87dff000000050000000000989680000000010000000000000000';
+      const mfp = "1250B6Bc";
+      const xpub =
+        "xpub661MyMwAqRbcGSmFWVZk2h773zMrcPFqDUWi7cFRpgPhfn7y9HEPzPsBDEXYxAWfAoGo7E7ijjYfB3xAY86MYzfvGLDHmcy2epZKNeDd4uQ";
+      const walletIndex = 0;
+      const result = await avalanche.signTxHex(txHex, mfp, xpub, walletIndex);
+      debugger
+      console.log('signature: ', result);
+    } catch (e) {
+      console.error(e)
+    }
+    setLoading(false);
+  }, [error, avalanche, setLoading]);
+
   return (
     <div className='App'>
       <Tabs items={[
@@ -191,6 +213,7 @@ function App() {
               <Button icon={<LockOutlined />} onClick={handleEthAddressNew}>Get ETH Address New</Button>
               <Button icon={<LockOutlined />} onClick={handleSignTxNew}>Sign ETH tx New</Button>
               <Button icon={<LockOutlined />} onClick={handleAvalanchePubkey}>Get Avalanche Pubkey</Button>
+              <Button icon={<LockOutlined />} onClick={handleAvalancheSignTx}>Sign Avalanche Tx</Button>
               <div>{solAddress}</div>
             </Space>
           </Spin>
