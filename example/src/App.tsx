@@ -188,7 +188,6 @@ function App() {
         "xpub661MyMwAqRbcGSmFWVZk2h773zMrcPFqDUWi7cFRpgPhfn7y9HEPzPsBDEXYxAWfAoGo7E7ijjYfB3xAY86MYzfvGLDHmcy2epZKNeDd4uQ";
       const walletIndex = 0;
       const result = await avalanche.signTxHex(txHex, mfp, xpub, walletIndex);
-      debugger
       console.log('signature: ', result);
     } catch (e) {
       console.error(e)
