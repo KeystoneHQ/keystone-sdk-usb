@@ -1,5 +1,5 @@
 {
-    "name": "hw-app-ada",
+    "name": "@keystonehq/hw-app-ada",
     "version": "0.1.0",
     "description": "Keystone Hardware Wallet App for Cardano",
     "main": "lib/node/index.cjs",
@@ -54,9 +54,6 @@
     "repository": {
         "type": "git",
         "url": "git+https://github.com/KeystoneHQ/hw-app-ada.git"
-    },
-    "publishConfig": {
-        "access": "public"
     },
     "dependencies": {
         "@emurgo/cardano-serialization-lib-browser": "^13.2.0",
