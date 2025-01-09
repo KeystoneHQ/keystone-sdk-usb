@@ -1,0 +1,31 @@
+{
+  "name": "@keystonehq/hw-app-avalanche",
+  "version": "0.0.1",
+  "description": "",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@avalabs/avalanchejs": "^4.1.1",
+    "@keystonehq/bc-ur-registry": "0.7.0",
+    "@keystonehq/bc-ur-registry-avalanche": "^0.0.2",
+    "@keystonehq/hw-app-base": "workspace:^",
+    "@keystonehq/hw-transport-error": "workspace:^",
+    "@keystonehq/hw-transport-usb": "workspace:^",
+    "@ngraveio/bc-ur": "^1.1.6",
+    "buffer": "^6.0.3"
+  },
+  "devDependencies": {
+    "eslint": "^9.17.0",
+    "jest": "^27.4.3",
+    "typescript": "^5.7.2"
+  }
+}

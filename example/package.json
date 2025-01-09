@@ -5,10 +5,11 @@
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
     "@babel/core": "^7.16.0",
+    "@keystonehq/hw-app-avalanche": "workspace:^",
+    "@keystonehq/hw-app-bitcoin": "workspace:*",
     "@keystonehq/hw-app-eth": "workspace:*",
     "@keystonehq/hw-app-sol": "workspace:^",
     "@keystonehq/hw-transport-webusb": "workspace:*",
-    "@keystonehq/hw-app-bitcoin": "workspace:*",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
     "@solana/web3.js": "^1.95.2",
     "@svgr/webpack": "^5.5.0",
