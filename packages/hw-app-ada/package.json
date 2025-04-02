@@ -1,6 +1,6 @@
 {
     "name": "@keystonehq/hw-app-ada",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Keystone Hardware Wallet App for Cardano",
     "main": "lib/node/index.cjs",
     "module": "lib/node/index.js",

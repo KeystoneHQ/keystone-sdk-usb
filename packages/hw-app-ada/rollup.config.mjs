@@ -37,7 +37,7 @@ export default [
         resolve({
           browser: true,
         }),
-        commonjs(),
+        commonjs({ ignore: ['safe-buffer'] }),
       ],
     },
     // Node.js build
