@@ -134,16 +134,20 @@ class Bitcoin extends Base {
 
         const account: CryptoMultiAccounts = await this.getURAccount(path, Curve.secp256k1, DerivationAlgorithm.slip10);
         const key = account.getKeys()[0];
-        const pubkey = key.getKey();
-        const chainCode = key.getChainCode();
+        const bip32Key = key.getBip32Key();
+
+        const tempHDKey = HDKey.fromExtendedKey(bip32Key);
 
         const hdkey = new HDKey({
-            publicKey: pubkey,
-            chainCode: chainCode,
+            publicKey: tempHDKey.publicKey!,
+            chainCode: tempHDKey.chainCode!,
             versions: version,
+            depth: tempHDKey.depth!,
+            index: tempHDKey.index!,
+            parentFingerprint: tempHDKey.parentFingerprint!,
         });
         this.mfp = account.getMasterFingerprint().toString('hex');
-        return hdkey.publicExtendedKey;
+        return hdkey.publicExtendedKey
     }
 
     /**
