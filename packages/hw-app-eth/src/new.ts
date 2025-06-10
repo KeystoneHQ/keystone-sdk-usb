@@ -123,6 +123,7 @@ export default class Eth {
         const response = await this.sendToDevice(Actions.CMD_RESOLVE_UR, encodedUR);
         const resultUR = parseResponoseUR(response.payload);
         const account = CryptoMultiAccounts.fromCBOR(resultUR.cbor);
+        this.mfp = account.getMasterFingerprint().toString('hex');
         const xpubs = account.getKeys().map(key => {
             const xpub = key.getBip32Key();
             const publicKey = key.getKey().toString('hex');
