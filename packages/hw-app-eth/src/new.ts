@@ -11,6 +11,7 @@ import { throwTransportError, Status } from '@keystonehq/hw-transport-error';
 import { ETHSignature, EthSignRequest, DataType } from '@keystonehq/bc-ur-registry-eth';
 import { Address } from '@ethereumjs/util';
 import { convertCompresskey } from './util';
+import { ExtendedPubkey, Address as KeystoneAddress } from './types';
 
 
 const pathToKeypath = (path: string): CryptoKeypath => {
@@ -73,7 +74,7 @@ export default class Eth {
         boolDisplay = false,
         boolChainCode?: boolean,
         chainId?: string,
-    ): Promise<{ address: string, publicKey: string, mfp: string, chainCode?: string; }> {
+    ): Promise<KeystoneAddress & { mfp: string }> {
 
         // Send a request to the device to get the address at the specified path
         const curve = Curve.secp256k1;
@@ -107,6 +108,36 @@ export default class Eth {
             publicKey: uncompressedPubkey,
             chainCode: boolChainCode ? chainCode.toString('hex') : undefined,
             mfp: this.mfp,
+        };
+    }
+
+    async getKeys(paths: string[]): Promise<{ keys: ExtendedPubkey[], mfp: string }> {
+        const curve = Curve.secp256k1;
+        const algo = DerivationAlgorithm.slip10;
+        const kds = paths.map(path => new KeyDerivationSchema(pathToKeypath(path), curve, algo, 'ETH'));
+        const keyDerivation = new KeyDerivation(kds);
+        const hardwareCall = new QRHardwareCall(QRHardwareCallType.KeyDerivation, keyDerivation, 'Keystone USB SDK', QRHardwareCallVersion.V1);
+        const ur = hardwareCall.toUR();
+        const encodedUR = new UREncoder(ur, Infinity).nextPart().toUpperCase();
+
+        const response = await this.sendToDevice(Actions.CMD_RESOLVE_UR, encodedUR);
+        const resultUR = parseResponoseUR(response.payload);
+        const account = CryptoMultiAccounts.fromCBOR(resultUR.cbor);
+        const xpubs = account.getKeys().map(key => {
+            const xpub = key.getBip32Key();
+            const publicKey = key.getKey().toString('hex');
+            const chainCode = key.getChainCode().toString('hex');
+            const ethAddress = Address.fromPublicKey(key.getKey()).toString();
+            return {
+                xpub,
+                publicKey,
+                chainCode,
+                address: ethAddress,
+            };
+        });
+        return {
+            keys: xpubs,
+            mfp: account.getMasterFingerprint().toString('hex'),
         };
     }
 
