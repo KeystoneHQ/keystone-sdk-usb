@@ -15,4 +15,5 @@ export type Address = {
 
 export type ExtendedPubkey = Address & {
   xpub: string;
+  path: string;
 };
