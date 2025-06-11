@@ -128,12 +128,14 @@ export default class Eth {
             const xpub = key.getBip32Key();
             const publicKey = key.getKey().toString('hex');
             const chainCode = key.getChainCode().toString('hex');
+            const path = key.getOrigin().getPath();
             const ethAddress = Address.fromPublicKey(key.getKey()).toString();
             return {
                 xpub,
                 publicKey,
                 chainCode,
                 address: ethAddress,
+                path: path,
             };
         });
         return {
