@@ -1,8 +1,9 @@
 {
     "name": "@keystonehq/hw-transport-usb",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "description": "Hardware Wallet Interface for USB support WebUSB and NodeUSB",
     "main": "lib/index.js",
+    "types": "lib/index.d.ts",
     "scripts": {
         "build": "tsc",
         "watch": "tsc -w",
@@ -13,13 +14,13 @@
     "author": "",
     "devDependencies": {
         "@types/node": "^16.18.52",
-        "@types/w3c-web-usb": "^1.0.6",
         "eslint": "^8.49.0",
         "typescript": "^5.2.2"
     },
     "license": "ISC",
     "dependencies": {
         "@keystonehq/hw-transport-error": "workspace:^",
-        "buffer": "^6.0.3"
+        "buffer": "^6.0.3",
+        "@types/w3c-web-usb": "^1.0.10"
     }
 }
