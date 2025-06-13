@@ -100,7 +100,7 @@ export default class Eth {
         const chainCode = key.getChainCode();
 
         const uncompressedPubkey = convertCompresskey(pubkey.toString('hex'));
-        const keyBuffer = Buffer.from(uncompressedPubkey, 'hex').slice(1);
+        const keyBuffer = Buffer.from(uncompressedPubkey, 'hex').subarray(1);
         const ethAddress = Address.fromPublicKey(keyBuffer).toString();
 
         return {
@@ -129,7 +129,9 @@ export default class Eth {
             const publicKey = key.getKey().toString('hex');
             const chainCode = key.getChainCode().toString('hex');
             const path = key.getOrigin().getPath();
-            const ethAddress = Address.fromPublicKey(key.getKey()).toString();
+            const uncompressedPubkey = convertCompresskey(publicKey);
+            const keyBuffer = Buffer.from(uncompressedPubkey, 'hex').subarray(1);
+            const ethAddress = Address.fromPublicKey(keyBuffer).toString();
             return {
                 xpub,
                 publicKey,
