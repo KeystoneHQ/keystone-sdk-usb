@@ -1,9 +1,9 @@
 import Base, { parseResponoseUR } from '@keystonehq/hw-app-base';
 import { Actions, TransportHID } from '@keystonehq/hw-transport-usb';
-import { Curve, DerivationAlgorithm } from '@keystonehq/bc-ur-registry';
+import { CryptoKeypath, Curve, DerivationAlgorithm } from '@keystonehq/bc-ur-registry';
 import { UnsignedTx, EVMUnsignedTx } from '@avalabs/avalanchejs';
-import { AvalancheSignRequest, AvalancheSignature } from '@keystonehq/bc-ur-registry-avalanche';
-import { UR, UREncoder, URDecoder } from '@ngraveio/bc-ur';
+import { AvalancheSignRequest, AvalancheSignature, AvalancheUtxoData } from '@keystonehq/bc-ur-registry-avalanche';
+import { UREncoder } from '@ngraveio/bc-ur';
 import { Buffer } from 'buffer';
 
 export enum ChainIDAlias {
@@ -12,8 +12,8 @@ export enum ChainIDAlias {
   C = 'C',
 }
 
-type SignTx = (tx: UnsignedTx | EVMUnsignedTx, mfp: string, xpub: string, walletIndex: number) => Promise<string>;
-type SignTxHex = (txHex: string, mfp: string, xpub: string, walletIndex: number) => Promise<string>;
+type SignTx = (tx: UnsignedTx | EVMUnsignedTx, derivationPath: CryptoKeypath, utxos: AvalancheUtxoData[]) => Promise<string>;
+type SignTxHex = (txHex: string, derivationPath: CryptoKeypath, utxos: AvalancheUtxoData[]) => Promise<string>;
 
 const CChainDerivationPath = "m/44'/60'/0'";
 const XPChainDerivationPath = "m/44'/9000'/0'";
@@ -44,12 +44,12 @@ export default class Avalanche extends Base {
     return await this.getPubkey(path, Curve.secp256k1, DerivationAlgorithm.slip10);
   }
 
-  signTx: SignTx = async (tx, mfp, xpub, walletIndex) => {
-    return await this.signTxHex(Buffer.from(tx.toBytes()).toString('hex'), mfp, xpub, walletIndex);
+  signTx: SignTx = async (tx, derivationPath, utxos) => {
+    return await this.signTxHex(Buffer.from(tx.toBytes()).toString('hex'), derivationPath, utxos);
   }
 
-  signTxHex: SignTxHex = async (txHex, mfp, xpub, walletIndex) => {
-    const ur = AvalancheSignRequest.constructAvalancheRequest(Buffer.from(txHex, 'hex'), mfp, xpub, walletIndex).toUR();
+  signTxHex: SignTxHex = async (txHex, derivationPath, utxos) => {
+    const ur = AvalancheSignRequest.constructAvalancheRequest(Buffer.from(txHex, 'hex'), derivationPath as any, utxos).toUR();
     const encodedUR = new UREncoder(ur, Infinity).nextPart().toUpperCase();
     const response = await this.sendToDevice(Actions.CMD_RESOLVE_UR, encodedUR);
     const resultUR = parseResponoseUR(response.payload);
