@@ -16,7 +16,7 @@
   "dependencies": {
     "@avalabs/avalanchejs": "^4.1.1",
     "@keystonehq/bc-ur-registry": "0.7.0",
-    "@keystonehq/bc-ur-registry-avalanche": "^0.0.4",
+    "@keystonehq/bc-ur-registry-avalanche": "0.1.1",
     "@keystonehq/hw-app-base": "workspace:^",
     "@keystonehq/hw-transport-error": "workspace:^",
     "@keystonehq/hw-transport-usb": "workspace:^",
