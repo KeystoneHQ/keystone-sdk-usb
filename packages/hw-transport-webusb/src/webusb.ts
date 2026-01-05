@@ -105,6 +105,7 @@ export class TransportWebUSB implements TransportHID {
       const sendRequest = (async () => {
         try {
           do {
+            // @ts-ignore
             const res = await this.device!.transferOut(this.endpoint, packages[0]);
             if (res.status !== 'ok') throwTransportError(Status.ERR_RESPONSE_STATUS_NOT_OK);
             packages.shift();

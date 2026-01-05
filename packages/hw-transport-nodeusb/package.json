@@ -13,7 +13,7 @@
     "author": "",
     "devDependencies": {
         "@types/node": "^16.18.52",
-        "@types/w3c-web-usb": "^1.0.6",
+        "@types/w3c-web-usb": "1.0.6",
         "eslint": "^8.49.0",
         "typescript": "^5.2.2"
     },
@@ -21,7 +21,7 @@
     "dependencies": {
         "@keystonehq/hw-transport-error": "workspace:^",
         "buffer": "^6.0.3",
-        "usb": "^2.14.0",
+        "usb": "2.14.0",
         "@keystonehq/hw-transport-usb": "workspace:^"
     }
 }
