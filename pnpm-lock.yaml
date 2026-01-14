@@ -378,8 +378,8 @@ importers:
         specifier: 0.7.0
         version: 0.7.0
       '@keystonehq/bc-ur-registry-avalanche':
-        specifier: 0.1.3
-        version: 0.1.3
+        specifier: 0.1.4
+        version: 0.1.4
       '@keystonehq/hw-app-base':
         specifier: workspace:^
         version: link:../hw-app-base
@@ -1870,8 +1870,8 @@ packages:
   '@keystonehq/alias-sampling@0.1.2':
     resolution: {integrity: sha512-5ukLB3bcgltgaFfQfYKYwHDUbwHicekYo53fSEa7xhVkAEqsA74kxdIwoBIURmGUtXe3EVIRm4SYlgcrt2Ri0w==}
 
-  '@keystonehq/bc-ur-registry-avalanche@0.1.3':
-    resolution: {integrity: sha512-TptjJK3hR6unfH+Rl105fLSUm0fBZg5dnDyJUsYIzcCFOxKWT4Rv1WECPWHmmFPmuWeB6mGJBuitMuc9VqFMjA==}
+  '@keystonehq/bc-ur-registry-avalanche@0.1.4':
+    resolution: {integrity: sha512-9Wyn5fvH4FA0gynKaz6dmZk/yPudJQXRwy887FxnnMN7630WSCjz0e0Vi0v+TcJy1oj1TfPKxOXtMcBr6Gf+ng==}
 
   '@keystonehq/bc-ur-registry-btc@0.1.1':
     resolution: {integrity: sha512-LdYqItY1Y/M6fWJNE6L0HYZbKL8CGVP6OigG7T/gJ+SWnOGgYXj3at02aV7b9qZ7iNwJPkNrqsIDN5eajQcZjQ==}
@@ -9843,7 +9843,7 @@ snapshots:
 
   '@keystonehq/alias-sampling@0.1.2': {}
 
-  '@keystonehq/bc-ur-registry-avalanche@0.1.3':
+  '@keystonehq/bc-ur-registry-avalanche@0.1.4':
     dependencies:
       '@keystonehq/bc-ur-registry': 0.6.4
       uuid: 8.3.2

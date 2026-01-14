@@ -12,8 +12,8 @@ export enum ChainIDAlias {
   C = 'C',
 }
 
-type SignTx = (tx: UnsignedTx | EVMUnsignedTx, derivationPath: string, utxos: AvalancheUtxoData[], xfp: string) => Promise<string>;
-type SignTxHex = (txHex: string, derivationPath: string, utxos: AvalancheUtxoData[], xfp: string) => Promise<string>;
+type SignTx = (tx: UnsignedTx | EVMUnsignedTx, derivationPaths: string[], utxos: AvalancheUtxoData[], xfp: string) => Promise<string[]>;
+type SignTxHex = (txHex: string, derivationPaths: string[], utxos: AvalancheUtxoData[], xfp: string) => Promise<string[]>;
 
 const CChainDerivationPath = "m/44'/60'/0'";
 const XPChainDerivationPath = "m/44'/9000'/0'";
@@ -44,16 +44,21 @@ export default class Avalanche extends Base {
     return await this.getPubkey(path, Curve.secp256k1, DerivationAlgorithm.slip10);
   }
 
-  signTx: SignTx = async (tx, derivationPath, utxos, xfp) => {
-    return await this.signTxHex(Buffer.from(tx.toBytes()).toString('hex'), derivationPath, utxos, xfp);
+  signTx: SignTx = async (tx, derivationPaths, utxos, xfp) => {
+    return await this.signTxHex(Buffer.from(tx.toBytes()).toString('hex'), derivationPaths, utxos, xfp);
   }
 
-  signTxHex: SignTxHex = async (txHex, derivationPath, utxos, xfp) => {
-    const ur = AvalancheSignRequest.constructAvalancheRequest(Buffer.from(txHex, 'hex'), derivationPath, utxos, xfp).toUR();
+  signTxHex: SignTxHex = async (txHex, derivationPaths, utxos, xfp) => {
+    const ur = AvalancheSignRequest.constructAvalancheRequest(Buffer.from(txHex, 'hex'), derivationPaths, utxos, xfp).toUR();
     const encodedUR = new UREncoder(ur, Infinity).nextPart().toUpperCase();
     const response = await this.sendToDevice(Actions.CMD_RESOLVE_UR, encodedUR);
     const resultUR = parseResponoseUR(response.payload);
     const result = AvalancheSignature.fromCBOR(resultUR.cbor);
-    return result.getSignature().toString('hex');
+    const sigBuffers = result.getSignatures();
+    if (!sigBuffers || sigBuffers.length === 0) {
+      throw new Error("No signatures returned from device");
+    }
+    const finalSigHexArray = sigBuffers.map(sig => sig.toString('hex'));
+    return finalSigHexArray;
   }
 }
