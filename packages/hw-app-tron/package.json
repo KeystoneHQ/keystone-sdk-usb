@@ -1,0 +1,28 @@
+{
+  "name": "@keystone-sdk/hw-app-tron",
+  "version": "0.0.1",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "test": "jest"
+  },
+  "dependencies": {
+        "@keystonehq/bc-ur-registry": "0.7.0",
+        "@keystonehq/bc-ur-registry-tron": "0.4.3",
+        "@keystonehq/hw-app-base": "workspace:^",
+        "@keystonehq/hw-transport-error": "workspace:^",
+        "@keystonehq/hw-transport-usb": "workspace:^",
+        "@ngraveio/bc-ur": "^1.1.6",
+        "@noble/hashes": "^1.5.0",
+        "bech32": "^2.0.0",
+        "uuid": "^8.3.2"
+    },
+    "devDependencies": {
+        "@types/jest": "^27.5.2",
+        "@types/node": "^16.18.52",
+        "eslint": "^8.49.0",
+        "jest": "^27.4.3",
+        "typescript": "^5.2.2"
+    }
+}
