@@ -1,7 +1,7 @@
 import * as uuid from 'uuid';
 import Base, { parseResponoseUR } from '@keystonehq/hw-app-base';
 import { Actions, TransportHID } from '@keystonehq/hw-transport-usb';
-import { TronSignRequest, TronSignature } from '@keystonehq/bc-ur-registry-tron';
+import { TronSignRequest, TronSignature, DataType } from '@keystonehq/bc-ur-registry-tron';
 import { UREncoder, UR } from '@ngraveio/bc-ur';
 
 /**
@@ -22,9 +22,9 @@ export default class Tron extends Base {
     /**
      * Signs a Tron transaction using the specified derivation path.
      */
-    async signTransactionBuffer(path: string, rawTx: Buffer, xfp: string, origin: string): Promise<string> {
+    async signTransactionBuffer(path: string, rawTx: Buffer, xfp: string, origin: string, type: DataType): Promise<{ r: string, s: string, v: string }> {
         this.precheck();
-        const encodedUR = this.generateSignRequest(rawTx, path, xfp || this.mfp!, origin);
+        const encodedUR = this.generateSignRequest(rawTx, path, xfp || this.mfp!, origin, type);
         const response = await this.sendToDevice(Actions.CMD_RESOLVE_UR, encodedUR);
         const resultUR = parseResponoseUR(response.payload);
 
@@ -39,8 +39,29 @@ export default class Tron extends Base {
      * @param origin 
      * @returns 
      */
-    async signTransaction(path: string, rawTx: string, xfp: string, origin: string): Promise<string> {
-        return await this.signTransactionBuffer(path, Buffer.from(rawTx, 'hex'), xfp, origin);
+    async signTransaction(path: string, rawTx: string, xfp: string, origin: string): Promise<{ r: string, s: string, v: string }> {
+        return await this.signTransactionBuffer(path, Buffer.from(rawTx, 'hex'), xfp, origin, DataType.transaction);
+    }
+
+    /**
+     * signs a personal message with the given path, message, xfp, and origin.
+     * @param path 
+     * @param message 
+     * @param xfp 
+     * @param origin 
+     * @returns 
+     */
+    async signPersonalMessage(path: string, message: string, xfp: string, origin: string): Promise<{ r: string, s: string, v: string }> {
+        let messageBuffer: Buffer;
+        const isHex = /^(0x)?[0-9a-fA-F]+$/.test(message) && message.length % 2 === 0;
+
+        if (isHex) {
+            const cleanHex = message.startsWith('0x') ? message.slice(2) : message;
+            messageBuffer = Buffer.from(cleanHex, 'hex');
+        } else {
+            messageBuffer = Buffer.from(message, 'utf-8');
+        }
+        return await this.signTransactionBuffer(path, messageBuffer, xfp || this.mfp!, origin, DataType.personalMessage);
     }
 
     /**
@@ -52,10 +73,11 @@ export default class Tron extends Base {
      * @param origin - The origin of the signing request, used for user confirmation on the device.
      * @returns A string representing the UR-encoded request in uppercase.
      */
-    public generateSignRequest(txBuffer: Buffer, path: string, mfp: string, origin: string): string {
+    public generateSignRequest(txBuffer: Buffer, path: string, mfp: string, origin: string, type: DataType): string {
         const requestId = uuid.v4();
         const tronUR = TronSignRequest.constructTronRequest(
             txBuffer,
+            type,
             path,
             mfp,
             requestId,
@@ -73,9 +95,17 @@ export default class Tron extends Base {
      * @param ur - The result UR from the device.
      * @returns The signature string in hexadecimal format.
      */
-    public parseSignature(ur: UR): string {
+    public parseSignature(ur: UR) {
         const signature = TronSignature.fromCBOR(ur.cbor);
-        return signature.getSignature().toString('hex');
+        const signatureBuffer = signature.getSignature();
+        const r = signatureBuffer.slice(0, 32).toString('hex');
+        const s = signatureBuffer.slice(32, 64).toString('hex');
+        const v = signatureBuffer.slice(64).toString('hex');
+        return {
+            r,
+            s,
+            v,
+        };
     };
 }
 
