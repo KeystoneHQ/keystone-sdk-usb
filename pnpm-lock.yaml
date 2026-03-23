@@ -636,8 +636,8 @@ importers:
         specifier: 0.7.0
         version: 0.7.0
       '@keystonehq/bc-ur-registry-tron':
-        specifier: 0.4.3
-        version: 0.4.3
+        specifier: 0.5.0
+        version: 0.5.0
       '@keystonehq/hw-app-base':
         specifier: workspace:^
         version: link:../hw-app-base
@@ -1841,8 +1841,8 @@ packages:
   '@keystonehq/bc-ur-registry-sol@0.9.5':
     resolution: {integrity: sha512-HZeeph9297ZHjAziE9wL/u2W1dmV0p1H9Bu9g1bLJazP4F6W2fjCK9BAoCiKEsMBqadk6KI6r6VD67fmDzWyug==}
 
-  '@keystonehq/bc-ur-registry-tron@0.4.3':
-    resolution: {integrity: sha512-VoflSrPW6zqyPye+H2ah6vMULj9m2wRKERL0cD0LaaXtZNCJd8ldbe/mGTS2D1+Dmj5AOmlvNEA/C07z20EeuA==}
+  '@keystonehq/bc-ur-registry-tron@0.5.0':
+    resolution: {integrity: sha512-HYjFw1rUJFqueaOQG2hEJBXbsSXe/nInSJ/1U3fjXrvZHWomc1PZNUg+frg12bjVnH7mfhrB9DfodB0v8qgEWg==}
 
   '@keystonehq/bc-ur-registry@0.5.4':
     resolution: {integrity: sha512-z7bZe10I5k0zz9znmDTXh+o3Rzb5XsRVpwAzexubOaLxVdZ0F7aMbe2LoEsw766Hpox/7zARi7UGmLz5C8BAzA==}
@@ -9840,7 +9840,7 @@ snapshots:
       bs58check: 2.1.2
       uuid: 8.3.2
 
-  '@keystonehq/bc-ur-registry-tron@0.4.3':
+  '@keystonehq/bc-ur-registry-tron@0.5.0':
     dependencies:
       '@keystonehq/bc-ur-registry': 0.6.4
       uuid: 9.0.1
