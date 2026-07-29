@@ -1,5 +1,5 @@
 import { Actions, decode, encode, logMethod, TransportConfig, TransportHID } from '@keystonehq/hw-transport-usb';
-import { USBInterfaceNumber, USBConfigurationValue, USBTimeout, MAXUSBPackets, USBPackageSize, OFFSET_INS, OFFSET_LC, OFFSET_P1, keystoneUSBVendorId } from '@keystonehq/hw-transport-usb';
+import { USBInterfaceNumber, USBConfigurationValue, USBTimeout, MAXUSBPackets, USBPackageSize, OFFSET_INS, OFFSET_LC, OFFSET_P1, keystoneUSBVendorId, keystoneUSBProductId } from '@keystonehq/hw-transport-usb';
 import { generateRequestID, isEmpty, isString, isUint8Array, safeJSONparse, safeJSONStringify } from '@keystonehq/hw-transport-usb';
 import { throwTransportError, Status, TransportError, ErrorInfo } from '@keystonehq/hw-transport-error';
 import { Buffer } from 'buffer';
@@ -8,6 +8,7 @@ import { Buffer } from 'buffer';
 const keystoneDevices = [
   {
     vendorId: keystoneUSBVendorId,
+    productId: keystoneUSBProductId,
   },
 ];
 
@@ -49,7 +50,11 @@ export class TransportWebUSB implements TransportHID {
  
     static async getKeystoneDevices(): Promise<USBDevice[]> {
         const devices = await navigator.usb.getDevices();
-        return devices.filter((d: USBDevice) => d.vendorId === keystoneUSBVendorId);
+        return devices.filter(
+            (d: USBDevice) =>
+                d.vendorId === keystoneUSBVendorId &&
+                d.productId === keystoneUSBProductId
+        );
     }
 
     static async getFirstKeystoneDevice(): Promise<USBDevice> {
